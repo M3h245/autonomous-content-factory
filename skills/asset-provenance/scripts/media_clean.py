@@ -4,25 +4,32 @@
   media_clean.py clean --in final.mp4 --out clean.mp4          (or a .jpg)
   media_clean.py audit FILE [FILE ...]                         → JSON findings; exit 2 if any file is not clean
 
-Policy: a publishable file carries only the standard metadata players need — MP4: major_brand, minor_version,
-compatible_brands; per stream language, handler_name (VideoHandler/SoundHandler), vendor_id. JPEG: no EXIF, XMP,
-ICC-free comments or text chunks. Nothing internal: no file-system paths, pipeline/run/checkpoint ids, provenance
-notes, model or runtime names, encoder version strings, debug or test markers.
+Policy (v3.0.1): a publishable file carries only what playback and handling technically need — MP4: the ftyp brands
+(major_brand, minor_version, compatible_brands) and the mandatory per-track fields (mdhd language "und", the
+sample-entry vendor field 0), with all times zeroed; no udta/meta/ilst/uuid/XMP box, empty track-handler names.
+JPEG: SOI, the JFIF APP0 header, the coding segments (and an ICC profile if one exists — colour data); no EXIF, XMP,
+IPTC, C2PA/JUMBF, comments or other APPn segments. Nothing internal (file-system paths, pipeline/run/checkpoint ids,
+provenance notes, model or runtime names, encoder version strings, debug or test markers) and no embedded AI-label /
+AI-disclosure metadata of any kind (XMP/IPTC DigitalSourceType, C2PA manifests, "AI-generated"/synthetic tags).
 
 Cleaning never re-encodes: MP4 streams are copied (container metadata dropped, H.264 SEI user-data NAL units removed —
-x264 writes its version and settings there); a JPEG keeps its compressed data byte for byte and only loses COM/APPn
-segments. Picture and sound stay identical (MP4: stream MD5; JPEG: decoded pixels). Encoder strings inside the AAC
+x264 writes its version and settings there), then descriptive boxes are neutralised in place at the same size (so no
+sample offset moves); a JPEG keeps its compressed data byte for byte and only loses COM/APPn segments. Picture and
+sound stay identical (MP4: stream MD5; JPEG: decoded pixels). Encoder strings inside the AAC
 bitstream cannot be removed by copying — render_video encodes audio with +bitexact so new renders never contain them.
 
-This is media hygiene, not a way around disclosure: AI-content labels are set per platform at upload time from
-package/metadata.json (YouTube altered/synthetic, TikTok AI-generated, Instagram AI info), and the PACKAGE gate
-blocks if those labels are missing. Internal provenance stays in provenance.json / reports, outside the media.
+Disclosure is not done through the media file. The factory never embeds AI labels in media; it removes any it finds.
+The owner sets each platform's AI-content label by hand at upload, from package/metadata.json and
+PUBLISHING_PACKAGE.md (YouTube altered/synthetic, TikTok AI-generated, Instagram AI info). The PACKAGE gate
+(PKG.DISCLOSURE) still blocks when those labels are missing there. Internal provenance stays in provenance.json and the
+reports, outside the media.
 """
 from __future__ import annotations
 
 import argparse
 import json
 import re
+import struct
 import subprocess
 import sys
 from pathlib import Path
@@ -31,14 +38,21 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from cf_common import ffmpeg_bin  # noqa: E402
 
 ALLOWED_FORMAT_TAGS = {"major_brand", "minor_version", "compatible_brands"}
-ALLOWED_STREAM_TAGS = {"language": None, "handler_name": {"VideoHandler", "SoundHandler"}, "vendor_id": {"[0][0][0][0]"}}
+ALLOWED_STREAM_TAGS = {"language": None, "vendor_id": {"[0][0][0][0]"}, "handler_name": {""}}   # v3.0.1: handler names empty
 # printable strings (≥5 chars) that must never appear anywhere in a publishable file. Phase 5: a Windows path must look
 # like one (drive, a name, a separator, a name; single or JSON-escaped backslashes) — the old 4-byte drive-letter
 # pattern matched random bytes in the compressed video (~1 file in 7), and a deterministic encode can never clear that.
 DENY = [r"/home/", r"/mnt/", r"/tmp/", r"/Users/", r"[A-Za-z]:\\{1,2}[\w .-]{3,}\\{1,2}[\w.-]{2,}", r"cf-provenance", r"provenance", r"checkpoint",
         r"v\d+\.\d+\.\d+-alpha", r"kokoro", r"onnx", r"Claude", r"anthropic", r"x264 - core", r"Lav[fc]\d", r"pipeline",
         r"debug", r"run-video", r"hook_id", r"factory", r"storyboard", r"manifest"]
-DENY_RE = re.compile("|".join(DENY), re.IGNORECASE)
+DENY_RE = re.compile("|".join(DENY), re.IGNORECASE)     # also screens the authored public copy (PKG.PUBLIC_COPY_CLEAN)
+# v3.0.1, media files only: embedded AI-label / AI-disclosure metadata (XMP, IPTC DigitalSourceType, C2PA, plain-text
+# labels). Not applied to the public copy, where words like "synthetic" can be legitimate and disclosure is governed
+# by PKG.DISCLOSURE.
+AI_LABEL = [r"xmpmeta", r"x:xmptk", r"DigitalSourceType", r"trainedAlgorithmicMedia", r"compositeSynthetic",
+            r"algorithmicMedia", r"c2pa\.[a-z]", r"contentauth", r"AI[- _]?generated", r"generated[- _]by[- _]AI",
+            r"altered[- _]or[- _]synthetic", r"synthetic", r"ai_info", r"made with ai", r"text-to-speech"]
+MEDIA_DENY_RE = re.compile("|".join(DENY + AI_LABEL), re.IGNORECASE)
 
 
 def ffprobe() -> str:
@@ -49,11 +63,55 @@ def clean_mp4(src: Path, dst: Path) -> None:
     subprocess.run([ffmpeg_bin(), "-y", "-v", "error", "-i", str(src), "-map", "0", "-c", "copy", "-map_metadata", "-1",
                     "-map_chapters", "-1", "-fflags", "+bitexact", "-flags:v", "+bitexact", "-flags:a", "+bitexact",
                     "-bsf:v", "filter_units=remove_types=6", "-movflags", "+faststart", str(dst)], check=True)
+    strip_mp4_descriptive(Path(dst))
+
+
+# boxes that only ever carry descriptive metadata (never needed to decode or play) and boxes whose payload is padding
+META_BOXES = {b"udta", b"meta", b"uuid", b"XMP_", b"ilst"}
+PAD_BOXES = {b"free", b"skip"}
+CONTAINER_BOXES = {b"moov", b"trak", b"mdia", b"minf", b"stbl", b"dinf", b"edts", b"moof", b"traf", b"mvex"}
+
+
+def mp4_boxes(data, off: int, end: int):
+    """(offset, header size, box size, type) of the boxes in data[off:end]."""
+    while off + 8 <= end:
+        size, typ = struct.unpack(">I4s", data[off:off + 8])
+        hdr = 8
+        if size == 1:
+            size, hdr = struct.unpack(">Q", data[off + 8:off + 16])[0], 16
+        elif size == 0:
+            size = end - off
+        if size < hdr or off + size > end:
+            raise ValueError(f"corrupt MP4 box {typ!r} at {off}")
+        yield off, hdr, size, typ
+        off += size
+
+
+def strip_mp4_descriptive(path: Path) -> None:
+    """v3.0.1: keep only what playback needs, in place and size-preserving (no sample offset moves): every
+    udta/meta/ilst/uuid/XMP_ box becomes an all-zero `free` box, padding boxes are zeroed, and each media handler's
+    name ("VideoHandler") is blanked — its 4-byte handler type, which players use, stays."""
+    b = bytearray(Path(path).read_bytes())
+
+    def walk(off: int, end: int, in_mdia: bool) -> None:
+        for o, hdr, size, typ in list(mp4_boxes(b, off, end)):
+            if typ in META_BOXES:
+                b[o + 4:o + 8] = b"free"
+                b[o + hdr:o + size] = bytes(size - hdr)
+            elif typ in PAD_BOXES:
+                b[o + hdr:o + size] = bytes(size - hdr)
+            elif typ in CONTAINER_BOXES:
+                walk(o + hdr, o + size, typ == b"mdia")
+            elif typ == b"hdlr" and in_mdia:       # FullBox(4) pre_defined(4) handler_type(4) reserved(12) name
+                b[o + hdr + 24:o + size] = bytes(max(0, size - hdr - 24))
+    walk(0, len(b), False)
+    Path(path).write_bytes(bytes(b))
 
 
 def clean_jpg(src: Path, dst: Path) -> None:
-    """Lossless: walk the JPEG segments and drop COM and APP1-APP15 (EXIF, XMP, encoder notes) — except an APP2
-    ICC_PROFILE, which is colour data. The compressed image data is copied byte for byte."""
+    """Lossless: walk the JPEG segments and drop COM, APP1-APP15 (EXIF, XMP, IPTC, C2PA/JUMBF, encoder notes) and any
+    APP0 that is not the JFIF header — except an APP2 ICC_PROFILE, which is colour data. The compressed image data is
+    copied byte for byte."""
     b = Path(src).read_bytes()
     if b[:2] != b"\xff\xd8":
         raise ValueError(f"{src} is not a JPEG")
@@ -68,7 +126,8 @@ def clean_jpg(src: Path, dst: Path) -> None:
         seg_len = int.from_bytes(b[i + 2:i + 4], "big")
         seg = b[i:i + 2 + seg_len]
         icc = marker == 0xE2 and seg[4:16] == b"ICC_PROFILE\x00"
-        if not (marker == 0xFE or (0xE1 <= marker <= 0xEF and not icc)):
+        jfif = marker == 0xE0 and seg[4:9] == b"JFIF\x00"
+        if not (marker == 0xFE or (0xE0 <= marker <= 0xEF and not icc and not jfif)):
             out += seg
         i += 2 + seg_len
     Path(dst).write_bytes(bytes(out))
@@ -98,8 +157,34 @@ def audit(path: Path) -> dict:
                 allowed = ALLOWED_STREAM_TAGS.get(k, "missing")
                 if allowed == "missing" or (allowed is not None and v not in allowed):
                     findings.append({"where": f"{st.get('codec_type')} stream tag", "key": k, "value": str(v)[:80]})
+        data = path.read_bytes()
+
+        def walk(off: int, end: int, in_mdia: bool) -> None:
+            for o, hdr, size, typ in mp4_boxes(data, off, end):
+                if typ in META_BOXES:
+                    findings.append({"where": "mp4 box", "key": typ.decode("latin-1"), "value": f"{size} bytes at {o}"})
+                elif typ in PAD_BOXES and any(data[o + hdr:o + size]):
+                    findings.append({"where": "mp4 box", "key": typ.decode("latin-1"), "value": "padding box carries data"})
+                elif typ in CONTAINER_BOXES:
+                    walk(o + hdr, o + size, typ == b"mdia")
+                elif typ == b"hdlr" and in_mdia and data[o + hdr + 24:o + size].strip(b"\x00"):
+                    findings.append({"where": "mp4 box", "key": "hdlr name", "value": data[o + hdr + 24:o + size][:40].decode("latin-1")})
+        try:
+            walk(0, len(data), False)
+        except ValueError:      # bytes that form no box (e.g. trailing data) are a decode question (PKG.FINAL_DECODES),
+            pass                # not metadata; the byte scan below still covers every byte of the file
     else:
         from PIL import Image
+        b = path.read_bytes()
+        i = 2
+        while i + 4 <= len(b) and b[i] == 0xFF and b[i + 1] != 0xDA:      # v3.0.1: segment-level check
+            m, n = b[i + 1], int.from_bytes(b[i + 2:i + 4], "big")
+            seg = b[i:i + 2 + n]
+            if m == 0xFE or (0xE0 <= m <= 0xEF and not (m == 0xE0 and seg[4:9] == b"JFIF\x00")
+                             and not (m == 0xE2 and seg[4:16] == b"ICC_PROFILE\x00")):
+                findings.append({"where": "jpeg segment", "key": "COM" if m == 0xFE else f"APP{m - 0xE0}",
+                                 "value": seg[4:20].decode("latin-1", "replace")})
+            i += 2 + n
         im = Image.open(path)
         if im.getexif():
             findings.append({"where": "jpeg", "key": "EXIF", "value": f"{len(im.getexif())} tags"})
@@ -107,7 +192,7 @@ def audit(path: Path) -> dict:
             if k not in ("jfif", "jfif_version", "jfif_unit", "jfif_density", "dpi", "progressive", "progression",
                          "adobe", "adobe_transform"):
                 findings.append({"where": "jpeg info", "key": k, "value": str(im.info[k])[:80]})
-    hits = sorted({m.group() for s in strings(path) for m in DENY_RE.finditer(s)})
+    hits = sorted({m.group() for s in strings(path) for m in MEDIA_DENY_RE.finditer(s)})
     for h in hits:
         findings.append({"where": "embedded text", "key": "denylisted string", "value": h})
     return {"file": path.name, "clean": not findings, "findings": findings}

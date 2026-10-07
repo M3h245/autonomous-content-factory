@@ -6,7 +6,8 @@ Read this file first, then `PROJECT_STATE.md`. Written 2026-10-07; updated at th
 | item | value |
 |---|---|
 | Phases complete | **0, 1, 2, 3, 3.5, 4, 5** |
-| Authoritative release | **`v3.0.0`** (git tag `v3.0.0`, `checkpoints/v3.0.0/`, `skills/content-factory/VERSION`) |
+| Authoritative release | **`v3.0.0`** (git tag `v3.0.0`, `checkpoints/v3.0.0/`) |
+| Post-freeze patch | **v3.0.1** (owner decision, untagged): final-media metadata only — see CHANGELOG; `skills/content-factory/VERSION` |
 | Phase 5 (productionization + validation) | **PASS WITH LIMITATIONS** — `skills/content-factory/PHASE_5_REPORT.md` |
 | Remaining development | **none — development is FROZEN** (no features, phases or optimisation) |
 
@@ -16,8 +17,9 @@ Rules for any later session:
 2. Never publish anything automatically; the owner uploads by hand.
 3. Never expose or commit secrets. API keys are read from environment variables only. `ANTHROPIC_API_KEY` is
    recommended for production QA; without it the reviewer falls back to its generous heuristic judge.
-4. Never weaken gates. Never remove platform AI-disclosure behaviour, and never use the media-metadata policy to evade
-   platform labelling. Media cleaning is privacy hygiene only; PKG.DISCLOSURE still blocks without labels.
+4. Never weaken gates. Never remove the platform AI-disclosure behaviour (labels in metadata.json, the description
+   line, PKG.DISCLOSURE, which still blocks without labels). Owner decision v3.0.1: the media files themselves carry
+   no AI-label or disclosure metadata. The owner discloses on each platform by hand at upload.
 5. Never modify completed checkpoints (`checkpoints/v2.0.0-alpha8/`, `checkpoints/v3.0.0/`).
 6. Keep every artifact file under 250 MB, and under 100 MB in git (GitHub's limit).
 
@@ -104,6 +106,7 @@ python3 -m unittest content-factory.tests.test_phase2_hooks        # ~5 min
 python3 -m unittest content-factory.tests.test_phase4              # ~2.5 min; uses fixtures/phase4_package_run
                                                                    # (override: CF_PACKAGE_RUN=<finished run>)
 python3 -m unittest content-factory.tests.test_phase5              # ~3 min; Phase 5 production + memory tests
+python3 -m unittest content-factory.tests.test_final_media_metadata  # ~15 s; v3.0.1 final-media metadata policy
 python3 content-factory/tests/smoke_v2.py                          # ~1 min
 python3 -m unittest content-factory/tests/test_bad_videos.py -k A  # then -k B (4 tests, ~7 min), -k C, -k D
 ```

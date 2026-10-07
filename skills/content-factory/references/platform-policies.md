@@ -16,5 +16,8 @@ novelty is checked against history; templates (visual style, structure, voice) s
 - TikTok: label AI-generated or significantly edited realistic people, scenes, images or audio (the factory labels
   realistic synthetic voices conservatively).
 - Instagram/Meta: "AI info" for photorealistic images or realistic-sounding synthetic audio.
-- EU AI Act transparency duties for AI-generated content apply from August 2026; keep the description disclosure line
-  and embedded metadata even when no platform label is required.
+- EU AI Act transparency duties (Art. 50) apply from 2 August 2026. The factory keeps the description disclosure line,
+  and the platform labels in metadata.json for the owner to set at upload. Owner decision (v3.0.1): the media files
+  carry **no** embedded AI-label or machine-readable AI marking (none had been embedded since Phase 3.5; v3.0.1
+  makes that a tested guarantee). Whether Art. 50(2) machine-readable marking applies to this channel as a provider is
+  the owner's call; if it does, the marking has to be added outside the factory.

@@ -59,5 +59,7 @@ Every other candidate is recorded with its reasons.
 `thumbnail.jpg` (= `cover.jpg`), `thumbnail_crops.jpg`, `metadata.json` (selected title/description/captions, cover
 steps per platform, AI labels), `publishing_package.json` + `PUBLISHING_PACKAGE.md` (public copy, video reference,
 covers, review result, rejected alternatives; internal references kept in a separate section). Media metadata policy
-(Phase 3.5) is unchanged: thumbnails are cleaned losslessly and audited; PKG.DISCLOSURE still blocks without labels.
+(asset-provenance SKILL.md; tightened in v3.0.1): video and images are cleaned losslessly to playback-only metadata,
+with no embedded AI-label metadata, and audited. Disclosure lives in metadata.json for manual upload;
+PKG.DISCLOSURE still blocks without labels.
 Public-copy check covers the authored copy only — the AI-disclosure line names the tools on purpose.

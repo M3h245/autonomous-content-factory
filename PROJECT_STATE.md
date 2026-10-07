@@ -1,7 +1,8 @@
-# PROJECT STATE — Autonomous Content Factory · v3.0.0 (FINAL, frozen) · 2026-10-07
+# PROJECT STATE — Autonomous Content Factory · v3.0.1 (frozen; post-freeze patch of v3.0.0) · 2026-10-07
 
 ## Status
-**Development is frozen at v3.0.0.** Phases 0–5 are complete. Only operation remains: making videos with the factory,
+**Development is frozen at v3.0.0** (tag `v3.0.0`). One post-freeze patch was applied by owner decision: **v3.0.1**,
+final-media metadata only (CHANGELOG). Phases 0–5 are complete. Only operation remains: making videos with the factory,
 uploading by hand, and logging analytics. Any further change is a new decision by the owner.
 
 ## Where things are
@@ -42,6 +43,7 @@ for t in test_cf_common_identity test_stage_order test_phase0_regressions test_t
 python3 -m unittest content-factory.tests.test_phase2_hooks
 python3 -m unittest content-factory.tests.test_phase4
 python3 -m unittest content-factory.tests.test_phase5
+python3 -m unittest content-factory.tests.test_final_media_metadata
 python3 content-factory/tests/smoke_v2.py
 python3 -m unittest content-factory/tests/test_bad_videos.py -k A   (then B, C, D)
 ```
@@ -61,8 +63,9 @@ For the v1 regression, see CLOUD_HANDOFF.md. To replay a run: `python3 work/phas
   - masking and clean-ending gates
 - Phase 3.5: every new video records a CTA decision; CTAs are never in the hook, before the payoff or after the loop
   line; the ending stands without the CTA; CTAs are relevant and not repeated across videos.
-- Publishable media carry standard metadata only (PKG.MEDIA_METADATA_CLEAN). Platform AI labels are mandatory
-  (PKG.DISCLOSURE).
+- Publishable media carry only the metadata playback needs, and **no embedded AI-label or disclosure metadata**
+  (v3.0.1, PKG.MEDIA_METADATA_CLEAN). Platform AI labels are still mandatory in metadata.json (PKG.DISCLOSURE); the
+  owner sets them by hand at upload.
 - Phase 4: every video ships the strongest of ≥3 genuinely different complete packages. An unsupported claim blocks a
   package. An external packet-only judgment can only lower scores, and it must cover every candidate.
 - Phase 5:

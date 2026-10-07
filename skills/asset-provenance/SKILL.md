@@ -27,14 +27,21 @@ No asset ships without a known license, required credit and an explicit labeling
    realistic synthetic visuals or AI music; TikTok/Instagram label for realistic synthetic visuals or voices
    (conservative); a plain description line always states AI narration and visual method.
 
-## Phase 3.5 final-media metadata policy
-The deliverable is a clean copy (scripts/media_clean.py): no container tags beyond major_brand/minor_version/
-compatible_brands and per-stream language/handler_name/vendor_id, no H.264 SEI user data (x264 version string), no
-JPEG COM/APPn segments (ICC kept); streams and pixels are not re-encoded. render_video encodes AAC with +bitexact so no
+## Final-media metadata policy (Phase 3.5; tightened in v3.0.1)
+The deliverable is a clean copy (scripts/media_clean.py) that carries only what playback technically needs.
+- MP4: the ftyp brands (major_brand, minor_version, compatible_brands) and the mandatory per-track fields (language
+  `und`, the zero vendor field), all times zero. No udta/meta/ilst/uuid/XMP box (neutralised in place as all-zero
+  `free` boxes), empty track-handler names, no H.264 SEI user data (x264 version string).
+- JPEG: SOI, the JFIF APP0 header and the coding segments (an ICC profile is kept if one exists). No EXIF, XMP, IPTC,
+  C2PA/JUMBF, COM or other APPn segment.
+- **No embedded AI-label or AI-disclosure metadata** (XMP/IPTC DigitalSourceType, C2PA manifests, "AI-generated" or
+  synthetic tags); the audit fails a file that carries any.
+- Streams and pixels are not re-encoded (stream MD5 and decoded pixels unchanged). render_video encodes AAC with +bitexact so no
 encoder string sits inside the audio. Provenance, model and run information stay in provenance.json and reports.
 PACKAGE blocks on PKG.MEDIA_METADATA_CLEAN (audit of every publishable .mp4/.jpg/.png), PKG.FINAL_DECODES and
-PKG.DISCLOSURE (platform AI labels present in metadata.json and the disclosure line in the YouTube description) — the
-policy removes internal data, never the platform disclosure.
+PKG.DISCLOSURE (platform AI labels present in metadata.json and the disclosure line in the YouTube description).
+Disclosure is never carried by the media file: the owner sets each platform's AI label by hand at upload from
+metadata.json / PUBLISHING_PACKAGE.md, and the package gate still requires those labels.
 
 ## Quality gate
 PROV.ASSETS_RECORDED, LICENSES_KNOWN, ATTRIBUTION, CONSENT, HASH_VERIFIED (blocking) · MODEL_LICENSE (major, human).

@@ -10,6 +10,7 @@ for t in test_cf_common_identity test_stage_order test_phase0_regressions test_t
 run test_phase2_hooks python3 -m unittest content-factory.tests.test_phase2_hooks
 run test_phase4 python3 -m unittest content-factory.tests.test_phase4
 run test_phase5 python3 -m unittest content-factory.tests.test_phase5
+run test_final_media_metadata python3 -m unittest content-factory.tests.test_final_media_metadata
 run smoke_v2 python3 content-factory/tests/smoke_v2.py
 for k in A B C D; do run bad_$k python3 -m unittest content-factory/tests/test_bad_videos.py -k $k; done
 cd $R/fixtures/v1_regression && V=$O/v1 && rm -rf $V && mkdir -p $V && sed "s#{FIXTURE}#$PWD#g" video/storyboard.timed.template.json > $V/timed.json

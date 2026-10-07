@@ -1,5 +1,35 @@
 # Changelog — Autonomous Content Factory
 
+## v3.0.1 — 2026-10-07 · post-freeze patch (owner decision): final-media metadata only · contract cf/1.1 · untagged
+Scope: the metadata inside the publishable media files (final.mp4, thumbnail/cover and preview JPEGs). Content
+generation, QA, reviewer, memory, packaging selection and the platform-compliance gates are unchanged.
+### Changed
+- The publishable MP4 now carries only what playback needs:
+  - the ftyp brands (major_brand, minor_version, compatible_brands);
+  - per track, the mandatory mdhd language (`und`) and the zero sample-entry vendor field;
+  - all times zero.
+  The empty `udta/meta/ilst` container ffmpeg always wrote is neutralised (an all-zero `free` box, in place and at the
+  same size, so no sample offset moves). The track-handler names ("VideoHandler", "SoundHandler") are blanked.
+  Streams are untouched (same MD5).
+- JPEGs keep SOI, the JFIF header and the coding segments (and an ICC profile if present). Any other APP0 (e.g. JFXX)
+  is now dropped as well as COM/APP1-APP15.
+- The media audit (PKG.MEDIA_METADATA_CLEAN) also fails a file that carries:
+  - embedded AI-label / AI-disclosure metadata (XMP, IPTC DigitalSourceType, C2PA manifests, "AI-generated" or
+    synthetic tags);
+  - a udta/meta/ilst/uuid/XMP box, a non-empty handler name, a padding box with data, or a non-JFIF APP0.
+  The public-copy screen (PKG.PUBLIC_COPY_CLEAN) keeps its v3.0.0 pattern list unchanged.
+### Clarified
+- The factory never embedded AI labels in media files (no stage writes XMP, C2PA, IPTC or label tags; since Phase 3.5
+  the cleaner dropped any container tags). v3.0.1 makes "no AI-label or disclosure metadata in the media" an explicit,
+  tested guarantee.
+- Platform disclosure stays outside the media and is done by hand at upload: the labels in metadata.json, the
+  disclosure line in the description, and PKG.DISCLOSURE, which still blocks a package without them.
+### Tests
+- test_final_media_metadata (8): dirty MP4/JPEG inputs with every forbidden kind of metadata come out playback-only with
+  identical streams and pixels; the factory's packaged deliverables pass an independent inspection (own box walker,
+  JPEG segment walker, full ffprobe dump, byte scan); disclosure outside the media is still enforced. The suite fails
+  on the v3.0.0 cleaner.
+
 ## v3.0.0 — 2026-10-07 · Phase 5 (productionization + validation) · contract cf/1.1 · FINAL — development frozen
 ### Production hardening
 - **Deterministic narration**: Kokoro runs a fresh ONNX session seeded from (text, voice, speed, language) per
