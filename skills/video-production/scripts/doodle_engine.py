@@ -44,6 +44,7 @@ from svgelements import (Arc, Circle, Close, CubicBezier, Ellipse, Line, Matrix,
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import doodle_lib  # noqa: E402
+from cf_common import X264_THREADS  # noqa: E402
 
 W, H = 1080, 1920
 FPS = 30
@@ -1271,7 +1272,9 @@ class Timeline:
         elif kind == "paper":
             e = ease_out_cubic(q)
             dim = skia.Paint()
-            dim.setColorFilter(skia.ColorFilters.Blend(skia.Color4f(0, 0, 0, 0.18 * e).toColor(), skia.BlendMode.kSrcATop))
+            cf = skia.ColorFilters.Blend(skia.Color4f(0, 0, 0, 0.18 * e).toColor(), skia.BlendMode.kSrcATop)
+            if cf is not None:   # Phase 5: skia returns None for a fully transparent dim (the transition's first frame) → crash
+                dim.setColorFilter(cf)
             c.drawImage(A, 0, -60 * e, paint=dim)
             y = (1 - e) * H
             sh = skia.Paint(Color=skia.Color(0, 0, 0, 70), ImageFilter=skia.ImageFilters.Blur(18, 18))
@@ -1329,7 +1332,7 @@ def build_timeline(sb: dict, timing: dict, base_dir: Path | None = None) -> Time
 def render_video(tl: Timeline, out: Path, fps: int = FPS, crf: int = 17, preset: str = "veryfast", ffmpeg: str = "ffmpeg") -> int:
     n = round(tl.duration * fps)
     cmd = [ffmpeg, "-y", "-v", "error", "-f", "rawvideo", "-pix_fmt", "rgba", "-s", f"{W}x{H}", "-r", str(fps), "-i", "-",
-           "-c:v", "libx264", "-preset", preset, "-crf", str(crf), "-pix_fmt", "yuv420p", "-r", str(fps), str(out)]
+           "-c:v", "libx264", "-preset", preset, "-crf", str(crf), "-threads", X264_THREADS, "-pix_fmt", "yuv420p", "-r", str(fps), str(out)]
     proc = subprocess.Popen(cmd, stdin=subprocess.PIPE)
     try:
         for f in range(n):

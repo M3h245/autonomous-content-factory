@@ -7,7 +7,7 @@ on:
       topic: { description: "Topic", required: true }
       count: { description: "Number of videos", default: "3" }
   schedule:
-    - cron: "0 6 * * 1"
+    - cron: "45 5 * * *"     # daily; COUNT 3-5 matches the production target (3-5 videos/day)
 jobs:
   produce:
     runs-on: ubuntu-latest
@@ -21,12 +21,16 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: "20" }
       - name: System packages
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg tesseract-ocr librsvg2-bin
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg tesseract-ocr librsvg2-bin libegl1   # libegl1: skia (doodle engine)
       - name: Claude Code, skills, models
         run: |
           npm install -g @anthropic-ai/claude-code
           python skills/automation-engineering/scripts/install_skills.py --project .
-          python .claude/skills/content-factory/scripts/setup_env.py --out capabilities.json
+          python .claude/skills/content-factory/scripts/setup_env.py --out capabilities.json   # exits 3 if a core capability is missing
+      - name: Content memory (repo file memory/dump.json; the factory refuses repeated topics and hooks)
+        run: |
+          mkdir -p runs
+          [ -f memory/dump.json ] && python .claude/skills/content-database/scripts/cfdb.py import --db runs/factory.db --in memory/dump.json || true
       - name: Produce videos
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -36,6 +40,7 @@ jobs:
           claude -p "/content-factory Create $COUNT high-quality short videos on $TOPIC. Unattended run: never publish; stop after FINAL PACKAGE." \
             --permission-mode acceptEdits --permission-prompts none \
             --allowedTools "Bash,Read,Write,Edit,WebSearch,WebFetch" --output-format json > run-log.json
+          python .claude/skills/content-database/scripts/cfdb.py export --db runs/factory.db --out memory/dump.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -43,3 +48,4 @@ jobs:
           path: |
             runs/**/*_package.zip
             run-log.json
+            memory/dump.json

@@ -3,7 +3,7 @@ name: content-factory
 description: Entry point and orchestrator of the Autonomous Content Factory. Use whenever the user wants finished short-form videos — e.g. "create 5 high-quality short videos on TOPIC", "make shorts/reels/TikToks about X", "run the content factory", "batch of faceless videos", "resume/continue my factory run", "package the videos" — even if the word factory never appears. It sequences the factory skills through RESEARCH, IDEATION, SELECTION, HOOK, SCRIPT, VISUAL PLAN, AUDIO, VIDEO, SUBTITLES, QA, REGENERATION, FINAL PACKAGE and ANALYTICS FEEDBACK with JSON contracts, a quality gate per stage and automatic regeneration, and delivers MP4s with burned word-synchronized captions, metadata and provenance. Do not use for one isolated task (only hooks, only captions, only a script); the specialised skill handles those directly.
 ---
 
-# Content Factory — orchestrator  ·  v2.0.0-alpha7 (contract cf/1.1)
+# Content Factory — orchestrator  ·  v3.0.0 (contract cf/1.1) · final, frozen
 
 Thin by design: it owns the brief, the run state, the data contract and regeneration decisions. Domain know-how
 lives in the 15 focused skills, which you load **only when `factory.py next` names them** (progressive disclosure).
@@ -29,7 +29,10 @@ Let `CF` = the folder that contains this skill and its siblings (claude.ai: `/mn
 `~/.claude/skills` or `<project>/.claude/skills`). `F=$CF/content-factory/scripts/factory.py`.
 1. **Bootstrap every session** (sandboxes reset): `python $CF/content-factory/scripts/setup_env.py --out /tmp/caps.json`.
    Read the printed capability list; plan only with what is available (see `references/capability-matrix.md`).
-2. **Memory**: if the user supplied `dump.json`/`factory.db`, import it (content-database) and pass `--db`.
+2. **Memory** (on by default): `init` uses `--db`, else `CF_DB`, else `<runs-dir>/factory.db`. If the user supplied
+   `dump.json`, import it first (content-database); the repository ships `memory/dump.json`. `init` refuses a topic
+   that repeats an earlier run (TOPIC_REPEATED; `--allow-similar-topic "reason"` overrides and is recorded) and a
+   machine that cannot render doodles, TTS, video or captions (CAPABILITY_MISSING, with the fix doctor names).
 3. **Init**: `python $F init --topic "…" --count N [--languages en] [--min-s 20 --max-s 45] [--voices en=af_heart]
    [--visual-style doodle|illustrated] [--caption-style auto|doodle|karaoke|word|clean]
    [--review-backend auto|heuristic|anthropic|subagent|human] [--db factory.db]`.
@@ -40,7 +43,8 @@ Let `CF` = the folder that contains this skill and its siblings (claude.ai: `/mn
    (`references/packaging.md`). A fresh agent that sees only the packets may add `package_judgment.json`
    (it can lower scores, never raise them).
    QA review is independent (video-quality-assurance/references/review-rubric.md): `auto` uses the Anthropic API when
-   ANTHROPIC_API_KEY is set, else the deterministic heuristic judge; `subagent` hands a packet to a fresh Claude
+   ANTHROPIC_API_KEY is set, else the deterministic heuristic judge (generous: in Phase 5 it passed two videos a
+   packet-only judge failed — use an LLM judge for production); `subagent` hands a packet to a fresh Claude
    Code agent. Never fill a review for a video you authored. `factory.py media … --steps N` processes N media steps
    and returns (resumable on machines/sandboxes with command time limits).
    Defaults: English, 20–45 s, **doodle** visuals (animated hand-drawn scenes, `visual-storyboarding/references/
@@ -53,13 +57,15 @@ Let `CF` = the folder that contains this skill and its siblings (claude.ai: `/mn
    - `rerun` (printed by record/media) → load that skill, apply `fix_action`/`params`, redo the stage.
    - `escalate` → stop that video, keep the others moving, report its structured errors at the end.
    - `done` → `python $F package --run RUN --zip`.
-5. **Deliver**: copy `RUN/*_package.zip` and each `package/<vid>/final.mp4` to `/mnt/user-data/outputs/`, present them,
+5. **Deliver** (only what passed; a failed PACKAGE leaves no zip): copy `RUN/*_package.zip` and each `package/<vid>/final.mp4` to `/mnt/user-data/outputs/`, present them,
    and summarise titles, durations, QA notes, AI-label flags and anything that needs a human.
-6. **Persist**: `cfdb.py ingest-run`, then `cfdb.py export` and include `dump.json` with the delivery.
+6. **Persist**: `package` already ingested the run; `cfdb.py export` and include `dump.json` with the delivery.
 
 ### Batch efficiency (N videos)
 One shared RESEARCH dossier; IDEATION pool ≥ 2N; write hooks/script/storyboard for a video in one bash heredoc;
-media ≈ 3–5 min per 30 s video on one vCPU (TTS ≈ 1.25× real time, render ≈ 3×) — one call per video.
+media ≈ 3–5 min per 30 s video on one vCPU (TTS ≈ 1.25× real time, render ≈ 3×) — one call per video. Measured in
+Phase 5 (4 vCPU): 5–14 min of stage time per video including retries, 20–35 min elapsed per authoring round; a
+strict judge needs 1–3 rounds. Videos of one run and runs in one folder are isolated (tested); one process per run.
 
 ## Quality gates
 Every stage ends with a gate script that writes a `result.json` envelope; nothing proceeds unless it passed.
@@ -68,7 +74,10 @@ Table of gates, error codes and fix routes: `references/orchestration-spec.md`.
 ## Failure recovery
 - Gate fail → `record` picks the earliest `fix_route`, marks downstream stages `stale`, retries (≤3 attempts per
   stage, ≤8 regenerations per video), else escalates. Crashes become `INTERNAL.EXCEPTION` envelopes and are retried.
-- After fixing a root cause by hand: `python $F reset --run RUN --video v01 --stage SUBTITLES --note "why"`.
+- After fixing a root cause by hand: `python $F reset --run RUN --video v01 --stage SUBTITLES --note "why"` (that stage
+  and every later one get a fresh retry budget).
+- Mutating commands hold `RUN/.lock`; a second process is refused (LOCKED), a dead holder's lock is taken over;
+  `python $F unlock --run RUN --note "why"` is the audited override. `record` refuses an envelope twice (STALE_RESULT).
 - Never edit a `result.json` to force a pass; never skip QA review.
 
 ## Human checkpoints

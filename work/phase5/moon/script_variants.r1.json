@@ -1,0 +1,33 @@
+{"video_id": "v01", "language": "en", "hook_id": "h3", "variants": [
+ {"variant_id": "A", "structure": "challenge → yes, low or high → not really giant → same-width photos → 1.5% farther → brain explanation → still debated → payoff (paper tube) → loop + save CTA (9 beats)",
+  "beats": [
+   {"id": "b1", "role": "hook", "text": "Can your fingernail cover the giant Moon?", "claim_ids": ["f7"], "on_screen": "FINGERNAIL TEST", "visual_intent": "frame 0: giant moon over rooftops, a finger rising beside it"},
+   {"id": "b2", "role": "value", "text": "Yes. At arm's length, it covers the same amount of Moon, low or high.", "claim_ids": ["f7"], "visual_intent": "fingernail covers the low moon, then the high moon"},
+   {"id": "b3", "role": "setup", "text": "So the giant Moon isn't really giant.", "claim_ids": ["f1", "f3"], "visual_intent": "giant moon deflates to normal size"},
+   {"id": "b4", "role": "value", "text": "Photos with the same settings show the same width near the horizon and high up.", "claim_ids": ["f1"], "on_screen": "SAME WIDTH", "visual_intent": "two photo frames side by side, equal moons, ruler"},
+   {"id": "b5", "role": "twist", "text": "And down low, the Moon is actually about 1.5 percent farther away.", "claim_ids": ["f2"], "on_screen": "1.5% FARTHER", "visual_intent": "night scene: arrow from viewer to low moon is longer"},
+   {"id": "b6", "role": "value", "text": "The leading idea: your brain thinks the horizon Moon is far away, so it sees it bigger.", "claim_ids": ["f5"], "visual_intent": "brain with a magnifier pointed at the horizon"},
+   {"id": "b7", "role": "value", "text": "Scientists still argue about the exact cause.", "claim_ids": ["f4"], "visual_intent": "two scientists arguing, question mark"},
+   {"id": "b8", "role": "payoff", "text": "But you can shrink it yourself: look through a rolled-up paper tube.", "claim_ids": ["f8"], "emphasis": ["shrink"], "pause_before": 0.3, "visual_intent": "paper tube aimed at the moon, moon shrinks inside the circle"},
+   {"id": "b9", "role": "loop", "text": "Or check it with your fingernail. Save this for the next big Moon.", "claim_ids": ["f7"], "on_screen": "SAVE FOR THE NEXT MOON", "visual_intent": "back to the giant moon and the finger"}
+  ],
+  "publish": {"title_options": ["The giant horizon Moon isn't bigger", "Shrink the giant Moon with a paper tube"],
+              "description": "Same-setting photos show the horizon Moon the same width as the high Moon; it is even about 1.5 percent farther away. The size comes from your brain.",
+              "hashtags": ["#moon", "#space", "#illusion", "#science"]},
+  "cta": {"needed": true, "decision_reason": "the video ends on a test viewers can only do on a moonrise night; saving it is the useful next step", "type": "save", "placement": "integrated", "modality": "both", "beat_id": "b9", "spoken": "Save this for the next big Moon.", "on_screen": "SAVE FOR THE NEXT MOON"}},
+ {"variant_id": "B", "structure": "challenge → answer → the Moon doesn't grow (photos) → even farther → the brain does the growing → Kaufman and Rock → payoff (paper tube) → loop (8 beats, no CTA)",
+  "beats": [
+   {"id": "b1", "role": "hook", "text": "Can your fingernail cover the giant Moon?", "claim_ids": ["f7"], "on_screen": "FINGERNAIL TEST", "visual_intent": "frame 0: giant moon over rooftops, a finger rising beside it"},
+   {"id": "b2", "role": "value", "text": "It can, at the horizon and overhead.", "claim_ids": ["f7"], "visual_intent": "fingernail covers the low moon and the high moon"},
+   {"id": "b3", "role": "value", "text": "Because the Moon doesn't grow. Same-setting photos show the same width.", "claim_ids": ["f1"], "on_screen": "SAME WIDTH", "visual_intent": "two photo frames, equal moons, ruler"},
+   {"id": "b4", "role": "twist", "text": "It's even about 1.5 percent farther away when it's low.", "claim_ids": ["f2"], "on_screen": "1.5% FARTHER", "visual_intent": "night scene: longer arrow to the low moon"},
+   {"id": "b5", "role": "value", "text": "Your brain does the growing. It judges the horizon Moon as farther off, so it sees it bigger.", "claim_ids": ["f3", "f5"], "visual_intent": "brain with a magnifier aimed at the horizon"},
+   {"id": "b6", "role": "value", "text": "Around 1960, Lloyd Kaufman and Irvin Rock found support for that idea.", "claim_ids": ["f6"], "visual_intent": "two researchers with a notebook and a check mark"},
+   {"id": "b7", "role": "payoff", "text": "Try a paper tube, and the giant Moon shrinks.", "claim_ids": ["f8"], "emphasis": ["shrinks"], "pause_before": 0.3, "visual_intent": "paper tube aimed at the moon, small moon in the circle"},
+   {"id": "b8", "role": "loop", "text": "So next time it looks huge, reach for your fingernail.", "claim_ids": ["f7"], "visual_intent": "back to the giant moon and the finger"}
+  ],
+  "publish": {"title_options": ["Why the horizon Moon looks bigger", "Your brain makes the Moon look bigger"],
+              "description": "The horizon Moon is not bigger: photos show the same width, and it is about 1.5 percent farther away. A paper tube makes the illusion shrink.",
+              "hashtags": ["#moon", "#space", "#illusion", "#science"]},
+  "cta": {"needed": false, "decision_reason": "the loop line already hands the viewer a test to try; an extra ask would crowd it"}}
+]}

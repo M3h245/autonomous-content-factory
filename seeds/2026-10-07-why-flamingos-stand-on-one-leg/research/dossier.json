@@ -1,0 +1,26 @@
+{
+ "topic": "Why flamingos stand on one leg",
+ "sources": [
+  {"id": "s1", "url": "https://doi.org/10.1098/rsbl.2016.0948", "title": "Mechanical evidence that flamingos can support their body on one leg with little active muscular force", "publisher": "Biology Letters (Chang & Ting, 2017)", "published": "2017-05-24", "accessed": "2026-10-07", "kind": "primary"},
+  {"id": "s2", "url": "https://www.npr.org/sections/thetwo-way/2017/05/25/530046238/scientists-pinpoint-how-a-flamingo-balances-on-one-leg", "title": "Scientists Pinpoint How A Flamingo Balances On One Leg", "publisher": "NPR", "published": "2017-05-25", "accessed": "2026-10-07", "kind": "news"},
+  {"id": "s3", "url": "https://www.sciencenews.org/article/how-flamingo-balances-one-leg", "title": "How a flamingo balances on one leg", "publisher": "Science News", "published": "2017-05", "accessed": "2026-10-07", "kind": "news"},
+  {"id": "s4", "url": "https://pubmed.ncbi.nlm.nih.gov/19637281/", "title": "Why do flamingos stand on one leg?", "publisher": "Zoo Biology 29(3) (Anderson & Williams, 2010)", "published": "2010", "accessed": "2026-10-07", "kind": "primary"},
+  {"id": "s5", "url": "https://www.livescience.com/5732-flamingos-stand-leg.html", "title": "Why Flamingos Stand on One Leg", "publisher": "Live Science", "published": "2009-09-17", "accessed": "2026-10-07", "kind": "news"},
+  {"id": "s6", "url": "https://www.dublinzoo.ie/animal/flamingo/", "title": "Chilean flamingo", "publisher": "Dublin Zoo", "accessed": "2026-10-07", "kind": "reference"},
+  {"id": "s7", "url": "https://www.scientificamerican.com/blog/running-ponies/flamingo-hows-wheres-and-whys-pink-errectile-tissue-one-leg", "title": "Flamingo hows, wheres and whys: Pink; erectile tissue; one leg", "publisher": "Scientific American (blog)", "accessed": "2026-10-07", "kind": "secondary"},
+  {"id": "s8", "url": "https://neuro.gatech.edu/tech-study-stands-flamingos-unique-pose", "title": "Tech Study Stands Up for Flamingos' Unique Pose", "publisher": "Georgia Institute of Technology", "published": "2017-05-24", "accessed": "2026-10-07", "kind": "secondary"},
+  {"id": "s9", "url": "https://www.smithsonianmag.com/smart-news/study-explores-how-flamingos-stay-stable-one-leg-180963440/", "title": "How Do Flamingos Stay Stable On One Leg?", "publisher": "Smithsonian Magazine", "published": "2017-05", "accessed": "2026-10-07", "kind": "news"}
+ ],
+ "facts": [
+  {"id": "f1", "claim": "The joint that looks like a backward-bending knee on a flamingo's leg is actually its ankle; the real knee sits higher up, hidden under the feathers.", "source_ids": ["s6", "s7"], "risk": "low", "confidence": 0.9},
+  {"id": "f2", "claim": "In a 2017 Biology Letters study, a dead flamingo held upright settled into a stable one-legged pose with no muscle activity at all.", "source_ids": ["s1", "s2", "s8"], "risk": "medium", "confidence": 0.9},
+  {"id": "f3", "claim": "The same flamingo bodies could not be held stable in a two-legged pose.", "source_ids": ["s1", "s2"], "risk": "medium", "confidence": 0.85},
+  {"id": "f4", "claim": "The researchers also stood eight live juvenile Chilean flamingos at Zoo Atlanta on a force plate to measure how much they swayed.", "source_ids": ["s1", "s3", "s8"], "risk": "medium", "confidence": 0.85},
+  {"id": "f5", "claim": "The live flamingos swayed less when they dozed off on one leg than when they were awake.", "source_ids": ["s1", "s3", "s9"], "risk": "medium", "confidence": 0.85},
+  {"id": "f6", "claim": "The study concluded that standing on one leg takes flamingos very little muscular effort, because the pose is held passively by the body's mechanics.", "source_ids": ["s1", "s8", "s9"], "risk": "medium", "confidence": 0.85},
+  {"id": "f7", "claim": "A 2010 Zoo Biology study of captive Caribbean flamingos found that more birds rested on one leg when standing in water than on land.", "source_ids": ["s4", "s5"], "risk": "medium", "confidence": 0.85},
+  {"id": "f8", "claim": "In that study, resting on one leg became less common as the temperature rose, which suggests the pose helps flamingos keep body heat.", "source_ids": ["s4", "s5", "s7"], "risk": "medium", "confidence": 0.8}
+ ],
+ "angles": ["the dead flamingo that still balances", "two explanations, both supported: low effort and heat saving", "the knee you see is an ankle"],
+ "misconceptions": ["standing on one leg is a hard balancing act that tires the bird", "the backward joint is a knee"]
+}

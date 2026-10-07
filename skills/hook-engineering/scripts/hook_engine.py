@@ -139,6 +139,17 @@ def cmd_select(a) -> int:
     sr.check("HOOK.DIVERSITY", len(mechs) >= 4 and not near and len(set(concepts)) == len(concepts), "major",
              f"{len(mechs)} distinct mechanisms; near-duplicate lines {near}; duplicate frame-0 concepts "
              f"{len(concepts) - len(set(concepts))}", len(mechs), 4, fix("HOOK", "regenerate", diversify=True, near_duplicates=near))
+    # ---- Phase 5: a hook the channel already used (content memory, history.json) is never selected again
+    past = [x["text"] for x in (read_json(a.history).get("items", []) if a.history and Path(a.history).exists() else [])
+            if x.get("kind") == "hook" and x.get("text")]
+    repeated_past = {}
+    for c in cands:
+        m = max(((jaccard(c["spoken_text"], h), h) for h in past), default=(0.0, ""))
+        if m[0] >= 0.6:                                   # same threshold as HOOK.DIVERSITY's near-duplicate lines
+            repeated_past[c["hook_id"]] = {"similarity": round(m[0], 2), "past_hook": m[1]}
+    if repeated_past:
+        sr.check("HOOK.NOT_REPEATED", False, "minor", f"candidates repeating an earlier video's hook (not selectable): "
+                 f"{repeated_past}", fix=fix("HOOK", "regenerate", strategy="change", repeated_past=repeated_past))
     # ---- render + measure + packet per candidate
     import estimate as E
     from review_packet import write_packet
@@ -170,6 +181,11 @@ def cmd_select(a) -> int:
                        f"{hist['failed'][fp]['attempt']}: {hist['failed'][fp]['reasons'][:3]}")
             rows.append(row)
             continue
+        if cid in repeated_past:
+            row.update(status="repeated_past", reason=f"repeats an earlier video's hook ({repeated_past[cid]['similarity']}): "
+                       f"{repeated_past[cid]['past_hook'][:80]!r}")
+            rows.append(row)
+            continue
         try:
             stats, warns = render(svg, word_times(c["spoken_text"], a.voice, a.speed), d.get("palette") or
                                   ["#ffd23f", "#e8452c", "#3b82c4", "#2f9e44", "#f783ac"], {"frame0": 0.0, "frame_1s": 1.0}, cdir)
@@ -192,11 +208,11 @@ def cmd_select(a) -> int:
         packets.append(str(pk))
         rows.append(row)
     rendered = [r for r in rows if r["status"] == "rendered"]
-    repeated = [r for r in rows if r["status"] == "repeated_failed"]
+    repeated = [r for r in rows if r["status"] in ("repeated_failed", "repeated_past")]
     sr.check("HOOK.FRAME0_RENDERED", all(r["status"] != "error" for r in rows), "blocking",
              "; ".join(f"{r['hook_id']}: {r['reason']}" for r in rows if r["status"] == "error") or "all frame-0 SVGs render",
              fix=fix("HOOK", "repair_frames"))
-    if repeated and not rendered:
+    if repeated and not rendered and all(r["status"] == "repeated_failed" for r in repeated):
         sr.check("HOOK.FUTILE_RESUBMISSION", False, "blocking",
                  f"every candidate is identical to one that already failed ({[r['hook_id'] for r in repeated]}); "
                  "re-scoring them cannot change the result — write new candidates with a different strategy")
@@ -265,6 +281,7 @@ def main() -> int:
     s.add_argument("--hooks", required=True); s.add_argument("--dossier"); s.add_argument("--out-dir", required=True)
     s.add_argument("--result", required=True); s.add_argument("--voice", default="am_michael"); s.add_argument("--speed", type=float, default=1.0)
     s.add_argument("--attempt", type=int, default=1)
+    s.add_argument("--history", help="content memory export (cfdb.py history): candidates repeating a past hook are not selectable")
     a = ap.parse_args()
     return cmd_select(a)
 

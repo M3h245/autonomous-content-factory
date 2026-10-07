@@ -1,0 +1,70 @@
+{
+  "judge": "fresh-agent",
+  "candidates": {
+    "P1": {
+      "scores": {
+        "title_strength": 3,
+        "curiosity": 3,
+        "accuracy": 4,
+        "thumbnail_readability": 4,
+        "complementarity": 4,
+        "hook_coherence": 5,
+        "promise_payoff": 4,
+        "clickbait_risk": 5,
+        "cta_coherence": 5
+      },
+      "notes": {
+        "title_strength": "Clear, but it is the most generic, often-asked flamingo question, with no specific detail to stop a scroll.",
+        "curiosity": "It relies on a familiar question many viewers think they already know, and 'SWAYED LESS' is too cryptic out of context to add pull.",
+        "accuracy": "All claims trace to f2/f5/f7/f8, but 'more birds did it ... in the cold' simplifies f8 (less common as temperature rose) into a cold condition.",
+        "thumbnail_readability": "Text is legible at 168 px (21.8 px high), but the dozing bird's closed eye and the sway brackets are hard to read at that size, and 'SWAYED LESS' has no visible referent (less than what?).",
+        "complementarity": "It adds different information from the title, but a feed viewer cannot connect 'SWAYED LESS' to anything in the title.",
+        "promise_payoff": "The whole 24 s addresses the title, but the 'why' rests on a hedged 1.1 s heat line (18.66-19.76 s) and a near-circular close. The thumbnail's sway fact gets only 3.2 s (11.14-14.36 s)."
+      }
+    },
+    "P2": {
+      "scores": {
+        "title_strength": 5,
+        "curiosity": 5,
+        "accuracy": 4,
+        "thumbnail_readability": 4,
+        "complementarity": 3,
+        "hook_coherence": 4,
+        "promise_payoff": 4,
+        "clickbait_risk": 4,
+        "cta_coherence": 5
+      },
+      "notes": {
+        "accuracy": "The title drops that the body was held upright or propped (f2, and the transcript's 'Propped'). The thumbnail shows the dead bird free-standing on a plank, while the video shows it on a rig. Together they suggest it balanced unaided. 'A dead flamingo showed it' also stretches a stability test into the full 'why'.",
+        "thumbnail_readability": "'NO MUSCLE' and the bird are clear at 168 px, but the X eye, the only cue that the bird is dead, is a few pixels wide and practically disappears in the feed.",
+        "complementarity": "The thumbnail image (a dead flamingo on one leg) repeats the title. 'NO MUSCLE' is largely implied by 'dead', so little new information is added.",
+        "hook_coherence": "The video opens on a generic 'Why do flamingos rest on one leg?' over a live bird. The dead flamingo the title sells is first spoken at 5.1 s, though the opening promise bridges the gap.",
+        "promise_payoff": "The dead-flamingo test gets solid time (2.28-10.90 s, about 36% of the runtime) with the two-leg contrast, but the video never explains how a dead bird stays steady. It only restates 'no muscle working'.",
+        "clickbait_risk": "The sensational 'dead flamingo' framing is slightly inflated by leaving out 'propped'. It is not misleading bait, but it leans that way."
+      }
+    },
+    "P3": {
+      "scores": {
+        "title_strength": 3,
+        "curiosity": 2,
+        "accuracy": 3,
+        "thumbnail_readability": 4,
+        "complementarity": 3,
+        "hook_coherence": 3,
+        "promise_payoff": 2,
+        "clickbait_risk": 4,
+        "cta_coherence": 5
+      },
+      "notes": {
+        "title_strength": "The title is specific but awkward: it never names the flamingo, reads like a fragment, and is hedged.",
+        "curiosity": "The title gives away its own hedged answer, and '2010 STUDY' is a dry label, so there is little reason to tap.",
+        "accuracy": "'Cold water' merges two separate findings: more birds on one leg in water than on land (f7), and less one-leg resting as temperature rose (f8). The evidence never mentions water temperature. The description and opening promise are accurate and hedged.",
+        "thumbnail_readability": "Legible at 168 px, but the thermometer's meaning (cold) is ambiguous at that size and the reeds add minor clutter.",
+        "complementarity": "The thermometer and water image restate the title's 'cold water', and '2010 STUDY' adds only a generic date label.",
+        "hook_coherence": "The video opens with the general why question and spends 2.3-14.4 s on the dead-flamingo and sway tests. The heat angle only starts at 14.6 s, and 'may ALSO keep a flamingo warm' presupposes a first reason the package never states.",
+        "promise_payoff": "Heat gets only 14.60-19.76 s (about 5 s, 22% of the runtime). The heat claim itself is a single 1.1 s hedged line, and the video's conclusion pivots to 'isn't hard work'.",
+        "clickbait_risk": "Honest and hedged overall, but the 'cold water' wording bends what the study measured."
+      }
+    }
+  }
+}

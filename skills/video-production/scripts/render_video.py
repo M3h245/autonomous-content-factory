@@ -28,7 +28,7 @@ import numpy as np
 import soundfile as sf
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from cf_common import (StageResult, decode_errors, emit, exit_for, ffmpeg_bin, ffprobe, fix,  # noqa: E402
+from cf_common import (X264_THREADS, StageResult, decode_errors, emit, exit_for, ffmpeg_bin, ffprobe, fix,  # noqa: E402
                        media_duration, read_json, run, stage_main, write_json)
 
 W, H = 1080, 1920
@@ -61,7 +61,7 @@ def render_shot(src: str, frames: int, motion: dict, fps: int, out: Path) -> Non
         vf = (f"scale=2160:3840:force_original_aspect_ratio=increase,crop=2160:3840,"
               f"zoompan=z='{z}':x='{x}':y='{y}':d={frames}:s={W}x{H}:fps={fps},setsar=1,format=yuv420p")
         cmd = [ffmpeg_bin(), "-y", "-v", "error", "-i", src, "-vf", vf, "-frames:v", frames]
-    run(cmd + ["-c:v", "libx264", "-preset", "veryfast", "-crf", "16", "-r", fps, str(out)])
+    run(cmd + ["-c:v", "libx264", "-preset", "veryfast", "-crf", "16", "-threads", X264_THREADS, "-r", fps, str(out)])
 
 
 def procedural_bed(duration: float, path: Path, seed: int = 7, sr: int = 48000) -> None:
@@ -240,7 +240,7 @@ def main_cmd(a) -> int:
                 chain.append(f"{label}[{i}:v]xfade=transition={kind}:duration={dur:.4f}:offset={off:.4f}{nxt}")
                 label = nxt
             run([ffmpeg_bin(), "-y", "-v", "error", *inputs, "-filter_complex", ";".join(chain), "-map", label,
-                 "-c:v", "libx264", "-preset", "veryfast", "-crf", "16", "-pix_fmt", "yuv420p", "-r", fps, video_only])
+                 "-c:v", "libx264", "-preset", "veryfast", "-crf", "16", "-threads", X264_THREADS, "-pix_fmt", "yuv420p", "-r", fps, video_only])
 
     # ---------------- audio: voice + music bed (ducked) + SFX → loudness normalized
     import audio_design as ad

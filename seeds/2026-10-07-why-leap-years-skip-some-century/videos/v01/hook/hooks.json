@@ -1,0 +1,104 @@
+{
+ "video_id": "v01",
+ "language": "en",
+ "topic": "Why leap years skip some century years",
+ "candidates": [
+  {
+   "hook_id": "h1",
+   "spoken_text": "The year 1900 had no leap day.",
+   "visual_concept": "February 1900 calendar page, day 29 crossed out",
+   "on_screen_text": "NO FEB 29",
+   "curiosity_mechanism": "surprising_claim",
+   "tension": "everyone thinks every 4th year",
+   "target_emotion": "surprise",
+   "first_frame_concept": "February 1900 calendar page, day 29 crossed out",
+   "first_frame_subject": "calendar page",
+   "first_frame_text": "NO FEB 29",
+   "visual_action": "cross pops on day 29 at 0.25 s",
+   "payoff_connection": "the divide-by-400 rule (f6)",
+   "why_it_should_work": "a concrete date that breaks the rule people know",
+   "first_frame_svg": "svg/h1_frame0.svg",
+   "fact_ids": [
+    "f6"
+   ]
+  },
+  {
+   "hook_id": "h2",
+   "spoken_text": "Leap years aren't every four years.",
+   "visual_concept": "blank February calendar page with a cross beside it",
+   "on_screen_text": "NOT EVERY 4",
+   "curiosity_mechanism": "misconception_reversal",
+   "tension": "contradicts school knowledge",
+   "target_emotion": "curiosity",
+   "first_frame_concept": "blank February calendar page with a cross beside it",
+   "first_frame_subject": "calendar page",
+   "first_frame_text": "NOT EVERY 4",
+   "visual_action": "cross pops at 0.25 s",
+   "payoff_connection": "Julian every-4 vs Gregorian rule (f3, f6)",
+   "why_it_should_work": "flips a rule everyone learned",
+   "first_frame_svg": "svg/h2_frame0.svg",
+   "fact_ids": [
+    "f3",
+    "f6"
+   ]
+  },
+  {
+   "hook_id": "h3",
+   "spoken_text": "Quick: was 2000 a leap year?",
+   "visual_concept": "February 2000 calendar page, question mark on day 29",
+   "on_screen_text": "2000: LEAP?",
+   "curiosity_mechanism": "quiz",
+   "tension": "viewer answers before the reveal",
+   "target_emotion": "playful",
+   "first_frame_concept": "February 2000 calendar page, question mark on day 29",
+   "first_frame_subject": "calendar page",
+   "first_frame_text": "2000: LEAP?",
+   "visual_action": "question mark pops at 0.25 s",
+   "payoff_connection": "2000 divides by 400 (f6)",
+   "why_it_should_work": "a quiz invites a guess",
+   "first_frame_svg": "svg/h3_frame0.svg",
+   "fact_ids": [
+    "f6"
+   ]
+  },
+  {
+   "hook_id": "h4",
+   "spoken_text": "Why do century years skip leap day?",
+   "visual_concept": "February 1800 calendar page with a question mark",
+   "on_screen_text": "CENTURY YEARS?",
+   "curiosity_mechanism": "question",
+   "tension": "a rule without a reason",
+   "target_emotion": "curiosity",
+   "first_frame_concept": "February 1800 calendar page with a question mark",
+   "first_frame_subject": "calendar page",
+   "first_frame_text": "CENTURY YEARS?",
+   "visual_action": "question mark pops at 0.25 s",
+   "payoff_connection": "dropping 3 leap days per 400 years (f6, f8)",
+   "why_it_should_work": "asks the exact question the video answers",
+   "first_frame_svg": "svg/h4_frame0.svg",
+   "fact_ids": [
+    "f6",
+    "f8"
+   ]
+  },
+  {
+   "hook_id": "h5",
+   "spoken_text": "Every four years? Not in 2100.",
+   "visual_concept": "February 2100 calendar page, day 29 crossed out",
+   "on_screen_text": "2100: NO LEAP DAY",
+   "curiosity_mechanism": "prediction",
+   "tension": "a future surprise",
+   "target_emotion": "surprise",
+   "first_frame_concept": "February 2100 calendar page, day 29 crossed out",
+   "first_frame_subject": "calendar page",
+   "first_frame_text": "2100: NO LEAP DAY",
+   "visual_action": "cross pops on day 29 at 0.25 s",
+   "payoff_connection": "2100 will not be a leap year (f6)",
+   "why_it_should_work": "a near-future date makes the rule personal",
+   "first_frame_svg": "svg/h5_frame0.svg",
+   "fact_ids": [
+    "f6"
+   ]
+  }
+ ]
+}

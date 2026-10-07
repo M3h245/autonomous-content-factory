@@ -465,7 +465,8 @@ RUBRIC_TEXT = ("Score each dimension 1-5 (1 unacceptable, 2 weak, 3 acceptable, 
                "short-form explainer. Dimensions: " + ", ".join(DIMS) + ". For EVERY dimension give concise visual/audio "
                "evidence from the packet; for every score below 4 give an explanation of what fails and what would fix it. "
                "Judge only what is in the packet. Return ONLY JSON: {\"<dimension>\": {\"score\": int, \"evidence\": str, "
-               "\"explanation\": str}, ...}")
+               "\"explanation\": str}, ...}. If hook_strength is below 4, you may add \"fix_stage\": \"HOOK\" to it when the "
+               "spoken hook line fails, or \"VISUAL_PLAN\" when only the opening picture fails.")
 
 
 def packet_text(pk: Packet, g: dict, obj: list) -> str:
@@ -506,6 +507,8 @@ def validate_judgment(j: dict) -> list[str]:
             errs.append(f"{d}: no evidence")
         elif v["score"] < 4 and not str(v.get("explanation", "")).strip():
             errs.append(f"{d}: score {v['score']} without explanation")
+        elif "fix_stage" in v and v["fix_stage"] not in JUDGE_ROUTES.get(d, {}):
+            errs.append(f"{d}: fix_stage {v['fix_stage']!r} not one of {sorted(JUDGE_ROUTES.get(d, {}))}")
     return errs
 
 
@@ -515,7 +518,8 @@ def merge(heur: dict, j: dict, who: str) -> dict:
         h, l = heur[d], j[d]
         sc = l["score"] if d in TASTE else min(l["score"], h["score"] if h.get("cap", 5) == 5 else 5)
         out[d] = {"score": sc, "anchor": ANCHORS[sc], "evidence": [f"{who}: {l['evidence']}"] + h["evidence"],
-                  "explanation": l.get("explanation", "") if sc < 4 else "", "judge": who, "heuristic_score": h["score"]}
+                  "explanation": l.get("explanation", "") if sc < 4 else "", "judge": who, "heuristic_score": h["score"],
+                  **({"fix_stage": l["fix_stage"]} if l.get("fix_stage") in JUDGE_ROUTES.get(d, {}) else {})}
     return out
 
 
@@ -534,9 +538,16 @@ ROUTES = {
 }
 
 
+# Phase 5: an LLM/human judge can say which stage its finding belongs to. Without this, a spoken-hook problem the
+# heuristic did not mark (✗) was routed to a first-scene redesign that cannot change the words.
+JUDGE_ROUTES = {"hook_strength": {"HOOK": ("HOOK", "regenerate", {}), "VISUAL_PLAN": ROUTES["hook_strength"]}}
+
+
 def route_for(d: str, info: dict) -> dict:
     stage, action, params = ROUTES.get(d, ("VISUAL_PLAN", "redesign_scene", {}))
-    if d == "hook_strength":
+    if info.get("fix_stage") in JUDGE_ROUTES.get(d, {}):
+        stage, action, params = JUDGE_ROUTES[d][info["fix_stage"]]
+    elif d == "hook_strength":
         spoken_bad = [e for e in info["evidence"][:3] if e.startswith("✗")]
         if spoken_bad:
             stage, action = "HOOK", "regenerate"
@@ -947,9 +958,21 @@ def cmd_candidates(a, kind: str) -> int:
         cid = pk.manifest.get("candidate_id") or Path(pdir).name
         r = score_hook_candidate(pk, pol) if kind == "hook" else score_package(pk, pol) if kind == "package" else \
             score_script_variant(pk, pol)
-        if kind == "package":
+        cover = []
+        if kind == "package" and judg is not None:
+            # Phase 5: once an external judgment is in play it must cover what ships. A candidate it does not name
+            # (e.g. a new id after a repackage) is not judged by heuristics alone, and an entry made for an earlier
+            # packet (packet_manifest_sha256 differs) is not reused.
+            jc = (judg.get("candidates") or {}).get(cid)
+            if jc is None:
+                cover.append({"id": "JUDGMENT.MISSING", "evidence": f"the external judgment does not cover {cid}: have the new "
+                              "packet judged (packet-only) or remove package_judgment.json"})
+            elif jc.get("packet_manifest_sha256") and jc["packet_manifest_sha256"] != pk.manifest_sha:
+                cover.append({"id": "JUDGMENT.STALE", "evidence": f"judgment of {cid} was made for packet "
+                              f"{jc['packet_manifest_sha256'][:12]}, current packet is {pk.manifest_sha[:12]}"})
+        if kind == "package" and not cover:
             r = merge_package_judgment(r, judg, cid)
-        fails = [o for o in r["objective"] if o["severity"] in ("blocking", "major")]
+        fails = cover + [o for o in r["objective"] if o["severity"] in ("blocking", "major")]
         low = [d for d, v in r["scores"].items() if v["score"] < pol.get("min_any_dimension", 3)]
         fails += [{"id": d, "score": r["scores"][d]["score"], "threshold": pol.get("min_any_dimension", 3),
                    "evidence": "below min_any_dimension"} for d in low if d not in thr] if kind == "package" else []

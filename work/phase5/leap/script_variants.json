@@ -1,0 +1,225 @@
+{
+ "video_id": "v01",
+ "language": "en",
+ "hook_id": "h2",
+ "variants": [
+  {
+   "variant_id": "A",
+   "structure": "myth → almost (1900) → the real year + overshoot → 10-day drift → 1582 jump → payoff (divide by 400) → 2000 vs 2100 → loop + share CTA (8 beats)",
+   "beats": [
+    {
+     "id": "b1",
+     "role": "hook",
+     "text": "Leap years aren't every four years.",
+     "claim_ids": [
+      "f3",
+      "f6"
+     ],
+     "on_screen": "NOT EVERY 4",
+     "visual_intent": "frame 0: February calendar page with a cross"
+    },
+    {
+     "id": "b2",
+     "role": "value",
+     "text": "Almost. But 1900 had no February 29.",
+     "claim_ids": [
+      "f6"
+     ],
+     "on_screen": "1900: NO FEB 29",
+     "visual_intent": "February 1900 page, day 29 crossed out"
+    },
+    {
+     "id": "b3",
+     "role": "setup",
+     "text": "The year of the seasons is about 365.24 days, so a leap day every 4 years overshoots.",
+     "claim_ids": [
+      "f1",
+      "f3"
+     ],
+     "on_screen": "365.24 DAYS",
+     "visual_intent": "Earth on its orbit around the Sun, the 365.24 number, a quarter-day clock spilling over"
+    },
+    {
+     "id": "b4",
+     "role": "value",
+     "text": "By the 1500s, the calendar had drifted about 10 days.",
+     "claim_ids": [
+      "f4"
+     ],
+     "on_screen": "10 DAYS OFF",
+     "visual_intent": "calendar sliding away from a sun marker"
+    },
+    {
+     "id": "b5",
+     "role": "twist",
+     "text": "So in 1582, 10 days were skipped: October 4 was followed by October 15.",
+     "claim_ids": [
+      "f5"
+     ],
+     "on_screen": "OCT 4 → OCT 15",
+     "visual_intent": "October 1582 page, days 5 to 14 torn out"
+    },
+    {
+     "id": "b6",
+     "role": "payoff",
+     "text": "And the rule changed: century years leap only if they divide by 400.",
+     "claim_ids": [
+      "f6"
+     ],
+     "emphasis": [
+      "400"
+     ],
+     "pause_before": 0.3,
+     "on_screen": "÷ 400",
+     "visual_intent": "big divide-by-400 sign"
+    },
+    {
+     "id": "b7",
+     "role": "value",
+     "text": "That's why 2000 had a leap day, and 2100 won't.",
+     "claim_ids": [
+      "f6"
+     ],
+     "visual_intent": "two calendar pages, 2000 check, 2100 cross"
+    },
+    {
+     "id": "b8",
+     "role": "loop",
+     "text": "Every four years? Almost. Send this to someone born on February 29.",
+     "claim_ids": [
+      "f6"
+     ],
+     "on_screen": "SEND TO A FEB 29 BIRTHDAY",
+     "visual_intent": "back to the February page"
+    }
+   ],
+   "publish": {
+    "title_options": [
+     "Leap years aren't every four years",
+     "Why 1900 had no February 29"
+    ],
+    "description": "The year is about 365.24 days, so a leap day every four years overshoots. Since 1582, century years leap only if they divide by 400.",
+    "hashtags": [
+     "#leapyear",
+     "#calendar",
+     "#history",
+     "#science"
+    ]
+   },
+   "cta": {
+    "needed": true,
+    "decision_reason": "February 29 birthdays are the people this rule affects most; sending it to one is a natural, specific share",
+    "type": "share",
+    "placement": "integrated",
+    "modality": "both",
+    "beat_id": "b8",
+    "spoken": "Send this to someone born on February 29.",
+    "on_screen": "SEND TO A FEB 29 BIRTHDAY"
+   }
+  },
+  {
+   "variant_id": "B",
+   "structure": "myth → rule first → three example years → why: the real year → overshoot → 10 days dropped → payoff (3 skips per 400 years) → loop (8 beats, no CTA)",
+   "beats": [
+    {
+     "id": "b1",
+     "role": "hook",
+     "text": "Leap years aren't every four years.",
+     "claim_ids": [
+      "f3",
+      "f6"
+     ],
+     "on_screen": "NOT EVERY 4",
+     "visual_intent": "frame 0: February calendar page with a cross"
+    },
+    {
+     "id": "b2",
+     "role": "value",
+     "text": "Most are. But century years only count if they divide by 400.",
+     "claim_ids": [
+      "f6"
+     ],
+     "on_screen": "÷ 400",
+     "visual_intent": "divide-by-400 sign"
+    },
+    {
+     "id": "b3",
+     "role": "value",
+     "text": "So 2000 had a leap day. 1900 didn't, and 2100 won't.",
+     "claim_ids": [
+      "f6"
+     ],
+     "visual_intent": "three calendar pages, check and crosses"
+    },
+    {
+     "id": "b4",
+     "role": "setup",
+     "text": "Why? The year of the seasons is about 365.24 days.",
+     "claim_ids": [
+      "f1"
+     ],
+     "on_screen": "365.24 DAYS",
+     "visual_intent": "Earth on its orbit"
+    },
+    {
+     "id": "b5",
+     "role": "value",
+     "text": "A leap day every 4 years makes it 365.25, a bit too long.",
+     "claim_ids": [
+      "f3"
+     ],
+     "visual_intent": "quarter-day clock overshooting"
+    },
+    {
+     "id": "b6",
+     "role": "twist",
+     "text": "By the 1500s that had added up to 10 days, so in 1582 ten days were dropped.",
+     "claim_ids": [
+      "f4",
+      "f5"
+     ],
+     "visual_intent": "October page with days torn out"
+    },
+    {
+     "id": "b7",
+     "role": "payoff",
+     "text": "Skipping 3 century leap days every 400 years cancels the extra.",
+     "claim_ids": [
+      "f8"
+     ],
+     "emphasis": [
+      "cancels"
+     ],
+     "pause_before": 0.3,
+     "visual_intent": "balance scale levelling"
+    },
+    {
+     "id": "b8",
+     "role": "loop",
+     "text": "So, every four years? Almost.",
+     "claim_ids": [
+      "f6"
+     ],
+     "visual_intent": "back to the February page"
+    }
+   ],
+   "publish": {
+    "title_options": [
+     "Why some century years skip leap day",
+     "Leap years aren't every four years"
+    ],
+    "description": "Century years leap only if they divide by 400: 2000 did, 1900 did not, 2100 will not. The rule fixes the calendar's small overshoot.",
+    "hashtags": [
+     "#leapyear",
+     "#calendar",
+     "#history",
+     "#science"
+    ]
+   },
+   "cta": {
+    "needed": false,
+    "decision_reason": "the loop question closes the video cleanly; an ask would compete with it"
+   }
+  }
+ ]
+}

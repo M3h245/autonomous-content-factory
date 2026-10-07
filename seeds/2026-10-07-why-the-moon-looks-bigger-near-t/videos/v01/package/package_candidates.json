@@ -1,0 +1,84 @@
+{
+ "video_id": "v01",
+ "language": "en",
+ "candidates": [
+  {
+   "id": "P1",
+   "strategy": "contrast",
+   "title": "Your camera says the Moon never grew",
+   "opening_promise": "Same settings, same width: the Moon never grew.",
+   "thumbnail": {
+    "concept": "one big moon with an equal-width ruler under it",
+    "text": "SAME WIDTH",
+    "svg": "svg/P1.svg",
+    "depicts": [
+     "f1"
+    ]
+   },
+   "description": "Photos taken with the same settings show the horizon Moon the same width as the high Moon. A leading explanation for the bigger look: your brain judges it farther away.",
+   "hashtags": [
+    "#moon",
+    "#space",
+    "#illusion",
+    "#science"
+   ],
+   "claim_ids": [
+    "f1",
+    "f5"
+   ],
+   "rationale": "the measurement against what your eyes say"
+  },
+  {
+   "id": "P2",
+   "strategy": "myth_bust",
+   "title": "The giant horizon Moon isn't bigger",
+   "opening_promise": "The giant Moon is actually a bit farther away.",
+   "thumbnail": {
+    "concept": "an eye looking at a big low moon along a distance line",
+    "text": "1.5% FARTHER",
+    "svg": "svg/P2.svg",
+    "depicts": [
+     "f2"
+    ]
+   },
+   "description": "At the horizon the Moon is about 1.5 percent farther from you than overhead, so it is very slightly smaller in the sky. The bigger look is an illusion.",
+   "hashtags": [
+    "#moon",
+    "#space",
+    "#illusion",
+    "#science"
+   ],
+   "claim_ids": [
+    "f2",
+    "f3"
+   ],
+   "rationale": "the misconception, with a backwards-sounding fact on the cover"
+  },
+  {
+   "id": "P3",
+   "strategy": "mechanism",
+   "title": "Your brain sees the horizon Moon bigger",
+   "opening_promise": "The camera says same size. Your brain disagrees.",
+   "thumbnail": {
+    "concept": "a thinking brain beside a moon low on the horizon",
+    "text": "FAR AWAY",
+    "svg": "svg/P3.svg",
+    "depicts": [
+     "f5"
+    ]
+   },
+   "description": "A leading explanation: the brain judges the horizon Moon to be farther away, so it sees it as larger. Scientists still do not agree on the exact cause.",
+   "hashtags": [
+    "#moon",
+    "#space",
+    "#illusion",
+    "#science"
+   ],
+   "claim_ids": [
+    "f4",
+    "f5"
+   ],
+   "rationale": "the mechanism, with its uncertainty"
+  }
+ ]
+}

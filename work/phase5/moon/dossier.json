@@ -1,0 +1,24 @@
+{
+ "topic": "Why the Moon looks bigger near the horizon",
+ "sources": [
+  {"id": "s1", "url": "https://science.nasa.gov/solar-system/moon/the-moon-illusion-why-does-the-moon-look-so-big-sometimes/", "title": "The Moon Illusion: Why Does the Moon Look So Big Sometimes?", "publisher": "NASA Science", "accessed": "2026-10-07", "kind": "reference"},
+  {"id": "s2", "url": "https://www.nasa.gov/general/why-does-the-moon-look-larger-at-the-horizon-we-asked-a-nasa-scientist-episode-50/", "title": "Why Does the Moon Look Larger at the Horizon? We Asked a NASA Scientist: Episode 50", "publisher": "NASA", "accessed": "2026-10-07", "kind": "reference"},
+  {"id": "s3", "url": "https://www.pnas.org/doi/10.1073/pnas.97.1.500", "title": "Explaining the moon illusion", "publisher": "PNAS 97(1) (Kaufman & Kaufman, 2000)", "published": "2000-01-04", "accessed": "2026-10-07", "kind": "primary"},
+  {"id": "s4", "url": "https://www.scientificamerican.com/article/why-does-the-moon-look-bigger-near-the-horizon/", "title": "Why Does the Moon Look Bigger Near the Horizon?", "publisher": "Scientific American", "accessed": "2026-10-07", "kind": "news"},
+  {"id": "s5", "url": "https://science.nasa.gov/resource/photographing-the-moon-illusion/", "title": "Photographing the Moon Illusion", "publisher": "NASA Science", "accessed": "2026-10-07", "kind": "reference"},
+  {"id": "s6", "url": "https://www.scientificamerican.com/article/bring-science-home-shrinking-moon/", "title": "Seeing Science: Solving the Mystery of the Shrinking Moon", "publisher": "Scientific American", "accessed": "2026-10-07", "kind": "news"}
+ ],
+ "facts": [
+  {"id": "f1", "claim": "Photos taken with the same camera settings show the Moon the same width near the horizon as high in the sky.", "source_ids": ["s1", "s5"], "risk": "medium", "confidence": 0.9},
+  {"id": "f2", "claim": "At the horizon the Moon is actually about 1.5 percent farther from you than when it is high overhead, so it is very slightly smaller in the sky.", "source_ids": ["s1", "s4"], "risk": "medium", "confidence": 0.85},
+  {"id": "f3", "claim": "The bigger horizon Moon is an illusion that comes from how the brain processes what the eyes see.", "source_ids": ["s1", "s2"], "risk": "low", "confidence": 0.9},
+  {"id": "f4", "claim": "Scientists still do not agree on the exact cause of the Moon illusion.", "source_ids": ["s1", "s2"], "risk": "low", "confidence": 0.85},
+  {"id": "f5", "claim": "A leading explanation is apparent distance: the brain judges the horizon Moon to be farther away, so it sees it as larger.", "source_ids": ["s3", "s4"], "risk": "medium", "confidence": 0.85},
+  {"id": "f6", "claim": "Experiments by Lloyd Kaufman and Irvin Rock around 1960 supported the apparent-distance explanation.", "source_ids": ["s3", "s4"], "risk": "medium", "confidence": 0.85},
+  {"id": "f7", "claim": "Held at arm's length, a fingernail covers about the same amount of Moon at the horizon as overhead.", "source_ids": ["s2", "s6"], "risk": "low", "confidence": 0.85},
+  {"id": "f8", "claim": "Looking at the horizon Moon through a rolled-up paper tube makes the illusion shrink or disappear.", "source_ids": ["s2", "s6"], "risk": "low", "confidence": 0.8},
+  {"id": "f9", "claim": "In a 2000 study, Lloyd and James Kaufman projected artificial moons against the real sky to test the apparent-distance explanation.", "source_ids": ["s3"], "risk": "medium", "confidence": 0.85}
+ ],
+ "angles": ["the camera proves your eyes wrong", "the horizon Moon is actually a bit farther away", "a paper tube test anyone can do tonight"],
+ "misconceptions": ["the atmosphere magnifies the Moon", "the Moon is closer at the horizon"]
+}

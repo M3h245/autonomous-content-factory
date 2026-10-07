@@ -6,7 +6,8 @@
 1. installs missing Python packages (kokoro-onnx, soundfile, numpy, pillow, fonttools, pandas, and for the v2 doodle
    engine: skia-python, svgelements, arabic-reshaper, python-bidi — all ship prebuilt wheels for Windows/macOS/Linux)
 2. downloads the Kokoro TTS model into the cache (GitHub release, ~354 MB, once per machine/session)
-3. runs doctor.py so every capability claim is verified on THIS machine
+3. runs doctor.py so every capability claim is verified on THIS machine; exits 3 (with the fix) if a core capability
+   (narration, rendering, captions, doodle visuals) is unavailable
 ffmpeg must be installed separately: Windows `winget install Gyan.FFmpeg`, macOS `brew install ffmpeg`,
 Debian/Ubuntu `sudo apt-get install -y ffmpeg`.
 """
@@ -14,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import importlib
+import json
 import platform
 import shutil
 import subprocess
@@ -37,6 +39,16 @@ def main() -> int:
     a = ap.parse_args()
     missing = []
     for mod, pkg in PKGS.items():
+        if "==" in pkg:              # Phase 5: a pin is enforced, not only applied when the package is absent
+            from importlib.metadata import PackageNotFoundError, version
+            name, want = pkg.split("==")
+            try:
+                if version(name) != want:
+                    missing.append(pkg)
+                continue
+            except PackageNotFoundError:
+                missing.append(pkg)
+                continue
         try:
             importlib.import_module(mod)
         except ImportError:
@@ -52,7 +64,19 @@ def main() -> int:
         hint = {"Windows": "winget install Gyan.FFmpeg", "Darwin": "brew install ffmpeg"}.get(platform.system(),
                                                                                              "sudo apt-get install -y ffmpeg")
         print(f"ffmpeg not found — install it: {hint}")
-    return subprocess.run([sys.executable, str(Path(__file__).with_name("doctor.py")), "--out", a.out]).returncode
+    rc = subprocess.run([sys.executable, str(Path(__file__).with_name("doctor.py")), "--out", a.out]).returncode
+    if rc != 0:
+        return rc
+    # Phase 5: never report success on a machine that cannot produce the default video (skia-python once failed to load
+    # libEGL.so.1, the doodle engine was unavailable, and setup still exited 0)
+    caps = json.loads(Path(a.out).read_text(encoding="utf-8"))["capabilities"]
+    core = {"tts.kokoro": "narration", "video.render": "rendering", "subtitles.burn": "captions", "visual.doodle": "doodle visuals"}
+    bad = [k for k in core if caps.get(k, {}).get("available") is not True]
+    for k in bad:
+        print(f"MISSING CORE CAPABILITY {k} ({core[k]}): {caps.get(k, {}).get('fix') or 'see doctor output'}")
+    if caps.get("qa.ocr", {}).get("available") is not True:
+        print(f"recommended: qa.ocr — {caps.get('qa.ocr', {}).get('fix')}")
+    return 3 if bad else 0
 
 
 if __name__ == "__main__":

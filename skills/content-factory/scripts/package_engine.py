@@ -88,7 +88,8 @@ def claim_check(text: str, cited: list[dict], where: str) -> list[dict]:
     out, ctext = [], " ".join(f["claim"] for f in cited).lower()
     cwords = set(words_of(ctext))
     for n in re.findall(r"\d+(?:[.,]\d+)?", text):
-        if n not in ctext:
+        # Phase 5: whole numbers only — a substring match let "2" pass on a fact that says "200"
+        if not re.search(r"(?<![\d.,])" + re.escape(n) + r"(?![\d]|[.,]\d)", ctext):
             out.append({"id": "CLAIM.UNSUPPORTED_NUMBER", "severity": "blocking", "where": where,
                         "evidence": f"'{n}' in '{text}' is not in any cited fact"})
     for a in phrase_hits(text, ABSOLUTES):

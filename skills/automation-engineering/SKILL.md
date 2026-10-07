@@ -30,6 +30,10 @@ Reliable, observable, credential-safe runs; the same skills in chat and headless
    -ExecutionPolicy Bypass -File D:\shorts-ai\factory\run_factory.ps1 -Topic \"…\" -Count 3"`; Linux cron; or
    `assets/templates/content-factory.yml` for GitHub Actions (package zip uploaded as an artifact).
 6. Monitor: each run log has `total_cost_usd`, escalations and the package path; alert on non-zero exit codes.
+   The templates import `memory/dump.json` when `factory.db` is missing and export it after every run (v3.0.0), so a
+   scheduled machine never repeats a topic; they keep claude's exit code. A run holds `RUN/.lock`; a second process is
+   refused (LOCKED), a dead one's lock is taken over. Set `ANTHROPIC_API_KEY` so the QA judge is an LLM, not the
+   generous heuristic.
 
 ## Quality gate
 A deployment is done when: doctor shows `tts.kokoro`, `video.render`, `subtitles.burn` available; one scheduled

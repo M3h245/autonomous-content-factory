@@ -1,0 +1,64 @@
+{
+  "judge": "fresh-agent",
+  "candidates": {
+    "P1": {
+      "scores": {
+        "title_strength": 4,
+        "curiosity": 4,
+        "accuracy": 5,
+        "thumbnail_readability": 5,
+        "complementarity": 3,
+        "hook_coherence": 5,
+        "promise_payoff": 4,
+        "clickbait_risk": 5,
+        "cta_coherence": 5
+      },
+      "notes": {
+        "title_strength": "Punchy contradiction, but it never says 'horizon', so 'never grew' is cryptic to anyone who hasn't just seen the picture.",
+        "curiosity": "Creates a real 'but it looks bigger?' gap. The single-Moon thumbnail with one width bar doesn't show what 'same' is compared to, so it adds little pull.",
+        "complementarity": "'SAME WIDTH' restates the title's 'camera says never grew' instead of adding new information such as the brain or distance angle.",
+        "promise_payoff": "The camera claim is paid off in about 4 s (2.2-6.4 s), and only with drawn photo frames, not a real same-setting photo comparison."
+      }
+    },
+    "P2": {
+      "scores": {
+        "title_strength": 5,
+        "curiosity": 5,
+        "accuracy": 4,
+        "thumbnail_readability": 5,
+        "complementarity": 5,
+        "hook_coherence": 3,
+        "promise_payoff": 4,
+        "clickbait_risk": 4,
+        "cta_coherence": 5
+      },
+      "notes": {
+        "accuracy": "All statements rest on f2/f3, but the description's 'very slightly smaller in the sky' is never said in the video. Leading the thumbnail with '1.5% FARTHER' next to an eye looking at a big Moon invites viewers to mix up real distance with the apparent-distance explanation.",
+        "hook_coherence": "The opening promise 'actually a bit farther away' and the '1.5% FARTHER' thumbnail match the third sentence (6.6 s), not the first spoken line or the 'CAMERA SAYS SAME' first frame.",
+        "promise_payoff": "The 'isn't bigger' title is paid off over 0-9.8 s, but the thumbnail's headline number gets one 3.2 s sentence (6.6-9.8 s), and the video never explains what it means.",
+        "clickbait_risk": "Honest overall. The only risk is the emphasis on the 1.5% figure, which can read as the reason the Moon looks big."
+      }
+    },
+    "P3": {
+      "scores": {
+        "title_strength": 3,
+        "curiosity": 3,
+        "accuracy": 4,
+        "thumbnail_readability": 4,
+        "complementarity": 5,
+        "hook_coherence": 4,
+        "promise_payoff": 4,
+        "clickbait_risk": 5,
+        "cta_coherence": 5
+      },
+      "notes": {
+        "title_strength": "Clear but it states the answer outright ('your brain sees it bigger'), so it has little tension to stop a scroll.",
+        "curiosity": "The answer is already in the title, and the 'FAR AWAY' thumbnail with a small Moon is cryptic: it reads as the trivial 'the Moon is far away'.",
+        "accuracy": "The title and hedged description are supported (f3, f5, f4), but the thumbnail's 'FAR AWAY' presents the leading hypothesis as settled fact, with no hedge.",
+        "thumbnail_readability": "The text is readable at 168 px, but the pink brain reads as a blob or cloud and the Moon is small, so the subject is not instantly clear.",
+        "hook_coherence": "The opening promise matches the first line and the 'CAMERA SAYS SAME' frame, but the brain-led title and thumbnail correspond to content that only starts at 10 s.",
+        "promise_payoff": "The brain explanation gets about 6.4 s (10.1-16.5 s), and the mechanism is a single sentence; the video never says why the brain judges the horizon Moon farther away."
+      }
+    }
+  }
+}

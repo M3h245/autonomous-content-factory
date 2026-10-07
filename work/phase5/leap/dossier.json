@@ -1,0 +1,24 @@
+{
+ "topic": "Why leap years skip some century years",
+ "sources": [
+  {"id": "s1", "url": "https://www.britannica.com/topic/Gregorian-calendar", "title": "Gregorian calendar", "publisher": "Encyclopaedia Britannica", "accessed": "2026-10-07", "kind": "reference"},
+  {"id": "s2", "url": "https://www.britannica.com/story/leap-day-february-29", "title": "Leap Day, February 29", "publisher": "Encyclopaedia Britannica", "accessed": "2026-10-07", "kind": "reference"},
+  {"id": "s3", "url": "https://aa.usno.navy.mil/faq/calendars", "title": "Introduction to Calendars", "publisher": "U.S. Naval Observatory", "accessed": "2026-10-07", "kind": "reference"},
+  {"id": "s4", "url": "https://www.rmg.co.uk/stories/time/which-years-are-leap-years-can-you-have-leap-seconds", "title": "Which years are leap years and can you have leap seconds?", "publisher": "Royal Museums Greenwich", "accessed": "2026-10-07", "kind": "reference"},
+  {"id": "s5", "url": "https://www.britannica.com/story/did-a-calendar-change-cause-riots-in-england", "title": "Did a Calendar Change Cause Riots in England?", "publisher": "Encyclopaedia Britannica", "accessed": "2026-10-07", "kind": "reference"},
+  {"id": "s6", "url": "https://www.grc.nasa.gov/www/k-12/Numbers/Math/Mathematical_Thinking/calendar_calculations.htm", "title": "Calendar Calculations", "publisher": "NASA Glenn Research Center", "accessed": "2026-10-07", "kind": "reference"},
+  {"id": "s7", "url": "https://www.britannica.com/science/calendar/The-Gregorian-calendar", "title": "Calendar: The Gregorian calendar", "publisher": "Encyclopaedia Britannica", "accessed": "2026-10-07", "kind": "reference"}
+ ],
+ "facts": [
+  {"id": "f1", "claim": "The solar year, which sets the seasons, lasts about 365.2422 days.", "source_ids": ["s1", "s6"], "risk": "medium", "confidence": 0.9},
+  {"id": "f2", "claim": "A common calendar year has 365 days, so without leap days the calendar would slip about a quarter of a day each year against the seasons.", "source_ids": ["s2", "s3"], "risk": "low", "confidence": 0.9},
+  {"id": "f3", "claim": "The Julian calendar added a leap day every 4 years, which made its average year 365.25 days, slightly too long.", "source_ids": ["s1", "s3"], "risk": "medium", "confidence": 0.9},
+  {"id": "f4", "claim": "By the 1500s that small surplus had added up to about 10 days.", "source_ids": ["s1", "s7"], "risk": "medium", "confidence": 0.85},
+  {"id": "f5", "claim": "In 1582 Pope Gregory XIII introduced the Gregorian calendar and dropped 10 days: Thursday 4 October 1582 was followed by Friday 15 October.", "source_ids": ["s1", "s7"], "risk": "medium", "confidence": 0.9},
+  {"id": "f6", "claim": "In the Gregorian calendar a century year is a leap year only if it divides by 400: 1600 and 2000 were leap years, 1700, 1800 and 1900 were not, and 2100 will not be.", "source_ids": ["s1", "s2", "s3"], "risk": "medium", "confidence": 0.95},
+  {"id": "f7", "claim": "Britain switched in 1752: Wednesday 2 September was followed by Thursday 14 September, skipping 11 days.", "source_ids": ["s5", "s7"], "risk": "medium", "confidence": 0.9},
+  {"id": "f8", "claim": "Skipping three century leap days every 400 years removes the Julian calendar's excess of about three days per 400 years.", "source_ids": ["s3", "s4"], "risk": "medium", "confidence": 0.8}
+ ],
+ "angles": ["1900 had no February 29", "the 10 days that vanished in 1582", "the divide-by-400 rule"],
+ "misconceptions": ["a leap year is simply every 4 years", "the year is exactly 365.25 days"]
+}

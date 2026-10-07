@@ -1,0 +1,107 @@
+{
+ "video_id": "v01",
+ "language": "en",
+ "topic": "Why flamingos stand on one leg",
+ "candidates": [
+  {
+   "hook_id": "h1",
+   "spoken_text": "How does a dead flamingo stay on one leg?",
+   "visual_concept": "flamingo with X eyes standing on one leg on the ground, question mark",
+   "on_screen_text": "DEAD, ON ONE LEG?",
+   "curiosity_mechanism": "surprising_claim",
+   "tension": "a dead bird should not hold a pose",
+   "target_emotion": "surprise",
+   "first_frame_concept": "flamingo with X eyes standing on one leg on the ground, question mark",
+   "first_frame_subject": "flamingo with X eyes",
+   "first_frame_text": "DEAD, ON ONE LEG?",
+   "visual_action": "question mark pops at 0.25 s",
+   "payoff_connection": "the 2017 cadaver test: held upright, it settled on one leg with no muscle (f2, f6)",
+   "why_it_should_work": "an impossible-sounding fact the next 10 s prove",
+   "first_frame_svg": "svg/h1_frame0.svg",
+   "fact_ids": [
+    "f2",
+    "f6"
+   ]
+  },
+  {
+   "hook_id": "h2",
+   "spoken_text": "One leg isn't a balancing act for flamingos.",
+   "visual_concept": "relaxed flamingo on one leg, a cross beside it",
+   "on_screen_text": "NOT A BALANCING ACT",
+   "curiosity_mechanism": "misconception_reversal",
+   "tension": "contradicts 'hard balancing act'",
+   "target_emotion": "curiosity",
+   "first_frame_concept": "relaxed flamingo on one leg, a cross beside it",
+   "first_frame_subject": "smiling flamingo on one leg",
+   "first_frame_text": "NOT A BALANCING ACT",
+   "visual_action": "cross pops at 0.25 s",
+   "payoff_connection": "the pose is held by the body's mechanics (f6)",
+   "why_it_should_work": "flips what everyone assumes",
+   "first_frame_svg": "svg/h2_frame0.svg",
+   "fact_ids": [
+    "f6"
+   ]
+  },
+  {
+   "hook_id": "h3",
+   "spoken_text": "Why doesn't a sleeping flamingo fall over?",
+   "visual_concept": "flamingo asleep on one leg in water, head on its back, question mark",
+   "on_screen_text": "SLEEPING, NOT FALLING",
+   "curiosity_mechanism": "visual_mystery",
+   "tension": "sleep should mean falling",
+   "target_emotion": "intrigue",
+   "first_frame_concept": "flamingo asleep on one leg in water, head on its back, question mark",
+   "first_frame_subject": "sleeping flamingo",
+   "first_frame_text": "SLEEPING, NOT FALLING",
+   "visual_action": "question mark pops at 0.2 s",
+   "payoff_connection": "dozing birds sway less (f5) because the pose is passive (f6)",
+   "why_it_should_work": "a mystery in one picture",
+   "first_frame_svg": "svg/h3_frame0.svg",
+   "fact_ids": [
+    "f5",
+    "f6"
+   ]
+  },
+  {
+   "hook_id": "h4",
+   "spoken_text": "Why do flamingos rest on one leg?",
+   "visual_concept": "flamingo on one leg in water, question mark",
+   "on_screen_text": "WHY ONE LEG?",
+   "curiosity_mechanism": "question",
+   "tension": "everyone has wondered",
+   "target_emotion": "curiosity",
+   "first_frame_concept": "flamingo on one leg in water, question mark",
+   "first_frame_subject": "flamingo on one leg",
+   "first_frame_text": "WHY ONE LEG?",
+   "visual_action": "question mark pops at 0.2 s",
+   "payoff_connection": "cadaver test (f2, f6) and the water/heat study (f7)",
+   "why_it_should_work": "asks exactly what the video answers",
+   "first_frame_svg": "svg/h4_frame0.svg",
+   "fact_ids": [
+    "f2",
+    "f6",
+    "f7"
+   ]
+  },
+  {
+   "hook_id": "h5",
+   "spoken_text": "Try sleeping on one leg like a flamingo.",
+   "visual_concept": "sleeping flamingo on one leg next to a nervous person shrugging",
+   "on_screen_text": "COULD YOU?",
+   "curiosity_mechanism": "direct_challenge",
+   "tension": "you would fall, it does not",
+   "target_emotion": "playful",
+   "first_frame_concept": "sleeping flamingo on one leg next to a nervous person shrugging",
+   "first_frame_subject": "flamingo asleep beside a person",
+   "first_frame_text": "COULD YOU?",
+   "visual_action": "person pops at 0.2 s",
+   "payoff_connection": "flamingos sway less asleep (f5); for them it takes little effort (f6)",
+   "why_it_should_work": "puts the viewer in the bird's place",
+   "first_frame_svg": "svg/h5_frame0.svg",
+   "fact_ids": [
+    "f5",
+    "f6"
+   ]
+  }
+ ]
+}

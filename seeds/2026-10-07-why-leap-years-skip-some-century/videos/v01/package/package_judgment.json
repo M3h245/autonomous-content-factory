@@ -1,0 +1,90 @@
+{
+  "judge": "fresh-agent",
+  "candidates": {
+    "P1": {
+      "scores": {
+        "title_strength": 4,
+        "curiosity": 4,
+        "accuracy": 5,
+        "thumbnail_readability": 4,
+        "complementarity": 5,
+        "hook_coherence": 5,
+        "promise_payoff": 5,
+        "clickbait_risk": 4,
+        "cta_coherence": 5
+      },
+      "notes": {
+        "title_strength": "Clear contradiction of a common belief, but it is a familiar myth-bust phrasing and names no specific example.",
+        "curiosity": "Gives a real reason to watch (what are the exceptions?), but viewers who already know the century rule get no new hook.",
+        "thumbnail_readability": "'NOT IN 1900' and the X'd cell read at 168 px, but the calendar header is blank (no 'FEB'), so the crossed cell is not instantly a leap day, and the text is only about 23 px tall.",
+        "clickbait_risk": "Absolute phrasing ('aren't every four years') sounds bigger than the payoff ('Most are... Almost'), though the video qualifies it at 2.3 s."
+      }
+    },
+    "P2": {
+      "scores": {
+        "title_strength": 4,
+        "curiosity": 4,
+        "accuracy": 5,
+        "thumbnail_readability": 3,
+        "complementarity": 4,
+        "hook_coherence": 3,
+        "promise_payoff": 4,
+        "clickbait_risk": 5,
+        "cta_coherence": 5
+      },
+      "notes": {
+        "title_strength": "Specific and counter-intuitive ('1900 had no leap day'), but plain wording and a niche year may not stop casual scrollers.",
+        "curiosity": "A genuine open question, slightly weakened because the thumbnail '÷ 400' already gives away the answer.",
+        "thumbnail_readability": "'÷ 400' is readable, but the main subject is an abstract blue circle with a green tick (low green-on-blue contrast) and no calendar or leap-day cue, so the topic is not instantly clear at 168 px.",
+        "complementarity": "Adds the rule to the title's example, but the approving green tick sends a mixed signal next to a title about 1900 failing.",
+        "hook_coherence": "The opening promise '1900 had no leap day, but 2000 did' is not the video's real opening ('Leap years aren't every four years' with a 'NOT EVERY 4' calendar). 1900/2000 only arrive at 7-10 s, and the circle thumbnail does not match the calendar first frame.",
+        "promise_payoff": "The why is answered (3-35 s), but 1900 itself is named only once (9.0-10.3 s); the video is about the general rule, not 1900."
+      }
+    },
+    "P3": {
+      "scores": {
+        "title_strength": 4,
+        "curiosity": 4,
+        "accuracy": 4,
+        "thumbnail_readability": 4,
+        "complementarity": 2,
+        "hook_coherence": 2,
+        "promise_payoff": 2,
+        "clickbait_risk": 3,
+        "cta_coherence": 5
+      },
+      "notes": {
+        "title_strength": "Surprising and concrete history hook, but it is not the video's subject.",
+        "curiosity": "Strong pull ('ten days dropped?'), but it promises a story the video barely tells.",
+        "accuracy": "Supported by f4/f5, but the description's 'Thursday 4 October was followed by Friday 15 October' is not in the transcript, and 'The century rule stops it drifting again' overstates: f8 says it removes about 3 days per 400 years, and a residual remains.",
+        "thumbnail_readability": "'−10 DAYS' and the struck-through block read at 168 px, but the unlabeled blue calendar gives no month or year, and the block does not obviously show ten days.",
+        "complementarity": "Title ('ten days were dropped') and thumbnail ('−10 DAYS' plus crossed-out days) say the same thing twice.",
+        "hook_coherence": "The opening promise 'Too many leap years: by 1582, ten days had to go' does not match the actual first line or the 'NOT EVERY 4' red FEB first frame. 1582 is not spoken until 27.4 s.",
+        "promise_payoff": "The 1582 drop gets one clause, 'so in 1582 ten days were dropped' (27.1-30.4 s, about 3 s; about 7 s including the drift setup), and there is no visual of days being removed; most of the 38 s is about the century leap-year rule.",
+        "clickbait_risk": "Not false, but it sells a calendar-reform history video when the viewer gets a leap-year-rule explainer, which risks early swipes and a sense of bait-and-switch."
+      }
+    },
+    "P4": {
+      "scores": {
+        "title_strength": 4,
+        "curiosity": 4,
+        "accuracy": 4,
+        "thumbnail_readability": 4,
+        "complementarity": 4,
+        "hook_coherence": 3,
+        "promise_payoff": 5,
+        "clickbait_risk": 4,
+        "cta_coherence": 5
+      },
+      "notes": {
+        "title_strength": "Clear, searchable 'why' question, but generic phrasing with no number or example to stop the scroll.",
+        "curiosity": "A real question, but it assumes viewers already know century years skip, so it pulls in fewer casual viewers.",
+        "accuracy": "The title overgeneralises: 'century years skip leap day' is false for 2000 (f6: only century years not divisible by 400 skip). The video's own publish title says 'some'. The opening promise and description are supported by f3/f8.",
+        "thumbnail_readability": "'365.25' and the quarter-pie read cleanly at 168 px, but the number has no 'days' and there is no calendar cue, so the meaning is not instant.",
+        "complementarity": "The thumbnail adds the cause (365.25) to the title's question, but the abstract pie does not visibly connect to leap days.",
+        "hook_coherence": "The opening promise 'A leap day every four years overshoots the seasons' is not the real first line (that idea arrives at 17.4-22.8 s), and the pie thumbnail does not match the calendar first frame. The topic still links through 'aren't every four years'.",
+        "clickbait_risk": "Honest overall; the only risk is the missing 'some', which implies all century years skip."
+      }
+    }
+  }
+}

@@ -115,6 +115,11 @@ def run(cmd, check: bool = True, timeout: int | None = None) -> subprocess.Compl
     return p
 
 
+# Phase 5: libx264 picks its thread count from the CPU count and the bitstream changes with it, so a 2-core and a
+# 4-core machine encoded different files from identical frames. Every encode uses this fixed count instead.
+X264_THREADS = "4"
+
+
 def ffmpeg_bin() -> str:
     return os.environ.get("CF_FFMPEG") or shutil.which("ffmpeg") or "ffmpeg"
 

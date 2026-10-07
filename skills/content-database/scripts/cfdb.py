@@ -4,6 +4,7 @@
   cfdb.py init        --db factory.db
   cfdb.py ingest-run  --db factory.db --run RUN_DIR          # after PACKAGE (idempotent upserts)
   cfdb.py similar     --db factory.db --text "..." [--top 5]  # novelty check vs past titles/hooks/angles
+  cfdb.py topic-check --db factory.db --text "new topic"      # repeats of past run topics / video titles (factory init)
   cfdb.py history     --db factory.db --out history.json      # compact list consumed by content-strategy
   cfdb.py publish     --db factory.db --video v01 --platform youtube --url URL [--platform-id ID]
   cfdb.py log-feedback --db factory.db --feedback feedback.json   # from content-analytics
@@ -94,15 +95,22 @@ def cmd_ingest(con, a):
         if not script:
             continue
         hooks = jload(vdir / "hook" / "hooks.scored.json") or jload(vdir / "hook" / "hooks.json") or {}
-        hk = next((c for c in hooks.get("candidates", []) if c["id"] == hooks.get("chosen_id")), {})
+        # v1 hooks: id / chosen_id / archetype; v2 hook engine (Phase 2+): hook_id / selected / curiosity_mechanism.
+        # Phase 5: ingest crashed (KeyError 'id') on every v2 run, so the memory never learned from current runs.
+        chosen = hooks.get("selected") or hooks.get("chosen_id")
+        hk = next((c for c in hooks.get("candidates", []) if (c.get("hook_id") or c.get("id")) == chosen), {})
+        if not hk and (vdir / "hook" / "selected_hook.json").exists():
+            hk = jload(vdir / "hook" / "selected_hook.json", {})
         tm = jload(vdir / "audio" / "timing.json", {})
         sb = jload(vdir / "visual" / "storyboard.rendered.json", {"scenes": []})
         qa = jload(vdir / "qa" / "result.json", {})
         prov = jload(run / "package" / vid / "provenance.json", {})
+        meta = jload(run / "package" / vid / "metadata.json", {})   # the title that ships (Phase 4 package selection)
         idea = ideas.get(vid_to_idea.get(vid.split("-")[0], ""), {})
         upsert(con, "videos", {"video_id": vid, "run_id": rid, "idea_id": idea.get("id"), "language": script["language"],
-                               "title": script["publish"]["title_options"][0], "hook": script["beats"][0]["text"],
-                               "hook_archetype": hk.get("archetype"), "format": idea.get("format"), "pillar": idea.get("pillar"),
+                               "title": meta.get("title") or script["publish"]["title_options"][0], "hook": script["beats"][0]["text"],
+                               "hook_archetype": hk.get("archetype") or hk.get("curiosity_mechanism"),
+                               "format": idea.get("format"), "pillar": idea.get("pillar"),
                                "duration_s": tm.get("duration_s"), "voice": tm.get("voice"),
                                "visual_kinds": ",".join(sorted({s["visual"].get("used_kind", s["visual"]["kind"]) for s in sb["scenes"]})),
                                "qa_status": qa.get("status"), "final_sha256": (prov.get("final") or {}).get("sha256"),
@@ -123,14 +131,59 @@ def cmd_ingest(con, a):
 
 def corpus(con):
     rows = con.execute("SELECT 'title', title, video_id FROM videos UNION ALL SELECT 'hook', hook, video_id FROM videos "
-                       "UNION ALL SELECT 'idea', title || ' ' || angle, idea_id FROM ideas").fetchall()
+                       "UNION ALL SELECT 'idea', title || ' ' || angle, idea_id FROM ideas "
+                       "UNION ALL SELECT 'topic', topic, run_id FROM runs").fetchall()
     return [{"kind": k, "text": t, "ref": r} for k, t, r in rows if t]
+
+
+# ----------------------------------------------------------------------------- topic repetition (Phase 5)
+TOPIC_STOP = set("""a an the and or but so of to in on at for with is are was were be been it its this that these those you your
+yours yourself we our us they their them i me my as by from do does did can cant cannot will would just why how what when
+where who which whats isnt not no get gets got make makes made give gives gave happen happens work works look looks really
+actually there here about into than then very more most some any all one ones thing things""".split())
+TOPIC_COSINE = 0.6   # calibrated on 12 restated/paraphrased past topics vs 16 unrelated ones (PHASE_5_REPORT.md)
+
+
+def topic_stems(text: str) -> list[str]:
+    out = []
+    for w in re.findall(r"[a-z]+", text.lower().replace("'", "")):
+        if w in TOPIC_STOP or len(w) <= 2:
+            continue
+        for suf in ("ing", "ies", "es", "ed", "ly", "y", "s", "e"):
+            if len(w) > 4 and w.endswith(suf):
+                w = w[: -len(suf)]
+                break
+        out.append(w)
+    return sorted(set(out))
+
+
+def stems_match(a: str, b: str) -> bool:
+    return a == b or (min(len(a), len(b)) >= 5 and (a.startswith(b) or b.startswith(a)))
+
+
+def topic_repeats(con, text: str) -> tuple[list[dict], int]:
+    """A new topic repeats an earlier one when it restates it (char-trigram cosine ≥ 0.6), shares ≥ 2 content stems
+    with it ("cracking your knuckles" vs "why your knuckles crack"), or is wholly contained in it ("brain freeze").
+    Compared with past run topics and the titles of videos that were made — not with ideas that were never produced."""
+    past = con.execute("SELECT 'run_topic', topic, run_id FROM runs UNION ALL "
+                       "SELECT 'video_title', title, run_id || '/' || video_id FROM videos").fetchall()
+    q, qs = grams(text), topic_stems(text)
+    hits = []
+    for kind, t, ref in past:
+        if not t:
+            continue
+        ps = topic_stems(t)
+        shared = sorted({s for s in qs for p in ps if stems_match(s, p)})
+        c = cosine(q, grams(t))
+        if c >= TOPIC_COSINE or len(shared) >= 2 or (shared and len(shared) == len(qs)):
+            hits.append({"kind": kind, "text": t, "ref": ref, "cosine": round(c, 3), "shared": shared})
+    return sorted(hits, key=lambda h: (-len(h["shared"]), -h["cosine"])), len(past)
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("cmd", choices=["init", "ingest-run", "similar", "history", "publish", "log-feedback", "weights",
-                                    "export", "import", "stats"])
+    ap.add_argument("cmd", choices=["init", "ingest-run", "similar", "topic-check", "history", "publish", "log-feedback",
+                                    "weights", "export", "import", "stats"])
     ap.add_argument("--db", required=True); ap.add_argument("--run"); ap.add_argument("--text")
     ap.add_argument("--top", type=int, default=5); ap.add_argument("--out"); ap.add_argument("--in", dest="inp")
     ap.add_argument("--video"); ap.add_argument("--platform"); ap.add_argument("--url"); ap.add_argument("--platform-id")
@@ -145,6 +198,10 @@ def main() -> int:
         q = grams(a.text)
         hits = sorted(({**c, "score": round(cosine(q, grams(c["text"])), 3)} for c in corpus(con)), key=lambda x: -x["score"])
         print(json.dumps(hits[: a.top], ensure_ascii=False, indent=1))
+    elif a.cmd == "topic-check":
+        reps, n = topic_repeats(con, a.text or "")
+        print(json.dumps({"topic": a.text, "checked": n, "repeats": reps}, ensure_ascii=False, indent=1))
+        return 0      # the verdict is in the JSON; a non-zero exit means the check itself failed
     elif a.cmd == "history":
         write_json(a.out, {"generated_at": now_iso(), "items": corpus(con)})
         print(a.out)

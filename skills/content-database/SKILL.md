@@ -20,10 +20,16 @@ Remember everything the factory made and learned so batches don't repeat themsel
 
 ## Workflow
 - New session: if the user uploads `dump.json` → `cfdb.py import --db factory.db --in dump.json`.
-- Before SELECTION (done by `factory.py init --db`): `history` and `weights` files are written into the run.
-- After PACKAGE: `cfdb.py ingest-run --db factory.db --run RUN`, then `cfdb.py export --db factory.db --out dump.json`
-  and deliver `dump.json` with the package (claude.ai sandboxes reset; this file is the memory).
+- Memory is on by default (v3.0.0): `factory.py init` uses `--db`, else `CF_DB`, else `<runs-dir>/factory.db`
+  (`--no-db` only for tests). Before creating the run it runs `cfdb.py topic-check` and refuses a topic that repeats an
+  earlier run topic or video title (TOPIC_REPEATED; override `--allow-similar-topic REASON`, recorded). Then
+  `history` and `weights` are written into the run; the HOOK gate never selects a hook already in the history.
+- After PACKAGE: `factory.py package` ingests the run automatically (idempotent). Then `cfdb.py export --db factory.db
+  --out dump.json` and deliver `dump.json` with the package (claude.ai sandboxes reset; this file is the memory).
+  The repository ships `memory/dump.json` (every topic made so far).
 - Novelty check: `cfdb.py similar --db factory.db --text "candidate title or hook"` (char-trigram cosine).
+- Topic check: `cfdb.py topic-check --db factory.db --text "…"` → `{topic, checked, repeats}` (repeat = trigram cosine
+  ≥0.6, ≥2 shared content stems, or one topic containing the other).
 - After upload by the user: `cfdb.py publish --video v01 --platform youtube --url … --platform-id …`.
 
 ## Quality gate
@@ -39,7 +45,7 @@ Corrupt or missing DB → rebuild from `dump.json` or by re-ingesting run folder
 capability is available on claude.ai but not provisioned by default.
 
 ## Scripts
-`scripts/cfdb.py init|ingest-run|similar|history|publish|log-feedback|weights|export|import|stats`
+`scripts/cfdb.py init|ingest-run|similar|topic-check|history|publish|log-feedback|weights|export|import|stats`
 
 ## Interactions
 content-strategy (history, weights), hook-engineering (weights), content-analytics (metrics), content-factory (run ingest).

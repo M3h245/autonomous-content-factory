@@ -9,17 +9,25 @@
   factory.py media   --run RUN --video v01   # AUDIO→VIDEO→SUBTITLES→QA(check) with automatic regeneration
   factory.py package --run RUN [--video v01 ...] [--zip]
   factory.py status  --run RUN
+  factory.py unlock  --run RUN --note "why"  # audited removal of a run lock left by a crashed process
 
 State lives in RUN/state.json; every stage writes a cf stage_result envelope (see references/orchestration-spec.md).
 A failed gate is never propagated: `record` routes the earliest fix_route, marks downstream stages stale, and
 re-runs within the retry budget, otherwise escalates with the structured errors.
+
+Production (Phase 5): content memory is on by default (--db, else $CF_DB, else RUNS_DIR/factory.db; --no-db opts out);
+init refuses a topic that repeats an earlier one and a machine that cannot render the brief; mutating commands hold
+an exclusive per-run lock; `package` adds the run to the memory database.
 """
 from __future__ import annotations
 
 import argparse
 import datetime as dt
+import hashlib
 import json
 import os
+import shutil
+import socket
 import subprocess
 import time
 import sys
@@ -45,6 +53,73 @@ def S(skill: str, script: str) -> str:
     return str(skill_script(skill, script))
 
 
+# ----------------------------------------------------------------------------- locks (Phase 5)
+LOCK_STALE_S = 12 * 3600
+
+
+def _pid_alive(pid) -> bool:
+    if os.name == "nt":       # os.kill(pid, 0) would terminate the process on Windows; rely on the lock's age there
+        return True
+    try:
+        os.kill(int(pid), 0)
+    except ProcessLookupError:
+        return False
+    except (PermissionError, ValueError, TypeError, OverflowError):
+        return True
+    return True
+
+
+class FileLock:
+    """Exclusive lock file (O_CREAT|O_EXCL). Two mutating processes on one run each loaded state.json, worked, and
+    saved it — the later save silently discarded the other's records. A lock whose owner died on this host, or that
+    is older than 12 h, is taken over; anything else fails fast (wait_s=0) or after waiting."""
+
+    def __init__(self, path: Path, what: str, wait_s: float = 0.0):
+        self.path, self.what, self.wait_s = Path(path), what, wait_s
+
+    def holder(self) -> dict:
+        try:
+            return json.loads(self.path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return {}
+
+    def stale(self, h: dict) -> bool:
+        try:
+            age = time.time() - self.path.stat().st_mtime
+        except OSError:
+            return False
+        if age > LOCK_STALE_S:
+            return True
+        return bool(h) and h.get("host") == socket.gethostname() and not _pid_alive(h.get("pid"))
+
+    def __enter__(self):
+        deadline = time.time() + self.wait_s
+        while True:
+            try:
+                fd = os.open(self.path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            except FileExistsError:
+                h = self.holder()
+                if self.stale(h):
+                    self.path.unlink(missing_ok=True)
+                    continue
+                if time.time() >= deadline:
+                    raise SystemExit(json.dumps({"error": "LOCKED", "lock": str(self.path), "held_by": h, "wanted_by": self.what,
+                                                 "hint": "another factory process is working on this; wait for it, or after a "
+                                                         "crash run `factory.py unlock --run RUN --note why`"}))
+                time.sleep(0.25)
+                continue
+            with os.fdopen(fd, "w", encoding="utf-8") as f:
+                json.dump({"pid": os.getpid(), "host": socket.gethostname(), "since": now_iso(), "cmd": self.what}, f)
+            return self
+
+    def __exit__(self, *exc) -> None:
+        self.path.unlink(missing_ok=True)
+
+
+def run_lock(run: Path, what: str) -> FileLock:
+    return FileLock(Path(run) / ".lock", what)
+
+
 def vp(run, vid: str) -> dict:
     run = Path(run)
     v = run / "videos" / vid
@@ -60,6 +135,18 @@ def vp(run, vid: str) -> dict:
                    "SUBTITLES": v / "subtitles" / "result.json", "QA": v / "qa" / "result.json",
                    "PACKAGE": run / "package" / vid / "result.json"}
     return d
+
+
+def cta_history_args(run: Path, vid: str) -> list:
+    """CTAs of OTHER packaged videos (Phase 5: a video re-made after a reset is not repeating its own earlier CTA)."""
+    hp = Path(run).parent / "cta_history.json"
+    if not hp.exists():
+        return []
+    others = [h for h in read_json(hp).get("ctas", []) if not (h.get("run") == Path(run).name and h.get("video_id") == vid)]
+    out = vp(run, vid)["dir"] / "cta_history.others.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    write_json(out, {"source": str(hp), "ctas": others})
+    return ["--cta-history", out]
 
 
 GLOBAL_RESULT = {"RESEARCH": ("research", "result.json"), "IDEATION": ("ideation", "result.json"),
@@ -105,13 +192,14 @@ def gate_cmd(run: Path, st: dict, stage: str, vid: str | None) -> list:
     att = str(entry(st, stage, vid).get("attempt", 1))
     if stage == "HOOK" and v2:
         return [PY, S("hook-engineering", "hook_engine.py"), "select", "--hooks", p["hooks"], "--dossier", r / "research" / "dossier.json",
-                "--out-dir", p["dir"] / "hook", "--result", p["result"]["HOOK"], "--voice", voice, "--attempt", att]
+                "--out-dir", p["dir"] / "hook", "--result", p["result"]["HOOK"], "--voice", voice, "--attempt", att] + \
+            (["--history", r / "history.json"] if (r / "history.json").exists() else [])   # Phase 5: no repeated past hooks
     if stage == "SCRIPT" and v2:
         return [PY, S("short-form-script", "script_select.py"), "select", "--variants", p["script"].with_name("script_variants.json"),
                 "--hook", p["dir"] / "hook" / "selected_hook.json", "--dossier", r / "research" / "dossier.json", "--out", p["script"],
                 "--result", p["result"]["SCRIPT"], "--min-s", b["min_s"], "--max-s", b["max_s"], "--voice", voice, "--attempt", att] + \
             (["--require-cta-decision"] if b.get("cta_engine") else []) + \
-            (["--cta-history", r.parent / "cta_history.json"] if (r.parent / "cta_history.json").exists() else [])
+            cta_history_args(r, vid)
     if stage == "HOOK":
         cmd = [PY, S("hook-engineering", "hook_lint.py"), "--hooks", p["hooks"], "--result", p["result"]["HOOK"]]
         return cmd + (["--weights", r / "weights.json"] if (r / "weights.json").exists() else [])
@@ -308,8 +396,23 @@ def _gate_seconds(res: dict) -> float | None:
         return None
 
 
+def envelope_video(result: Path, res: dict, st: dict) -> str | None:
+    """Phase 5: a crash envelope (stage_main) carries no video id; recording it crashed the factory (KeyError) and the
+    media loop died silently. The canonical path names the video: RUN/videos/<vid>/<stage>/ or RUN/package/<vid>/."""
+    parts = Path(result).resolve().parts[:-1]
+    for i in range(len(parts) - 1, 0, -1):
+        if parts[i - 1] in ("videos", "package") and parts[i] in st.get("videos", {}):
+            return parts[i]
+    return None
+
+
 def record(run: Path, st: dict, result: Path, wall_s: float | None = None) -> dict:
     res = read_json(result)
+    if res.get("stage") in VIDEO_STAGES and not res.get("video_id"):
+        res["video_id"] = envelope_video(result, res, st)
+        if not res["video_id"]:
+            raise SystemExit(f"invalid stage envelope {result}: {res.get('stage')} result without a video id")
+        write_json(result, res)
     vid0, stage0 = res.get("video_id"), res.get("stage")
     if stage0 in VIDEO_STAGES and vid0 in st.get("videos", {}):
         blocking = [s for s in VIDEO_STAGES[: VIDEO_STAGES.index(stage0)] if st["videos"][vid0]["stages"][s]["status"] not in DONE]
@@ -319,6 +422,13 @@ def record(run: Path, st: dict, result: Path, wall_s: float | None = None) -> di
     if errs:
         raise SystemExit(f"invalid stage envelope {result}: {errs[:3]}")
     stage, vid = res["stage"], res.get("video_id")
+    digest = hashlib.sha256(Path(result).read_bytes()).hexdigest()
+    if res["skill"] not in ("trend-intelligence", "asset-provenance") and (stage in GLOBAL_STAGES or vid in st.get("videos", {})):
+        if entry(st, stage, vid).get("result_sha256") == digest:
+            # Phase 5: a gate that crashed before writing left the previous envelope behind; recording it again would
+            # silently replay an old verdict
+            raise SystemExit(f"STALE_RESULT: {result} was already recorded (attempt {res.get('attempt')}, finished "
+                             f"{res.get('finished_at')}); the gate did not write a new result — rerun the gate and read its error")
     ev = {"ts": now_iso(), "stage": stage, "video_id": vid, "skill": res["skill"], "status": res["status"],
           "attempt": res.get("attempt"), "result": str(result),
           "wall_s": wall_s if wall_s is not None else _since_issue(st, stage, vid),
@@ -331,7 +441,8 @@ def record(run: Path, st: dict, result: Path, wall_s: float | None = None) -> di
         st["events"].append({**ev, "advisory": True})
         return {"action": "proceed", "advisory": True, "stage": stage}
     e = entry(st, stage, vid)
-    e.update(status=res["status"], attempt=max(e.get("attempt", 0), res.get("attempt", 1)), result=str(result))
+    e.update(status=res["status"], attempt=max(e.get("attempt", 0), res.get("attempt", 1)), result=str(result),
+             result_sha256=digest)
     st["events"].append(ev)
     if res["status"] in PASSED:
         e.pop("fix_params", None)
@@ -340,6 +451,8 @@ def record(run: Path, st: dict, result: Path, wall_s: float | None = None) -> di
         if vid and stage == "PACKAGE":
             st["videos"][vid]["status"] = "packaged"
         return {"action": "proceed", "stage": stage, "video_id": vid}
+    if vid and stage == "PACKAGE" and st["videos"][vid]["status"] == "packaged":
+        st["videos"][vid]["status"] = "in_progress"      # Phase 5: a failed re-package is not "packaged"
     if res["status"] == "pending_review":
         return review_decision(run, vid)
     return route(run, st, res)
@@ -365,7 +478,7 @@ def media_cmds(run: Path, st: dict, stage: str, vid: str) -> list[list]:
         return [[PY, S("visual-storyboarding", "storyboard_tool.py"), "retime", "--storyboard", rendered, "--timing", p["timing"],
                  "--out", p["timed"], "--max-shot", fp.get("max_shot", 3.6)],
                 [PY, S("video-production", "render_video.py"), "--storyboard", p["timed"], "--voice", p["voice"], "--script", p["script"],
-                 *(["--cta-history", run.parent / "cta_history.json"] if (run.parent / "cta_history.json").exists() else []),
+                 *cta_history_args(run, vid),
                  "--timing", p["timing"], "--out-dir", p["video"], "--result", p["result"]["VIDEO"], "--music", b.get("music", "procedural"),
                  "--lufs", fp.get("lufs", -14), "--attempt", att]
                 + [x for k, flag in (("music_under_voice_db", "--music-under-voice-db"), ("music_carve_db", "--music-carve-db"),
@@ -469,6 +582,7 @@ def cmd_media(a) -> int:
             return 3
         res_path = vp(run, a.video)["result"][todo]
         t0 = time.time()
+        p = None
         for i, cmd in enumerate(media_cmds(run, st, todo, a.video)):
             p = subprocess.run([str(c) for c in cmd], capture_output=True, text=True)
             print(f"[{todo}] {Path(str(cmd[1])).name} exit={p.returncode} {p.stdout.strip()[-600:]}", file=sys.stderr)
@@ -477,6 +591,12 @@ def cmd_media(a) -> int:
                 sr.fail("VID.RETIME_FAILED", (p.stderr or p.stdout)[-400:], fix=fix("VISUAL_PLAN", "remap_beats"), retryable=True)
                 sr.finalize(res_path)
                 break
+        if not res_path.exists() or res_path.stat().st_mtime < t0 - 1:
+            # Phase 5: the stage died before writing its envelope (import error, killed process); never re-record an old one
+            sr = StageResult(todo, "content-factory", a.video, attempt=v["stages"][todo].get("attempt", 0) + 1)
+            sr.fail("INTERNAL.NO_RESULT", f"{todo} wrote no result (exit {p.returncode if p else '?'}): "
+                    f"{((p.stderr or p.stdout) if p else '')[-400:]}", retryable=True)
+            sr.finalize(res_path, status="error")
         decision = record(run, st, res_path, wall_s=round(time.time() - t0, 2))
         auto_review = decision.get("action") == "review" and review_backend(st) in ("heuristic", "anthropic")
         if decision.get("action") == "review" and not auto_review:
@@ -492,10 +612,28 @@ def cmd_media(a) -> int:
     if getattr(a, "steps", None):
         print(json.dumps({"action": "media_step_limit", "video_id": a.video, "next": next_action(run, load(run))["action"]}))
         return 0
+    # Phase 5: never end silently — say why the loop stopped and what is next
+    print(json.dumps({"action": "media_budget_exhausted", "video_id": a.video, "steps": budget,
+                      "next": next_action(run, load(run)), "hint": "rerun `factory.py media` to continue, or inspect `status`"}))
     return 2
 
 
 # ----------------------------------------------------------------------------- commands
+def missing_capabilities(caps: dict, brief: dict) -> list[dict]:
+    """What this machine must be able to do for the brief (Phase 5: a machine without skia rendered doodle scenes with
+    the procedural fallback and setup still exited 0)."""
+    c = caps.get("capabilities", {})
+
+    def ok(k):
+        return c.get(k, {}).get("available") is True
+    need = [("tts", ("tts.kokoro", "tts.elevenlabs", "tts.openai")), ("video.render", ("video.render",)),
+            ("subtitles.burn", ("subtitles.burn",))]
+    if brief.get("visual_style", "doodle") == "doodle":
+        need.append(("visual.doodle", ("visual.doodle",)))
+    return [{"capability": name, "fix": c.get(alts[0], {}).get("fix") or "python content-factory/scripts/setup_env.py"}
+            for name, alts in need if not any(ok(x) for x in alts)]
+
+
 def cmd_init(a) -> int:
     runs = Path(a.runs_dir).resolve()
     rid = f"{dt.date.today().isoformat()}-{slug(a.topic, 32)}"
@@ -503,29 +641,62 @@ def cmd_init(a) -> int:
     while run.exists():
         k += 1
         run = runs / f"{rid}-{k}"
+    db = None if a.no_db else Path(a.db or os.environ.get("CF_DB") or runs / "factory.db").resolve()
     brief = {"run_id": run.name, "topic": a.topic, "count": a.count, "languages": a.languages.split(","),
              "platforms": a.platforms.split(","), "duration_s": {"min": a.min_s, "max": a.max_s}, "min_s": a.min_s,
              "max_s": a.max_s, "voices": dict(x.split("=", 1) for x in a.voices.split(",") if "=" in x) if a.voices else {},
              "music": a.music, "caption_style": a.caption_style, "visual_style": a.visual_style,
              "review_backend": a.review_backend, "hook_engine": "v2", "cta_engine": "v1", "package_engine": "v1",
              "audience": a.audience, "tone": a.tone,
-             "constraints": a.constraint or [], "created_at": now_iso()}
+             "constraints": a.constraint or [], "created_at": now_iso(), "memory": {"db": str(db) if db else None}}
     errs = validate(brief, SCHEMAS["brief"])
     if errs:
         print(json.dumps({"error": "invalid brief", "details": errs}))
         return 2
+    cfdb = S("content-database", "cfdb.py")
+    if db and db.exists():               # Phase 5: an obvious repeat of an earlier topic is refused before any work
+        p = subprocess.run([PY, cfdb, "topic-check", "--db", str(db), "--text", a.topic], capture_output=True, text=True)
+        try:
+            tc = json.loads(p.stdout)
+        except ValueError:
+            print(json.dumps({"error": "MEMORY_UNREADABLE", "db": str(db), "stderr": (p.stderr or p.stdout)[-400:]}))
+            return 2
+        if tc.get("repeats") and not a.allow_similar_topic:
+            print(json.dumps({"error": "TOPIC_REPEATED", "topic": a.topic, "repeats": tc["repeats"][:5],
+                              "hint": "choose a topic the factory has not covered, or pass --allow-similar-topic \"reason\" "
+                                      "(recorded in the brief)"}, indent=1))
+            return 2
+        brief["memory"]["topic_check"] = {"checked": tc.get("checked"), "repeats": tc.get("repeats", [])[:5],
+                                          "override": a.allow_similar_topic}
     for d in ("research", "ideation", "selection", "videos", "package"):
         (run / d).mkdir(parents=True, exist_ok=True)
+    p = subprocess.run([PY, str(Path(__file__).with_name("doctor.py")), "--out", str(run / "capabilities.json")],
+                       capture_output=True, text=True)
+    caps = read_json(run / "capabilities.json") if (run / "capabilities.json").exists() else {}
+    missing = missing_capabilities(caps, brief) if p.returncode == 0 and caps else [{"capability": "doctor", "fix": (p.stderr or p.stdout)[-400:]}]
+    if missing:                          # Phase 5: refuse a run this machine cannot produce, instead of degrading it
+        shutil.rmtree(run, ignore_errors=True)
+        print(json.dumps({"error": "CAPABILITY_MISSING", "missing": missing,
+                          "hint": "run setup_env.py and fix what it reports, then init again"}, indent=1))
+        return 2
+    if db:
+        steps = ([[PY, cfdb, "init", "--db", str(db)]] if not db.exists() else []) + \
+                [[PY, cfdb, "history", "--db", str(db), "--out", str(run / "history.json")],
+                 [PY, cfdb, "weights", "--db", str(db), "--out", str(run / "weights.json")]]
+        for cmd in steps:
+            p = subprocess.run(cmd, capture_output=True, text=True)
+            if p.returncode != 0:        # Phase 5: memory that silently fails to load disables every repetition check
+                shutil.rmtree(run, ignore_errors=True)
+                print(json.dumps({"error": "MEMORY_FAILED", "step": cmd[2], "db": str(db), "stderr": (p.stderr or p.stdout)[-400:]}))
+                return 2
     write_json(run / "run.json", brief)
     st = {"run_id": run.name, "brief": brief, "status": "in_progress", "created_at": now_iso(),
           "global": {s: {"status": "pending", "attempt": 0} for s in GLOBAL_STAGES}, "videos": {}, "events": []}
+    if a.allow_similar_topic:
+        st["events"].append({"ts": now_iso(), "stage": "INIT", "decision": {"action": "allow_similar_topic",
+                                                                            "note": a.allow_similar_topic}})
     save(run, st)
-    subprocess.run([PY, str(Path(__file__).with_name("doctor.py")), "--out", str(run / "capabilities.json")], capture_output=True)
-    if a.db and Path(a.db).exists():
-        db = S("content-database", "cfdb.py")
-        subprocess.run([PY, db, "history", "--db", a.db, "--out", str(run / "history.json")], capture_output=True)
-        subprocess.run([PY, db, "weights", "--db", a.db, "--out", str(run / "weights.json")], capture_output=True)
-    print(json.dumps({"run": str(run), "next": next_action(run, st)}, indent=1))
+    print(json.dumps({"run": str(run), "memory": brief["memory"], "next": next_action(run, st)}, indent=1))
     return 0
 
 
@@ -617,34 +788,53 @@ def main() -> int:
     i.add_argument("--review-backend", default="auto", choices=["auto", "heuristic", "anthropic", "subagent", "human"],
                    help="independent reviewer judge: auto = anthropic if ANTHROPIC_API_KEY else heuristic")
     i.add_argument("--audience", default="general"); i.add_argument("--tone", default="curious, clear, friendly")
-    i.add_argument("--constraint", action="append"); i.add_argument("--db")
+    i.add_argument("--constraint", action="append")
+    i.add_argument("--db", help="content memory (default: $CF_DB, else RUNS_DIR/factory.db; created if missing)")
+    i.add_argument("--no-db", action="store_true", help="no content memory: no history, no repetition checks, no ingest")
+    i.add_argument("--allow-similar-topic", metavar="REASON", help="audited override of the topic-repetition check")
     i.add_argument("--runs-dir", default=os.environ.get("CF_RUNS_DIR", str(Path.home() / "content-factory" / "runs")))
     for name in ("next", "status"):
         s = sub.add_parser(name); s.add_argument("--run", required=True)
     r = sub.add_parser("record"); r.add_argument("--run", required=True); r.add_argument("--result", required=True)
     m = sub.add_parser("media"); m.add_argument("--run", required=True); m.add_argument("--video", required=True)
     m.add_argument("--steps", type=int, help="run at most N media stages (or one review) then return; call again to resume")
-    z = sub.add_parser("reset", help="human override after an escalation: re-open a stage with a fresh retry budget")
+    z = sub.add_parser("reset", help="human override after an escalation: re-open a stage (and every later stage) with a fresh retry budget")
     z.add_argument("--run", required=True); z.add_argument("--video"); z.add_argument("--stage", required=True, choices=STAGES)
     z.add_argument("--note", default="")
     rp = sub.add_parser("report", help="per-stage baseline: wall time, status, attempts, cache use, artifacts")
     rp.add_argument("--run", required=True); rp.add_argument("--out", help="default RUN/report")
     p = sub.add_parser("package"); p.add_argument("--run", required=True); p.add_argument("--video", action="append")
     p.add_argument("--zip", action="store_true")
+    u = sub.add_parser("unlock", help="remove a lock left behind by a crashed factory process (audited)")
+    u.add_argument("--run", required=True); u.add_argument("--note", required=True)
     a = ap.parse_args()
     if a.cmd == "init":
         return cmd_init(a)
     if a.cmd == "status":
         return cmd_status(a)
     run = Path(a.run).resolve()
+    if a.cmd == "report":
+        return cmd_report(run, a.out)
+    if a.cmd == "unlock":
+        lk = run_lock(run, "unlock")
+        held = lk.holder() if lk.path.exists() else None
+        lk.path.unlink(missing_ok=True)
+        st = load(run)
+        st["events"].append({"ts": now_iso(), "stage": "LOCK", "decision": {"action": "unlock", "held_by": held, "note": a.note}})
+        save(run, st)
+        print(json.dumps({"unlocked": str(lk.path), "held_by": held}))
+        return 0
+    with run_lock(run, a.cmd):       # Phase 5: one mutating factory process per run
+        return dispatch(a, run)
+
+
+def dispatch(a, run: Path) -> int:
     if a.cmd == "next":
         st = load(run)
         d = issue(st, next_action(run, st))
         save(run, st)
         print(json.dumps(d, indent=1))
         return 0
-    if a.cmd == "report":
-        return cmd_report(run, a.out)
     if a.cmd == "record":
         st = load(run)
         d = record(run, st, Path(a.result).resolve())
@@ -660,7 +850,10 @@ def main() -> int:
         scope[a.stage].pop("fix_params", None)
         for later in order[order.index(a.stage) + 1:]:
             if scope[later]["status"] != "skipped":
-                scope[later]["status"] = "stale"
+                # Phase 5: stale stages rerun on new inputs, so they get a fresh budget too (before, a stage that had used
+                # 2 attempts on the old content escalated on its first failure on the new one, with no automatic fix)
+                scope[later].update(status="stale", attempt=0)
+                scope[later].pop("fix_params", None)
         if a.video:
             st["videos"][a.video].update(status="in_progress", regenerations=0)
         else:
@@ -680,6 +873,14 @@ def main() -> int:
             if rp.exists():
                 print(json.dumps(record(run, st, rp)))
         save(run, st)
+        db = (st["brief"].get("memory") or {}).get("db")
+        if db:                       # Phase 5: what was made is remembered without a manual step
+            p = subprocess.run([PY, S("content-database", "cfdb.py"), "ingest-run", "--db", db, "--run", str(run)],
+                               capture_output=True, text=True)
+            print(json.dumps({"memory": {"db": db, "ingested": p.stdout.strip()[-300:] if p.returncode == 0 else None,
+                                         "error": None if p.returncode == 0 else (p.stderr or p.stdout)[-400:]}}))
+            if p.returncode != 0:
+                return rc or 2
         return rc
     return 1
 

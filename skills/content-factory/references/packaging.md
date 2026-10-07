@@ -46,7 +46,10 @@ video CTA, evidence and measurements — never the strategy, concept, rationale 
 title strength, curiosity, accuracy, thumbnail readability, title/thumbnail complementarity, hook/package coherence,
 promise/payoff (incl. airtime of the title's focus), clickbait risk (5 = safe), CTA coherence. Thresholds in
 `review-policy.json → package_thresholds`. An optional external judgment (`videos/<v>/package/package_judgment.json`,
-written by a fresh agent or a human who saw only the packets) can lower a score, never raise it.
+written by a fresh agent or a human who saw only the packets) can lower a score, never raise it. Since v3.0.0 it must
+cover every candidate it is applied to: a candidate it does not name fails JUDGMENT.MISSING (judge the new packet or
+remove the file), and an entry carrying `packet_manifest_sha256` that differs from the current packet fails
+JUDGMENT.STALE. A failed PACKAGE leaves no deliverables and no run zip behind.
 
 Selection: the PASS candidate with the highest total (ties: accuracy, clickbait safety, shorter title, id).
 Every other candidate is recorded with its reasons.

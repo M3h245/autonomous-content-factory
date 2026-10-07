@@ -1,0 +1,112 @@
+{
+ "video_id": "v01",
+ "language": "en",
+ "candidates": [
+  {
+   "id": "P1",
+   "strategy": "myth_bust",
+   "title": "Leap years aren't every four years",
+   "opening_promise": "Leap years aren't every four years.",
+   "thumbnail": {
+    "concept": "a February page with day 29 crossed out",
+    "text": "NOT IN 1900",
+    "svg": "svg/P1.svg",
+    "depicts": [
+     "f6"
+    ]
+   },
+   "description": "A century year is a leap year only if it divides by 400: 2000 was, 1900 was not, and 2100 will not be. The rule keeps the calendar in step with the seasons.",
+   "hashtags": [
+    "#LeapYear",
+    "#calendar",
+    "#history",
+    "#science"
+   ],
+   "claim_ids": [
+    "f3",
+    "f6"
+   ],
+   "rationale": "flips the rule everyone learned, exactly as the video opens"
+  },
+  {
+   "id": "P2",
+   "strategy": "curiosity",
+   "title": "Why 1900 had no leap day",
+   "opening_promise": "1900 had no leap day, but 2000 did.",
+   "thumbnail": {
+    "concept": "one big badge with the divide-by-400 rule",
+    "text": "÷ 400",
+    "svg": "svg/P2.svg",
+    "depicts": [
+     "f6"
+    ]
+   },
+   "description": "Century years are leap years only if they divide by 400. That is why 2000 had a leap day, 1900 did not, and 2100 will not.",
+   "hashtags": [
+    "#LeapYear",
+    "#calendar",
+    "#history",
+    "#science"
+   ],
+   "claim_ids": [
+    "f6"
+   ],
+   "rationale": "a concrete date that breaks the rule"
+  },
+  {
+   "id": "P3",
+   "strategy": "story",
+   "title": "In 1582, ten days were dropped",
+   "opening_promise": "Too many leap years: by 1582, ten days had to go.",
+   "thumbnail": {
+    "concept": "an October page with a block of days struck out",
+    "text": "−10 DAYS",
+    "svg": "svg/P3.svg",
+    "depicts": [
+     "f5"
+    ]
+   },
+   "description": "By the 1500s the old calendar had drifted about 10 days, so in 1582 Thursday 4 October was followed by Friday 15 October. The century rule stops it drifting again.",
+   "hashtags": [
+    "#LeapYear",
+    "#calendar",
+    "#history",
+    "#science"
+   ],
+   "claim_ids": [
+    "f4",
+    "f5",
+    "f6"
+   ],
+   "rationale": "the strange historical moment behind the rule"
+  },
+  {
+   "id": "P4",
+   "strategy": "mechanism",
+   "title": "Why century years skip leap day",
+   "opening_promise": "A leap day every four years overshoots the seasons.",
+   "thumbnail": {
+    "concept": "one big quarter-day clock under the number 365.25",
+    "text": "365.25",
+    "svg": "svg/P4.svg",
+    "depicts": [
+     "f3"
+    ]
+   },
+   "description": "A leap day every 4 years makes the average year 365.25 days, a little longer than the seasons. Skipping three century leap days every 400 years fixes it.",
+   "hashtags": [
+    "#LeapYear",
+    "#calendar",
+    "#history",
+    "#science"
+   ],
+   "claim_ids": [
+    "f1",
+    "f3",
+    "f6",
+    "f8"
+   ],
+   "rationale": "explains the arithmetic behind the rule"
+  }
+ ]
+}

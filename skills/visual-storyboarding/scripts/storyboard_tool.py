@@ -322,6 +322,13 @@ def cmd_render(a) -> int:
     missing = [s["id"] for s in sb["scenes"] if "path" not in s["visual"]]
     sr.check("VIS.ASSETS_RENDERED", not missing, "blocking", f"unrendered scenes: {missing}", missing, [],
              fix("VISUAL_PLAN", "rerender", scenes=missing, add_fallback="procedural"))
+    # Phase 5: a doodle scene that failed and was rendered by a fallback backend is a different (worse) video, not a pass
+    fell = {s["id"]: s["visual"].get("errors", [])[:1] for s in sb["scenes"]
+            if s["visual"].get("kind") == "doodle" and s["visual"].get("used_kind") not in (None, "doodle")}
+    if fell:
+        sr.check("VIS.DOODLE_FALLBACK", False, "major", f"doodle scenes rendered by a fallback backend instead: {fell} "
+                 "(fix the scene SVG, or the machine if the doodle engine cannot load — setup_env.py)", fell, {},
+                 fix("VISUAL_PLAN", "repair_scene", scenes=sorted(fell), errors=fell))
     blank, used = [], {}
     for s in sb["scenes"]:
         if "path" in s["visual"]:

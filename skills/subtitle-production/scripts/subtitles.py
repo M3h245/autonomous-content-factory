@@ -26,7 +26,7 @@ from fontTools.ttLib import TTFont
 from PIL import ImageFont
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from cf_common import (StageResult, decode_errors, emit, exit_for, ff_filter_path, ffmpeg_bin, fix,  # noqa: E402
+from cf_common import (X264_THREADS, StageResult, decode_errors, emit, exit_for, ff_filter_path, ffmpeg_bin, fix,  # noqa: E402
                        read_json, run, stage_main, validate_artifact)
 
 W, H = 1080, 1920
@@ -261,7 +261,7 @@ def cmd_run(a) -> int:
     (out / "captions.vtt").write_text(vtt, encoding="utf-8")
     final = out / "final.mp4"
     vf = f"ass=filename={ff_filter_path(out / 'captions.ass')}:fontsdir={ff_filter_path(FONTS_DIR)}:shaping=complex"
-    run([ffmpeg_bin(), "-y", "-v", "error", "-i", a.video, "-vf", vf, "-c:v", "libx264", "-preset", a.preset, "-crf", str(a.crf),
+    run([ffmpeg_bin(), "-y", "-v", "error", "-i", a.video, "-vf", vf, "-c:v", "libx264", "-preset", a.preset, "-crf", str(a.crf), "-threads", X264_THREADS,
          "-profile:v", "high", "-level", "4.1", "-pix_fmt", "yuv420p", "-c:a", "copy", "-movflags", "+faststart", final])
 
     # ---------------- gate

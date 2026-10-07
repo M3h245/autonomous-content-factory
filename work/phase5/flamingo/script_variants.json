@@ -1,0 +1,223 @@
+{
+ "video_id": "v01",
+ "language": "en",
+ "hook_id": "h4",
+ "variants": [
+  {
+   "variant_id": "A",
+   "structure": "question → dead-flamingo test at once → one leg holds with no muscle → two legs fail → little effort → zoo birds asleep → 2010 water/cold clue → payoff (armchair) → loop (9 beats, no CTA)",
+   "beats": [
+    {
+     "id": "b1",
+     "role": "hook",
+     "text": "Why do flamingos rest on one leg?",
+     "claim_ids": [
+      "f2",
+      "f6",
+      "f7"
+     ],
+     "on_screen": "WHY ONE LEG?",
+     "visual_intent": "frame 0: flamingo on one leg in water, question mark"
+    },
+    {
+     "id": "b2",
+     "role": "value",
+     "text": "In 2017, researchers propped up a dead flamingo.",
+     "claim_ids": [
+      "f2"
+     ],
+     "on_screen": "2017 TEST",
+     "visual_intent": "lab bench, X-eyed flamingo held upright by a clamp"
+    },
+    {
+     "id": "b3",
+     "role": "value",
+     "text": "On one leg, it settled into a steady pose, with no muscle working.",
+     "claim_ids": [
+      "f2",
+      "f6"
+     ],
+     "on_screen": "NO MUSCLE",
+     "emphasis": [
+      "no"
+     ],
+     "visual_intent": "the X-eyed flamingo steady on one leg, check mark"
+    },
+    {
+     "id": "b4",
+     "role": "twist",
+     "text": "On two legs, it wouldn't stay steady.",
+     "claim_ids": [
+      "f3"
+     ],
+     "visual_intent": "same flamingo on two legs, tipping, motion lines, a cross"
+    },
+    {
+     "id": "b5",
+     "role": "value",
+     "text": "So one leg takes very little muscle effort.",
+     "claim_ids": [
+      "f6"
+     ],
+     "visual_intent": "muscle meter near empty beside the one-legged flamingo"
+    },
+    {
+     "id": "b6",
+     "role": "value",
+     "text": "Live birds at Zoo Atlanta swayed less when they dozed off.",
+     "claim_ids": [
+      "f4",
+      "f5"
+     ],
+     "visual_intent": "sleeping flamingo on a force plate, sway arcs shrink"
+    },
+    {
+     "id": "b7",
+     "role": "value",
+     "text": "A 2010 zoo study adds a clue: more birds did it in water, and more as it got colder. That may save heat.",
+     "claim_ids": [
+      "f7",
+      "f8"
+     ],
+     "visual_intent": "flamingo in cold water, thermometer low, tucked leg under the feathers"
+    },
+    {
+     "id": "b8",
+     "role": "payoff",
+     "text": "One leg isn't a balancing act. It's a flamingo's armchair.",
+     "claim_ids": [
+      "f6"
+     ],
+     "emphasis": [
+      "armchair"
+     ],
+     "pause_before": 0.3,
+     "visual_intent": "flamingo relaxing on one leg beside an armchair"
+    },
+    {
+     "id": "b9",
+     "role": "loop",
+     "text": "So next time you see one on one leg, it's probably resting.",
+     "claim_ids": [
+      "f6"
+     ],
+     "visual_intent": "back to the one-legged flamingo, eyes closed, calm"
+    }
+   ],
+   "publish": {
+    "title_options": [
+     "Why flamingos rest on one leg",
+     "One leg is a flamingo's armchair"
+    ],
+    "description": "In 2017, researchers propped up a dead flamingo: on one leg it settled into a steady pose with no muscle working. Live birds swayed less asleep.",
+    "hashtags": [
+     "#flamingo",
+     "#animals",
+     "#science",
+     "#shorts"
+    ]
+   },
+   "cta": {
+    "needed": false,
+    "decision_reason": "a short explainer that ends on its own answer; an ask would compete with the loop line"
+   }
+  },
+  {
+   "variant_id": "B",
+   "structure": "question → test first → two legs fail → sleep sway → cold-water clue → payoff (7 beats, no CTA)",
+   "beats": [
+    {
+     "id": "b1",
+     "role": "hook",
+     "text": "Why do flamingos rest on one leg?",
+     "claim_ids": [
+      "f2",
+      "f6",
+      "f7"
+     ],
+     "on_screen": "WHY ONE LEG?",
+     "visual_intent": "frame 0: flamingo on one leg in water, question mark"
+    },
+    {
+     "id": "b2",
+     "role": "value",
+     "text": "In 2017, scientists tested a dead flamingo.",
+     "claim_ids": [
+      "f2"
+     ],
+     "visual_intent": "X-eyed flamingo on a lab bench"
+    },
+    {
+     "id": "b3",
+     "role": "value",
+     "text": "Propped on one leg, it held steady with no muscle working.",
+     "claim_ids": [
+      "f2",
+      "f6"
+     ],
+     "on_screen": "NO MUSCLE",
+     "visual_intent": "clamp lifts it, it settles on one leg"
+    },
+    {
+     "id": "b4",
+     "role": "twist",
+     "text": "On two legs, it wouldn't.",
+     "claim_ids": [
+      "f3"
+     ],
+     "visual_intent": "two-legged pose tipping, a cross"
+    },
+    {
+     "id": "b5",
+     "role": "value",
+     "text": "Live birds at Zoo Atlanta swayed less when they dozed off.",
+     "claim_ids": [
+      "f4",
+      "f5"
+     ],
+     "visual_intent": "sleeping flamingo, sway arcs shrink"
+    },
+    {
+     "id": "b6",
+     "role": "value",
+     "text": "In a 2010 zoo study, more did it in water and in the cold. That may save heat.",
+     "claim_ids": [
+      "f7",
+      "f8"
+     ],
+     "visual_intent": "cold water, thermometer"
+    },
+    {
+     "id": "b7",
+     "role": "payoff",
+     "text": "So one leg isn't hard work. It's how a flamingo rests.",
+     "claim_ids": [
+      "f6"
+     ],
+     "emphasis": [
+      "rests"
+     ],
+     "pause_before": 0.3,
+     "visual_intent": "relaxed flamingo, REST POSE"
+    }
+   ],
+   "publish": {
+    "title_options": [
+     "Why flamingos rest on one leg",
+     "A dead flamingo held steady on one leg"
+    ],
+    "description": "A 2017 test propped up a dead flamingo: on one leg it held steady with no muscle working, but not on two.",
+    "hashtags": [
+     "#flamingo",
+     "#animals",
+     "#science",
+     "#shorts"
+    ]
+   },
+   "cta": {
+    "needed": false,
+    "decision_reason": "ends on its own answer"
+   }
+  }
+ ]
+}

@@ -1,20 +1,24 @@
-# PROJECT STATE — Autonomous Content Factory · v2.0.0-alpha8 · 2026-10-07
+# PROJECT STATE — Autonomous Content Factory · v3.0.0 (FINAL, frozen) · 2026-10-07
+
+## Status
+**Development is frozen at v3.0.0.** Phases 0–5 are complete. Only operation remains: making videos with the factory,
+uploading by hand, and logging analytics. Any further change is a new decision by the owner.
 
 ## Where things are
-`/mnt/user-data/outputs/checkpoints/v2.0.0-alpha8/` holds (Phase 4):
-- the skills zip
-- `phase4-run.zip` (brain-freeze fresh run, RESEARCH → PACKAGE), `phase4-replay.zip`, `phase4-work.zip` (authoring
-  scripts, inspection sheets, external judgment, knuckle packaging dev run), `phase4-package.zip` (both publishing
-  packages: final video, thumbnail, cover, crops, metadata, PUBLISHING_PACKAGE.md)
-- PHASE_4_REPORT.md, this file, SHA256SUMS.txt
+- `checkpoints/v3.0.0/` (in git):
+  - `content-factory-v3.0.0.zip` (the skills)
+  - `phase5-package-leap.zip` (the publishable package)
+  - `phase5-rejected-for-review.zip` (the two videos the independent judge rejected, for inspection, not for upload)
+  - `phase5-records.zip` (run states, events, reports, judgments, authoring scripts)
+  - `memory-dump.json`, PHASE_5_REPORT.md, this file, SHA256SUMS.txt
+- `checkpoints/v2.0.0-alpha8/` is unchanged.
+- `seeds/` holds the authored inputs of all five recent runs; `memory/dump.json` holds the channel memory (8 runs).
 
-Earlier checkpoints are unchanged: alpha7 (Phase 3.5), alpha6 (Phase 3), alpha4, alpha5, `content-factory-v2.0.0-alpha2.zip`, `-alpha3.zip`, `phase0/`.
+Integrity: `cd checkpoints/v3.0.0 && sha256sum -c SHA256SUMS.txt`.
 
-Integrity: verify with `sha256sum -c SHA256SUMS.txt` against the zips. Loose .mp4/.jpg files may be rewritten by the
-storage between sessions (same content, different container bytes); the zips hold the authoritative copies.
-
-Resume: unzip the skills zip (e.g. into `cf/`), run `python cf/content-factory/scripts/setup_env.py --out caps.json`
-(it installs the pinned runtime and Kokoro), then run the tests.
+Resume on a new machine: `python skills/content-factory/scripts/setup_env.py --out caps.json`. It installs the pinned
+runtime and Kokoro, and exits 3 with the fix if a core capability (for example libEGL for the doodle engine) is
+missing. Then run the tests.
 
 ## Phases
 | phase | status |
@@ -24,31 +28,29 @@ Resume: unzip the skills zip (e.g. into `cf/`), run `python cf/content-factory/s
 | 2 hook + script | PASS |
 | 3 visual + audio | PASS — owner chose audio mix A by ear (2026-10-07) |
 | 3.5 retention + CTA + metadata policy | PASS WITH LIMITATIONS (heuristic CTA judge; no conversion data yet) |
-| 4 packaging | PASS WITH LIMITATIONS (heuristic package judge is generous; external packet-only judge supported; ≈3:2 YouTube crop advisory) |
-| 5 validation → v3.0.0 | not started |
+| 4 packaging | PASS WITH LIMITATIONS (heuristic package judge is generous; ≈3:2 YouTube crop advisory) |
+| 5 productionization + validation → v3.0.0 | PASS WITH LIMITATIONS — 3 fresh runs; 1 of 3 accepted by the independent judge; see PHASE_5_REPORT.md |
 
 ## Owner decisions
-- 2026-10-07 — audio mix **A**: music 17 dB under the voice with a 12 dB speech-band carve (policy 16-18 dB). Chosen by
-  ear over B (21/6) and C (24.7/0). It was already the default; no code change.
+- 2026-10-07 — audio mix **A**: music 17 dB under the voice with a 12 dB speech-band carve (policy 16-18 dB).
 
-## How to verify (one CPU; run long tests one per command)
+## How to verify (from `skills/`; run long tests one per command)
 ```
-python -m unittest discover -s content-factory/tests -p "test_*.py"
-CF_FIXTURE_DIR=fx python -m unittest content-factory/tests/test_bad_videos.py -k test_A   (then B, C)
-python content-factory/tests/smoke_v2.py
+for t in test_cf_common_identity test_stage_order test_phase0_regressions test_tts_cache test_visual_audit \
+         test_reviewer test_futile_retry test_phase2_script test_phase3 test_phase35 test_factory_review; do
+  python3 -m unittest content-factory.tests.$t; done
+python3 -m unittest content-factory.tests.test_phase2_hooks
+python3 -m unittest content-factory.tests.test_phase4
+python3 -m unittest content-factory.tests.test_phase5
+python3 content-factory/tests/smoke_v2.py
+python3 -m unittest content-factory/tests/test_bad_videos.py -k A   (then B, C, D)
 ```
-The end-to-end class in test_phase4 needs a finished run with package candidates: unzip `runs_p4_dev/` from
-`phase4-work.zip` and set `CF_PACKAGE_RUN` to its knuckle run folder (otherwise it is skipped with a message).
-For the v1 regression: from `v1_regression/`, run render_video and subtitles on `video/storyboard.timed.json`. Both
-must pass, using kenburns and karaoke.
+For the v1 regression, see CLOUD_HANDOFF.md. To replay a run: `python3 work/phase4/replay.py seeds/<run> <runs-dir>`.
 
 ## Decisions in force
-- English, doodle style.
-- AUDIO runs before VISUAL_PLAN.
-- Independent review everywhere.
-- Hook engine v2, with hook length measured from real TTS.
-- Frame-0 rules.
-- Checkpoint files stay under 250 MB (larger files vanished from the outputs storage); zips are authoritative.
+- English, doodle style. AUDIO runs before VISUAL_PLAN. Independent review everywhere.
+- Hook engine v2, with hook length measured from real TTS. Frame-0 rules.
+- Deterministic stages are never retried blindly. Results are recorded only in stage order. The audio runtime is pinned.
 - Phase 3 rules:
   - layout and subject variety
   - ≥2 events in the first 1.5 s
@@ -57,24 +59,21 @@ must pass, using kenburns and karaoke.
   - music 16-18 dB under the voice, with a speech-band carve
   - SFX ≤0.8/s
   - masking and clean-ending gates
-- Deterministic stages are never retried blindly.
-- Results are recorded only in stage order.
-- The audio runtime is pinned.
-- Phase 3.5: every new video records a CTA decision; a CTA never sits in the hook or before the payoff, never after the
-  loop line, and the ending must stand without it; CTAs stay relevant and are not repeated (cta_history.json).
-- Publishable media carry standard metadata only (PKG.MEDIA_METADATA_CLEAN); provenance stays in reports; platform AI
-  labels are mandatory (PKG.DISCLOSURE).
-
-- Phase 4: every new video ships the strongest of ≥3 genuinely different complete packages (title + opening promise +
-  doodle thumbnail + copy). An unsupported or contradicted claim blocks a package; thumbnails must read at 168 px with
-  text and subject in the central square; a packet-only external judge may lower scores, never raise them. The
-  selected thumbnail is the cover; PUBLISHING_PACKAGE.md is the owner's upload sheet.
+- Phase 3.5: every new video records a CTA decision; CTAs are never in the hook, before the payoff or after the loop
+  line; the ending stands without the CTA; CTAs are relevant and not repeated across videos.
+- Publishable media carry standard metadata only (PKG.MEDIA_METADATA_CLEAN). Platform AI labels are mandatory
+  (PKG.DISCLOSURE).
+- Phase 4: every video ships the strongest of ≥3 genuinely different complete packages. An unsupported claim blocks a
+  package. An external packet-only judgment can only lower scores, and it must cover every candidate.
+- Phase 5:
+  - Deterministic narration and encodes (seeded Kokoro, x264 `-threads 4`): replays are byte-identical across CPU sets
+    and caches.
+  - Memory is on by default: a repeated topic is refused at `init`, a used hook is never selected, every packaged run is
+    remembered.
+  - One process per run (`RUN/.lock`). Every failure is an envelope; nothing ships after a failed PACKAGE.
+  - **Production QA uses an LLM judge** (`ANTHROPIC_API_KEY`, or `--review-backend subagent`); the heuristic judge is
+    a fallback.
 
 ## Next
-Phase 5 (validation), as the owner defines it — not started. Do not start it automatically.
-
-## Transfer (2026-10-07)
-The project is prepared for a Claude Code Cloud Session as a private GitHub repository. Read `CLOUD_HANDOFF.md` first.
-Phases 0–4 are complete (alpha8 is authoritative). Phase 5 is the only remaining development phase; it runs at HIGH
-effort and must not redo Phases 0–4. After v3.0.0, development is frozen. In the repository the skills live under
-`skills/`, and the test fixtures under `fixtures/`.
+None — frozen. Operation: `factory.py init --topic …` → loop `next` → `package --zip` → upload by hand →
+`cfdb.py publish` / content-analytics.

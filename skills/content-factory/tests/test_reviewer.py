@@ -128,6 +128,19 @@ class Reviewer(unittest.TestCase):
         self.assertEqual(m["hook_strength"]["score"], 5)            # taste: the LLM decides
         self.assertEqual(m["subtitle_readability"]["score"], 3)     # measurable: capped by the measurement
 
+    def test_judge_routes_spoken_hook_to_HOOK(self):
+        heur = {d: {"score": 4, "evidence": ["✓ visual subject at frame 0"], "cap": 4} for d in R.DIMS}
+        pol = json.loads(Path(R.DEFAULT_POLICY).read_text())
+        j = judgment(4)
+        j["hook_strength"] = {"score": 3, "evidence": "opening question", "explanation": "the spoken line answers itself"}
+        hook = lambda m: [f for f in R.decide(m, [], pol)[1] if f["id"] == "hook_strength"][0]["fix_route"]["stage"]
+        self.assertEqual(hook(R.merge(heur, j, "subagent")), "VISUAL_PLAN")      # unchanged without fix_stage
+        j["hook_strength"]["fix_stage"] = "HOOK"
+        self.assertEqual(R.validate_judgment(j), [])
+        self.assertEqual(hook(R.merge(heur, j, "subagent")), "HOOK")
+        j["hook_strength"]["fix_stage"] = "VIDEO"
+        self.assertTrue(R.validate_judgment(j))
+
     def test_policy(self):
         pol = json.loads(Path(R.DEFAULT_POLICY).read_text())
         ok = {d: {"score": 4, "explanation": "", "evidence": ["e"]} for d in R.DIMS}

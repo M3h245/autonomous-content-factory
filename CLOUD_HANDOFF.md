@@ -1,58 +1,53 @@
 # CLOUD HANDOFF — Autonomous Content Factory
 
-Read this file first, then `PROJECT_STATE.md`. Written 2026-10-07 for the transfer to a Claude Code Cloud Session.
+Read this file first, then `PROJECT_STATE.md`. Written 2026-10-07; updated at the v3.0.0 release (development frozen).
 
-## Status
+## Status — FROZEN at v3.0.0 (2026-10-07)
 | item | value |
 |---|---|
-| Phases complete | **0, 1, 2, 3, 3.5, 4** |
-| Authoritative checkpoint | **`v2.0.0-alpha8`** (`checkpoints/v2.0.0-alpha8/`, `skills/content-factory/VERSION`) |
-| Phase 4 (packaging) | **PASS WITH LIMITATIONS** — see "Known limitations" |
-| Remaining development | **Phase 5 (validation) is the ONLY remaining development phase** |
-| Phase 5 effort | **HIGH** |
-| After Phase 5 | the release is **v3.0.0** and **development is FROZEN** — no further features, phases or optimisation |
+| Phases complete | **0, 1, 2, 3, 3.5, 4, 5** |
+| Authoritative release | **`v3.0.0`** (git tag `v3.0.0`, `checkpoints/v3.0.0/`, `skills/content-factory/VERSION`) |
+| Phase 5 (productionization + validation) | **PASS WITH LIMITATIONS** — `skills/content-factory/PHASE_5_REPORT.md` |
+| Remaining development | **none — development is FROZEN** (no features, phases or optimisation) |
 
-Rules for the Cloud Session:
-1. **Do NOT redo Phases 0–4.** Their results are final. Do not reopen their limitations unless Phase 5 finds a
-   *blocking* regression, and then fix only that regression.
-2. **Phase 5 scope comes from the owner (Abolfazl).** Do not invent it, and do not start Phase 5 before the owner sends
-   the Phase 5 brief.
-3. Never publish anything automatically; the owner uploads by hand.
-4. Never expose or commit secrets. API keys are read from environment variables only (`ANTHROPIC_API_KEY` is optional;
-   without it the reviewer uses its deterministic heuristic judge).
-5. Never weaken gates. Never remove platform AI-disclosure behaviour, and never use the media-metadata policy to evade
+Rules for any later session:
+1. **Development is frozen.** Do not change code, gates or policies. Operating the factory (making videos, packaging,
+   logging analytics) is allowed; a change needs a new, explicit decision by the owner.
+2. Never publish anything automatically; the owner uploads by hand.
+3. Never expose or commit secrets. API keys are read from environment variables only. `ANTHROPIC_API_KEY` is
+   recommended for production QA; without it the reviewer falls back to its generous heuristic judge.
+4. Never weaken gates. Never remove platform AI-disclosure behaviour, and never use the media-metadata policy to evade
    platform labelling. Media cleaning is privacy hygiene only; PKG.DISCLOSURE still blocks without labels.
-6. Never modify completed checkpoints (`checkpoints/v2.0.0-alpha8/` here; alpha2–alpha7 in the original outputs storage).
-7. Keep every artifact file under 250 MB, and under 100 MB in git (GitHub's limit).
+5. Never modify completed checkpoints (`checkpoints/v2.0.0-alpha8/`, `checkpoints/v3.0.0/`).
+6. Keep every artifact file under 250 MB, and under 100 MB in git (GitHub's limit).
 
-## Exact next action for the Cloud Session
-1. `cat CLOUD_HANDOFF.md PROJECT_STATE.md skills/content-factory/PHASE_4_REPORT.md`
-2. Rebuild the runtime, which installs the pinned onnxruntime 1.29.0 / kokoro-onnx 0.6.1 and downloads the Kokoro
-   model (~354 MB) from GitHub releases into `~/.cache/content-factory`:
-   `python3 skills/content-factory/scripts/setup_env.py --out /tmp/caps.json`
-3. Verify the baseline (commands below): fast tests → test_phase4 → smoke. Optionally run bad videos A–D, the v1
-   regression and the seed replay.
-4. Report the baseline result to the owner and **wait for the Phase 5 brief**. Run Phase 5 at HIGH effort, finish
-   at v3.0.0, then stop development.
+## How to operate (no development)
+1. `python3 skills/content-factory/scripts/setup_env.py --out /tmp/caps.json`. It installs the pinned runtime and the
+   Kokoro model, and exits 3 with a fix if a core capability is missing.
+2. Optional: verify with the test commands below.
+3. `factory.py init --topic "…" --runs-dir runs`. Memory is on: `runs/factory.db`; import `memory/dump.json` first on a
+   new machine. Then loop on `next`, then `package --zip`, then upload by hand.
 
 ## Repository layout
 ```
 CLOUD_HANDOFF.md            this file
-PROJECT_STATE.md            project state (current, alpha8)
+PROJECT_STATE.md            project state (v3.0.0, frozen)
 skills/                     the 15 factory skills (side by side; skills_root() = this folder)
   content-factory/          orchestrator: scripts/factory.py, package_run.py, package_engine.py, setup_env.py, doctor.py,
                             cf_common.py (contract library — 15 byte-identical copies, enforced by a test),
                             references/ (orchestration-spec, packaging, platform policies…), tests/, VERSION,
-                            CHANGELOG.md, PHASE_1..4 reports, PROJECT_STATE.md
+                            CHANGELOG.md, PHASE_1..5 reports, PROJECT_STATE.md
   content-research/ content-strategy/ hook-engineering/ short-form-script/ multilingual-content/ voice-production/
   visual-storyboarding/ video-production/ subtitle-production/ video-quality-assurance/ asset-provenance/
   content-database/ content-analytics/ trend-intelligence/ automation-engineering/
-checkpoints/v2.0.0-alpha8/  authoritative checkpoint files that fit in git (see "Checkpoints")
+checkpoints/v3.0.0/         final release checkpoint (see "Checkpoints")
+checkpoints/v2.0.0-alpha8/  Phase 4 checkpoint files that fit in git
 fixtures/phase4_package_run/<knuckle run>   trimmed finished run for test_phase4 end-to-end (16 MB)
 fixtures/v1_regression/     v1 Ken Burns + karaoke regression inputs (storyboard paths templated: {FIXTURE})
-seeds/<run>/                authored inputs of both Phase 4 runs (dossier, ideas, hooks+SVG, script variants,
-                            storyboard+SVG, package candidates+SVG, external judgment) for deterministic replay
-work/phase4/                operator scripts used in Phase 4 (scene/hook/package authoring helpers, replay driver)
+seeds/<run>/                authored inputs of the 2 Phase 4 and 3 Phase 5 runs (dossier, ideas, hooks+SVG, script
+                            variants, storyboard+SVG, package candidates+SVG, external judgment) for deterministic replay
+memory/dump.json            channel memory (every topic made so far; imported by the automation templates)
+work/phase4/, work/phase5/  operator scripts (authoring helpers per topic, replay driver, seed builder)
 ```
 
 ## Architecture (short)
@@ -91,9 +86,10 @@ python3 skills/content-factory/scripts/factory.py next  --run runs/<run>
 python3 skills/content-factory/scripts/factory.py media --run runs/<run> --video v01 [--steps N]
 python3 skills/content-factory/scripts/factory.py record --run runs/<run> --result <result.json>
 python3 skills/content-factory/scripts/factory.py reset --run runs/<run> --video v01 --stage <STAGE> --note "why"
+python3 skills/content-factory/scripts/factory.py unlock --run runs/<run> --note "why"     # audited; stale locks self-clear
 
-# deterministic replay of a Phase 4 run from its authored inputs
-python3 work/phase4/replay.py seeds/2026-10-07-why-ice-cream-gives-you-brain-fr runs_replay
+# deterministic replay of any seeded run from its authored inputs
+python3 work/phase4/replay.py seeds/2026-10-07-why-leap-years-skip-some-century runs_replay
 ```
 
 ## Tests (from `skills/`; one CPU — run long ones one per command, Bash timeouts ≤10 min)
@@ -107,6 +103,7 @@ for t in test_cf_common_identity test_stage_order test_phase0_regressions test_t
 python3 -m unittest content-factory.tests.test_phase2_hooks        # ~5 min
 python3 -m unittest content-factory.tests.test_phase4              # ~2.5 min; uses fixtures/phase4_package_run
                                                                    # (override: CF_PACKAGE_RUN=<finished run>)
+python3 -m unittest content-factory.tests.test_phase5              # ~3 min; Phase 5 production + memory tests
 python3 content-factory/tests/smoke_v2.py                          # ~1 min
 python3 -m unittest content-factory/tests/test_bad_videos.py -k A  # then -k B (4 tests, ~7 min), -k C, -k D
 ```
@@ -120,6 +117,9 @@ python3 ../../skills/subtitle-production/scripts/subtitles.py run --timing audio
 ```
 
 ## Checkpoints
+- **v3.0.0** (`checkpoints/v3.0.0/`, all in git, each file < 100 MB): `content-factory-v3.0.0.zip`,
+  `phase5-package-leap.zip`, `phase5-rejected-for-review.zip`, `phase5-records.zip`, `memory-dump.json`,
+  PHASE_5_REPORT.md, PROJECT_STATE.md, `SHA256SUMS.txt` (`cd checkpoints/v3.0.0 && sha256sum -c SHA256SUMS.txt`).
 - **In this repository** (`checkpoints/v2.0.0-alpha8/`):
   - the code archive `content-factory-v2.0.0-alpha8.zip`
   - `phase4-package.zip` (brain-freeze publishing package: final video, thumbnail, cover, crops, metadata,
@@ -143,24 +143,16 @@ python3 ../../skills/subtitle-production/scripts/subtitles.py run --timing audio
   - The v1 fixture's storyboard paths are templated.
   - No behaviour, gate or policy was changed.
 
-## Known limitations (carried into Phase 5)
-- **Phase 1/3.5/4 judges are heuristic.**
-  - The package judge is generous: it gave a perfect 45 to a package a packet-only external judge rated 37, with an
-    accuracy flaw.
-  - An external judge is supported (`package_judgment.json`) but is not run by default.
-- **The ≈3:2 YouTube crop check for Shorts custom thumbnails is advisory only.** The ratio comes from secondary sources,
-  and the crop cuts the selected thumbnail's text. Shorts custom thumbnails have been rolling out since 2026-07-25,
-  starting with Partner Program channels.
-- **The brain-freeze hook line is borderline.** "Sip or gulp? One doubles your odds" maps eating fast to gulping. The
-  selected package's copy is accurate; the video was not re-rendered.
-- **Claim checks are lexical.** Numbers are matched as substrings of the cited facts; paraphrased overstatement needs a
-  reviewer.
-- **No measured conversion, CTR or retention data yet.** CTA and package choices are a priori.
-- **No text-on-text overlap gate**; text collisions are caught by eye.
-- **No futile-resubmission guard for VISUAL_PLAN.**
-- **The YouTube "altered/synthetic" flag** comes from unchanged provenance logic (False for cartoon visuals with AI
-  narration). The other platforms' AI labels are True.
-- **Byte reproducibility across environments is unproven.** Within one environment, replay is byte-identical.
+## Known limitations (final)
+See `skills/content-factory/PHASE_5_REPORT.md` §7. In short:
+- the heuristic judges are generous (use an LLM judge in production)
+- writing quality is the bottleneck
+- claim checks are lexical
+- the ≈3:2 YouTube crop is advisory
+- no CTR or retention data yet
+- no text-on-text overlap gate
+- no VISUAL_PLAN futile-resubmission guard
+- byte reproducibility is proven across CPU sets and caches on one software stack
 
 ## Standing owner preferences
 - The owner (Abolfazl, Pavia) wants finished outputs produced by Claude, not instructions.

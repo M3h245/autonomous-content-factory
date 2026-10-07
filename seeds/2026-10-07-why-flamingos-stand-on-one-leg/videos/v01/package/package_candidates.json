@@ -1,0 +1,89 @@
+{
+ "video_id": "v01",
+ "language": "en",
+ "candidates": [
+  {
+   "id": "P1",
+   "strategy": "question",
+   "title": "Why flamingos rest on one leg",
+   "opening_promise": "Two clues to why flamingos rest on one leg.",
+   "thumbnail": {
+    "concept": "flamingo asleep on one leg on a force plate, sway marks either side",
+    "text": "SWAYED LESS",
+    "svg": "svg/P1.svg",
+    "depicts": [
+     "f5"
+    ]
+   },
+   "description": "In 2017, a dead flamingo propped on one leg held steady with no muscle working. A 2010 zoo study found more birds did it in water and in the cold, which may save heat.",
+   "hashtags": [
+    "#flamingo",
+    "#animals",
+    "#science",
+    "#biology"
+   ],
+   "claim_ids": [
+    "f2",
+    "f5",
+    "f6",
+    "f7",
+    "f8"
+   ],
+   "rationale": "the viewer's own question, answered by two studies"
+  },
+  {
+   "id": "P2",
+   "strategy": "myth_bust",
+   "title": "A dead flamingo held steady on one leg",
+   "opening_promise": "Why rest on one leg? A dead flamingo showed it.",
+   "thumbnail": {
+    "concept": "X-eyed flamingo on one leg on a lab bench, a check mark beside it",
+    "text": "NO MUSCLE",
+    "svg": "svg/P2.svg",
+    "depicts": [
+     "f2"
+    ]
+   },
+   "description": "In a 2017 study, a dead flamingo held upright settled into a stable one-legged pose with no muscle activity, but would not stay steady on two legs.",
+   "hashtags": [
+    "#flamingo",
+    "#animals",
+    "#science",
+    "#biology"
+   ],
+   "claim_ids": [
+    "f2",
+    "f3",
+    "f6"
+   ],
+   "rationale": "the most surprising measured fact"
+  },
+  {
+   "id": "P3",
+   "strategy": "utility",
+   "title": "One leg in cold water may save heat",
+   "opening_promise": "Resting on one leg may also keep a flamingo warm.",
+   "thumbnail": {
+    "concept": "flamingo on one leg in water beside a cold thermometer",
+    "text": "2010 STUDY",
+    "svg": "svg/P3.svg",
+    "depicts": [
+     "f7",
+     "f8"
+    ]
+   },
+   "description": "A 2010 zoo study found more flamingos rested on one leg in water than on land, and fewer as it got warmer, which suggests the pose helps keep heat.",
+   "hashtags": [
+    "#flamingo",
+    "#animals",
+    "#science",
+    "#biology"
+   ],
+   "claim_ids": [
+    "f7",
+    "f8"
+   ],
+   "rationale": "the second, hedged reason as its own angle"
+  }
+ ]
+}

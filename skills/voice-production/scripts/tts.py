@@ -128,15 +128,25 @@ class KokoroBackend:
         missing = [f for f in KOKORO_FILES if not (d / f).exists()]
         if missing:
             raise RuntimeError(f"Kokoro model files missing {missing}; run `tts.py setup`")
-        self.k = Kokoro(str(d / KOKORO_FILES[0]), str(d / KOKORO_FILES[1]))
+        self.files = (str(d / KOKORO_FILES[0]), str(d / KOKORO_FILES[1]))
+        self.k = Kokoro(*self.files)
         self.lang, self.voice, self.speed = lang, voice, speed
         if voice not in self.k.get_voices():
             raise ValueError(f"voice {voice!r} not available; see `tts.py voices`")
         from importlib.metadata import version
-        self.model_id = f"Kokoro-82M v1.0 (onnx fp32, kokoro-onnx {version('kokoro-onnx')})"
+        self.model_id = f"Kokoro-82M v1.0 (onnx fp32, kokoro-onnx {version('kokoro-onnx')}, seeded per sentence)"
 
     def sentence(self, text: str, words: list[str]):
-        audio, sr, timings = self.k.create_timed(text, voice=self.voice, speed=self.speed, lang=self.lang)
+        # Phase 5 finding: the Kokoro graph contains random ops that ONNX Runtime seeds when a session is created, so the
+        # same sentence came out different on every fresh synthesis (earlier replays matched only through the cache).
+        # A fresh session seeded from the sentence's own inputs makes the audio a pure function of them — independent of
+        # synthesis order, cache state and CPU count (verified 1/2/4 CPUs).
+        import onnxruntime as rt
+        from kokoro_onnx import Kokoro
+        seed = json.dumps([text, self.voice, float(self.speed), self.lang], ensure_ascii=False)
+        rt.set_seed(int(hashlib.sha256(seed.encode("utf-8")).hexdigest()[:8], 16) & 0x7FFFFFFF)
+        k = Kokoro(*self.files)
+        audio, sr, timings = k.create_timed(text, voice=self.voice, speed=self.speed, lang=self.lang)
         assert sr == SR
         if timings:
             word_ph = [self.k.tokenizer.phonemize(w, self.lang) for w in words]
@@ -185,7 +195,7 @@ class ElevenLabsBackend:
 
 
 # ----------------------------------------------------------------------------- sentence cache
-TTS_CACHE_VERSION = 1
+TTS_CACHE_VERSION = 2   # v2 (Phase 5): seeded Kokoro synthesis; v1 entries hold unseeded audio and are never mixed in
 
 
 def runtime_versions(backend: str) -> dict:

@@ -12,6 +12,7 @@ import argparse
 import importlib
 import os
 import platform
+import re
 import shutil
 import socket
 import sys
@@ -48,12 +49,28 @@ def probe_http(url: str, timeout: float = 5.0) -> str:
         return "unreachable"
 
 
+IMPORT_ERRORS: dict = {}
+
+
 def module_version(name: str):
     try:
         m = importlib.import_module(name)
         return getattr(m, "__version__", "installed")
-    except Exception:  # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001 — keep the reason: "installed but cannot load" needs a different fix
+        IMPORT_ERRORS[name] = f"{type(exc).__name__}: {exc}"[:300]
         return None
+
+
+def import_fix(mod: str, pkg: str) -> str:
+    """Install hint for a module that is missing or installed but unable to load (Phase 5: skia-python was installed but
+    could not load libEGL.so.1, so the doodle engine was unavailable while setup reported success)."""
+    err = IMPORT_ERRORS.get(mod, "")
+    m = re.search(r"(lib[\w.+-]+\.so[\w.]*)", err)
+    if m:
+        apt = {"libEGL.so.1": "libegl1", "libGL.so.1": "libgl1", "libfontconfig.so.1": "libfontconfig1",
+               "libsndfile.so.1": "libsndfile1"}.get(m.group(1), m.group(1).split(".so")[0])
+        return f"{pkg} is installed but cannot load {m.group(1)}: Debian/Ubuntu `sudo apt-get install -y {apt}`"
+    return f"pip install {pkg}" + (f" ({err})" if err else "")
 
 
 def main() -> int:
@@ -106,7 +123,9 @@ def main() -> int:
         "tts.elevenlabs": {"available": creds["ELEVENLABS_API_KEY"] and egress("api.elevenlabs.io"), "word_timing": "character alignment"},
         "tts.openai": {"available": creds["OPENAI_API_KEY"] and egress("api.openai.com"), "word_timing": "estimated"},
         "visual.doodle": {"available": bool(tools["py.skia"] and tools["py.svgelements"] and tools["py.numpy"]),
-                          "note": "v2 animated doodle engine (video-production/scripts/doodle_engine.py)"},
+                          "note": "v2 animated doodle engine (video-production/scripts/doodle_engine.py)",
+                          "fix": "; ".join(import_fix(m, p) for m, p in (("skia", "skia-python"), ("svgelements", "svgelements"),
+                                                                         ("numpy", "numpy")) if not tools[f"py.{m}"]) or None},
         "visual.svg": {"available": tools["rsvg_convert"] or bool(tools["py.cairosvg"])},
         "visual.procedural": {"available": bool(tools["py.numpy"] and tools["py.PIL"])},
         "visual.sd_forge": {"available": forge == "reachable", "url": a.forge_url,
@@ -117,13 +136,16 @@ def main() -> int:
         "video.render": {"available": render_ok},
         "subtitles.burn": {"available": render_ok and "ass" in filters and bool(tools["bundled_fonts"])},
         "qa.probes": {"available": render_ok},
-        "qa.ocr": {"available": bool(tools["tesseract_langs"]), "langs": tools["tesseract_langs"]},
+        "qa.ocr": {"available": bool(tools["tesseract_langs"]), "langs": tools["tesseract_langs"],
+                   "fix": None if tools["tesseract_langs"] else "recommended (reviewer and caption OCR checks): Debian/Ubuntu "
+                   "`sudo apt-get install -y tesseract-ocr`, macOS `brew install tesseract`, Windows `winget install UB-Mannheim.TesseractOCR`"},
         "trends.youtube_data": {"available": creds["YOUTUBE_API_KEY"] and egress("www.googleapis.com")},
         "analytics.youtube_api": {"available": creds["YOUTUBE_OAUTH_CLIENT_SECRETS"] and egress("youtubeanalytics.googleapis.com")},
         "analytics.csv_import": {"available": bool(tools["py.pandas"])},
         "publish.youtube_api": {"available": False, "note": "never autonomous: requires OAuth + explicit human approval per upload"},
         "research.web": {"available": "agent-tool", "note": "web_search/web_fetch are Claude tools; not probed from the shell"},
     }
+    tools["import_errors"] = dict(IMPORT_ERRORS)
     report = {"generated_at": now_iso(), "tools": tools, "network": network, "local_services": {"sd_forge": forge},
               "credentials_present": creds, "capabilities": caps}
     write_json(a.out, report)

@@ -1,0 +1,199 @@
+{
+ "video_id": "v01",
+ "language": "en",
+ "hook_id": "h5",
+ "variants": [
+  {
+   "variant_id": "A",
+   "structure": "contradiction (camera vs eyes) → photo proof → not giant → farther → leading explanation → still debated → fingernail test → paper tube + integrated save CTA (8 beats)",
+   "beats": [
+    {
+     "id": "b1",
+     "role": "hook",
+     "text": "Your camera says the Moon never grew.",
+     "claim_ids": [
+      "f1"
+     ],
+     "on_screen": "CAMERA SAYS SAME",
+     "visual_intent": "frame 0: giant moon over rooftops, a camera pointing at it"
+    },
+    {
+     "id": "b2",
+     "role": "value",
+     "text": "Photos with the same settings show it the same width, low or high.",
+     "claim_ids": [
+      "f1"
+     ],
+     "visual_intent": "two photos side by side, equal-width rulers"
+    },
+    {
+     "id": "b3",
+     "role": "value",
+     "text": "So it isn't really giant.",
+     "claim_ids": [
+      "f3"
+     ],
+     "visual_intent": "NOT GIANT, normal moon, cross"
+    },
+    {
+     "id": "b4",
+     "role": "twist",
+     "text": "Down low, it's actually about 1.5 percent farther away.",
+     "claim_ids": [
+      "f2"
+     ],
+     "on_screen": "1.5% FARTHER",
+     "visual_intent": "night: eye, distance line to the low moon"
+    },
+    {
+     "id": "b5",
+     "role": "value",
+     "text": "A leading explanation: your brain judges the horizon Moon farther away, so it sees it bigger.",
+     "claim_ids": [
+      "f5"
+     ],
+     "visual_intent": "thinking brain, far moon, = BIGGER"
+    },
+    {
+     "id": "b6",
+     "role": "value",
+     "text": "Scientists still argue about the exact cause.",
+     "claim_ids": [
+      "f4"
+     ],
+     "visual_intent": "two scientists disagreeing"
+    },
+    {
+     "id": "b7",
+     "role": "value",
+     "text": "Test it: at arm's length, a fingernail covers about the same amount of Moon, low or high.",
+     "claim_ids": [
+      "f7"
+     ],
+     "visual_intent": "night: a fingernail beside the low moon and the high moon, same size"
+    },
+    {
+     "id": "b8",
+     "role": "payoff",
+     "text": "Or look through a rolled-up paper tube, and the giant Moon shrinks. Save this for the next big Moon.",
+     "claim_ids": [
+      "f8"
+     ],
+     "pause_before": 0.2,
+     "visual_intent": "night: view through a paper tube, a small moon; then a big SAVE label",
+     "on_screen": "SAVE FOR THE NEXT MOON"
+    }
+   ],
+   "publish": {
+    "title_options": [
+     "Your camera says the Moon never grew",
+     "The giant horizon Moon isn't bigger"
+    ],
+    "description": "Same-setting photos show the horizon Moon the same width as the high Moon, and it is about 1.5 percent farther away. A leading explanation: your brain.",
+    "hashtags": [
+     "#moon",
+     "#space",
+     "#illusion",
+     "#science"
+    ]
+   },
+   "cta": {
+    "needed": true,
+    "decision_reason": "the video ends on two tests viewers can only do on a moonrise night; saving it is the useful next step",
+    "type": "save",
+    "placement": "integrated",
+    "modality": "both",
+    "beat_id": "b8",
+    "spoken": "Save this for the next big Moon.",
+    "on_screen": "SAVE FOR THE NEXT MOON"
+   }
+  },
+  {
+   "variant_id": "B",
+   "structure": "contradiction → photo proof → farther → it's your brain → explanation → debated → paper tube (7 beats, no CTA)",
+   "beats": [
+    {
+     "id": "b1",
+     "role": "hook",
+     "text": "Your camera says the Moon never grew.",
+     "claim_ids": [
+      "f1"
+     ],
+     "on_screen": "CAMERA SAYS SAME",
+     "visual_intent": "frame 0: giant moon over rooftops, a camera pointing at it"
+    },
+    {
+     "id": "b2",
+     "role": "value",
+     "text": "Same-setting photos show the same width near the horizon and high up.",
+     "claim_ids": [
+      "f1"
+     ],
+     "visual_intent": "two photos"
+    },
+    {
+     "id": "b3",
+     "role": "twist",
+     "text": "And down low, it's about 1.5 percent farther away.",
+     "claim_ids": [
+      "f2"
+     ],
+     "visual_intent": "distance line"
+    },
+    {
+     "id": "b4",
+     "role": "value",
+     "text": "It's your brain.",
+     "claim_ids": [
+      "f3"
+     ],
+     "visual_intent": "brain"
+    },
+    {
+     "id": "b5",
+     "role": "value",
+     "text": "A leading explanation: it judges the horizon Moon farther away, so it sees it bigger.",
+     "claim_ids": [
+      "f5"
+     ],
+     "visual_intent": "far moon"
+    },
+    {
+     "id": "b6",
+     "role": "value",
+     "text": "Scientists still argue about the exact cause.",
+     "claim_ids": [
+      "f4"
+     ],
+     "visual_intent": "scientists"
+    },
+    {
+     "id": "b7",
+     "role": "payoff",
+     "text": "Try a rolled-up paper tube: the giant Moon shrinks.",
+     "claim_ids": [
+      "f8"
+     ],
+     "visual_intent": "paper tube view"
+    }
+   ],
+   "publish": {
+    "title_options": [
+     "Your camera says the Moon never grew",
+     "Why the horizon Moon looks bigger"
+    ],
+    "description": "Same-setting photos show the horizon Moon the same width as the high Moon. A leading explanation is apparent distance, and scientists still argue.",
+    "hashtags": [
+     "#moon",
+     "#space",
+     "#illusion",
+     "#science"
+    ]
+   },
+   "cta": {
+    "needed": false,
+    "decision_reason": "ends on its own test"
+   }
+  }
+ ]
+}

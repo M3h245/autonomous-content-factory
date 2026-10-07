@@ -1,0 +1,104 @@
+{
+ "video_id": "v01",
+ "language": "en",
+ "topic": "Why the Moon looks bigger near the horizon",
+ "candidates": [
+  {
+   "hook_id": "h1",
+   "spoken_text": "That huge horizon Moon isn't actually bigger.",
+   "visual_concept": "giant moon rising behind rooftops, stars",
+   "on_screen_text": "NOT BIGGER",
+   "curiosity_mechanism": "misconception_reversal",
+   "tension": "your eyes say otherwise",
+   "target_emotion": "surprise",
+   "first_frame_concept": "giant moon rising behind rooftops, stars",
+   "first_frame_subject": "giant moon",
+   "first_frame_text": "NOT BIGGER",
+   "visual_action": "stars pop at 0.2 s",
+   "payoff_connection": "photos show the same width (f1); it is an illusion (f3)",
+   "why_it_should_work": "contradicts what everyone has seen",
+   "first_frame_svg": "svg/h1_frame0.svg",
+   "fact_ids": [
+    "f1",
+    "f3"
+   ]
+  },
+  {
+   "hook_id": "h2",
+   "spoken_text": "The rising Moon is actually a bit farther away.",
+   "visual_concept": "giant moon over rooftops with a distance arrow from the street",
+   "on_screen_text": "FARTHER AWAY",
+   "curiosity_mechanism": "surprising_claim",
+   "tension": "bigger but farther?",
+   "target_emotion": "curiosity",
+   "first_frame_concept": "giant moon over rooftops with a distance arrow from the street",
+   "first_frame_subject": "giant moon",
+   "first_frame_text": "FARTHER AWAY",
+   "visual_action": "arrow draws at 0.25 s",
+   "payoff_connection": "about 1.5 percent farther at the horizon (f2)",
+   "why_it_should_work": "a fact that sounds backwards",
+   "first_frame_svg": "svg/h2_frame0.svg",
+   "fact_ids": [
+    "f2"
+   ]
+  },
+  {
+   "hook_id": "h3",
+   "spoken_text": "Hold up a fingernail: does the giant Moon shrink?",
+   "visual_concept": "giant moon over rooftops, an index finger rising beside it",
+   "on_screen_text": "DOES IT SHRINK?",
+   "curiosity_mechanism": "direct_challenge",
+   "tension": "a test the viewer can do",
+   "target_emotion": "playful",
+   "first_frame_concept": "giant moon over rooftops, an index finger rising beside it",
+   "first_frame_subject": "giant moon",
+   "first_frame_text": "DOES IT SHRINK?",
+   "visual_action": "finger slides up at 0.25 s",
+   "payoff_connection": "at arm's length a fingernail covers about the same amount of Moon, low or high (f7)",
+   "why_it_should_work": "invites the viewer to try",
+   "first_frame_svg": "svg/h3_frame0.svg",
+   "fact_ids": [
+    "f7"
+   ]
+  },
+  {
+   "hook_id": "h4",
+   "spoken_text": "Same Moon, two sizes. Which one is real?",
+   "visual_concept": "giant low moon beside a small high moon over rooftops",
+   "on_screen_text": "SAME MOON?",
+   "curiosity_mechanism": "visual_mystery",
+   "tension": "two sizes of one thing",
+   "target_emotion": "intrigue",
+   "first_frame_concept": "giant low moon beside a small high moon over rooftops",
+   "first_frame_subject": "two moons",
+   "first_frame_text": "SAME MOON?",
+   "visual_action": "small moon pops at 0.25 s",
+   "payoff_connection": "same width in photos (f1); the brain makes the difference (f3)",
+   "why_it_should_work": "a puzzle in one picture",
+   "first_frame_svg": "svg/h4_frame0.svg",
+   "fact_ids": [
+    "f1",
+    "f3"
+   ]
+  },
+  {
+   "hook_id": "h5",
+   "spoken_text": "Your camera says the Moon never grew.",
+   "visual_concept": "giant moon over rooftops with a camera pointing at it",
+   "on_screen_text": "CAMERA SAYS SAME",
+   "curiosity_mechanism": "contradiction",
+   "tension": "camera vs eyes",
+   "target_emotion": "surprise",
+   "first_frame_concept": "giant moon over rooftops with a camera pointing at it",
+   "first_frame_subject": "giant moon",
+   "first_frame_text": "CAMERA SAYS SAME",
+   "visual_action": "camera pops at 0.2 s",
+   "payoff_connection": "photos show the same width (f1)",
+   "why_it_should_work": "pits a measurement against perception",
+   "first_frame_svg": "svg/h5_frame0.svg",
+   "fact_ids": [
+    "f1"
+   ]
+  }
+ ]
+}

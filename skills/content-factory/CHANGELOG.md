@@ -1,5 +1,53 @@
 # Changelog — Autonomous Content Factory
 
+## v3.0.0 — 2026-10-07 · Phase 5 (productionization + validation) · contract cf/1.1 · FINAL — development frozen
+### Production hardening
+- **Deterministic narration**: Kokoro runs a fresh ONNX session seeded from (text, voice, speed, language) per
+  sentence (`onnxruntime.set_seed` only applies at session creation). Same audio across processes, sentence order,
+  cache state and CPU count; TTS cache v2. Before, alpha8 replays were byte-identical only because of the TTS cache.
+- **Deterministic encodes**: every x264 encode uses `-threads 4` (`cf_common.X264_THREADS`); x264's automatic thread
+  count changed the bitstream between 2- and 4-CPU machines.
+- **Run lock**: mutating factory commands hold `RUN/.lock` (refused with LOCKED while held); a lock left by a dead
+  process (same host) or older than 12 h is taken over; `factory.py unlock --run R --note` is audited.
+  cta_history.json is updated under a shared lock.
+- **No silent failures**: `record` keeps each envelope's sha256 and refuses a re-record (STALE_RESULT); a media stage
+  that writes no (or an old) result becomes INTERNAL.NO_RESULT; crash envelopes get their video id from their path;
+  `media` reports media_budget_exhausted.
+- **Capabilities**: doctor names missing system libraries with a fix (libEGL.so.1 → apt libegl1); setup_env enforces
+  the `==` pins and exits 3 when a core capability (tts.kokoro, video.render, subtitles.burn, visual.doodle) is
+  missing; `init` refuses such a machine (CAPABILITY_MISSING) instead of rendering silently with a fallback;
+  VIS.DOODLE_FALLBACK (major) when a doodle scene was rendered by a fallback.
+- **Operator reset**: `reset` re-opens the stage *and every later stage* with a fresh retry budget (before, a stage
+  that had used 2 attempts on the old content escalated on its first failure on the new content).
+- **Reviewer routing**: an LLM/human judgment may mark `hook_strength` with `fix_stage` HOOK or VISUAL_PLAN; before, a
+  spoken-hook problem the heuristic did not mark was routed to a first-scene redesign that cannot change words.
+- **CTA history**: a video re-made after a reset is checked against other videos' CTAs only, and re-packaging
+  replaces (or, without a CTA, drops) its own entry.
+- **Package judgment coverage**: an external package judgment must cover every candidate (JUDGMENT.MISSING); an entry
+  with `packet_manifest_sha256` must match the current packet (JUDGMENT.STALE).
+- **Nothing ships after a failed PACKAGE**: the package folder is regenerated per attempt, the run zip is written only
+  when every video passed (a stale zip is removed), and the video leaves `packaged`. Before, `package --zip` zipped the
+  previous attempt's deliverables although PKG.PACKAGING had failed.
+- Automation templates: daily cron (05:45 UTC), libegl1, memory import/export around each run, exit code preserved.
+### Content memory and anti-repetition
+- Memory is on by default (`runs/factory.db`, `CF_DB` or `--db`; `--no-db` opts out). `init` checks the topic against
+  every earlier run topic and video title (`cfdb.py topic-check`: trigram cosine ≥0.6, ≥2 shared stems, or
+  containment; calibrated on 12 repeats / 15 new topics, all correct) and refuses TOPIC_REPEATED unless
+  `--allow-similar-topic REASON` (recorded). Memory errors stop the run (MEMORY_FAILED).
+- The hook engine never selects a hook the channel already used (jaccard ≥0.6 with history; HOOK.NOT_REPEATED).
+- `package` ingests the run automatically (idempotent). `memory/dump.json` ships the channel memory (8 runs).
+### Fixed during Phase 5
+- Paper transition crashed at its first frame (`setColorFilter(None)`), latent since alpha8.
+- PKG.MEDIA_METADATA_CLEAN false positive: the drive-path pattern matched random bytes in about 1 video in 7.
+- Package claim numbers matched substrings ("2" in "200"); whole numbers only now.
+- `cfdb ingest-run` crashed on hook-engine-v2 runs; title now taken from the shipped package.
+- A crash envelope without a video id made `record` raise and `media` loop silently.
+### Validation
+- 3 fresh videos (flamingos, Moon illusion, leap years), RESEARCH → PACKAGE through the factory gates; packet-only
+  external judge on every final video and package set; seed replays byte-identical across CPU sets and caches.
+  See PHASE_5_REPORT.md.
+- Tests: test_phase5 (27), test_reviewer +1 (11).
+
 ## v2.0.0-alpha8 — 2026-10-07 · Phase 4 (packaging) · contract cf/1.1
 ### Added
 - Packaging engine (`content-factory/scripts/package_engine.py`, contract `package_candidates`): ≥3 complete packages

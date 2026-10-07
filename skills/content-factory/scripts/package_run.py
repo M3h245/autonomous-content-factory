@@ -3,7 +3,7 @@
 
   package_run.py --run RUN --video v01 [--video v02 ...] [--zip] [--attempt N]
 
-Per video (RUN/package/<vid>/): final.mp4 (provenance metadata embedded), cover.jpg, captions.srt/.vtt,
+Per video (RUN/package/<vid>/): final.mp4 (standard metadata only; provenance stays in provenance.json), cover.jpg, captions.srt/.vtt,
 metadata.json (YouTube/TikTok/Instagram fields + AI-label flags), provenance.json, CREDITS.txt, qa_report.json,
 contact_sheet.jpg, result.json. Run level: run_summary.md, checksums.sha256 and optionally <run>_package.zip.
 Nothing is published: uploading stays a human decision.
@@ -19,9 +19,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.append(str(Path(__file__).resolve().parents[2] / "asset-provenance" / "scripts"))   # media_clean
-from cf_common import (StageResult, emit, ffmpeg_bin, fix, read_json, run as sh, sha256_file,  # noqa: E402
+from cf_common import (StageResult, emit, ffmpeg_bin, fix, log, read_json, run as sh, sha256_file,  # noqa: E402
                        skill_script, stage_main, write_json)
-from factory import PASSED, vp  # noqa: E402
+from factory import PASSED, FileLock, vp  # noqa: E402
 
 YT_TITLE, YT_DESC, SOCIAL_CAP = 100, 5000, 2200
 NEED = ["final.mp4", "cover.jpg", "captions.srt", "captions.vtt", "metadata.json", "provenance.json", "CREDITS.txt", "qa_report.json"]
@@ -93,6 +93,8 @@ def run_packaging(run: Path, vid: str, p: dict, sr: StageResult) -> dict | None:
 
 def package_video(run: Path, vid: str, attempt: int) -> dict:
     p, out = vp(run, vid), run / "package" / vid
+    if out.exists():            # Phase 5: every file here is regenerated; a failed attempt must not leave the last
+        shutil.rmtree(out)      # attempt's final.mp4 / PUBLISHING_PACKAGE.md looking ready to upload
     out.mkdir(parents=True, exist_ok=True)
     sr = StageResult("PACKAGE", "content-factory", vid, attempt=attempt)
     qa = read_json(p["result"]["QA"]) if p["result"]["QA"].exists() else {"status": "missing"}
@@ -110,11 +112,12 @@ def package_video(run: Path, vid: str, attempt: int) -> dict:
         for flag, f in (("--dossier", run / "research" / "dossier.json"), ("--license-map", run / "licenses.json")):
             if f.exists():
                 cmd += [flag, f]
-        subprocess.run([str(c) for c in cmd], capture_output=True, text=True)
+        pp = subprocess.run([str(c) for c in cmd], capture_output=True, text=True)
         pr = read_json(prov_res) if prov_res.exists() else {"status": "missing", "errors": []}
         hard = [e for e in pr.get("errors", []) if e["severity"] != "minor"]
         if sr.check("PKG.PROVENANCE", pr["status"] in PASSED, "blocking",
-                    "; ".join(e["message"][:140] for e in hard) or f"provenance {pr['status']}",
+                    "; ".join(e["message"][:140] for e in hard) or f"provenance {pr['status']} (exit {pp.returncode}): "
+                    f"{(pp.stderr or pp.stdout)[-300:]}",
                     fix=(hard[0].get("fix_route") if hard else None) or fix("PACKAGE", "retry")):
             prov, script = read_json(out / "provenance.json"), read_json(p["script"])
             for src in (p["subs"] / "captions.srt", p["subs"] / "captions.vtt", p["qa"] / "contact_sheet.jpg", p["qa"] / "qa_report.json"):
@@ -207,13 +210,17 @@ def package_video(run: Path, vid: str, attempt: int) -> dict:
             sr.check("PKG.DISCLOSURE", all(x is not None for x in labels) and disc["description_line"] in desc, "blocking",
                      f"platform AI labels {labels}; disclosure line in the YouTube description: {disc['description_line'] in desc}",
                      fix=fix("PACKAGE", "retry"))
-            if cta.get("needed") and not sr.failed:            # remember only CTAs of videos that really ship
-                hist_p = run.parent / "cta_history.json"
-                hist = read_json(hist_p) if hist_p.exists() else {"ctas": []}
-                txt = " ".join(x for x in (cta.get("spoken", ""), cta.get("on_screen", "")) if x)
-                if not any(h["run"] == run.name and h["video_id"] == vid for h in hist["ctas"]):
-                    hist["ctas"].append({"run": run.name, "video_id": vid, "type": cta.get("type"), "text": txt})
-                    write_json(hist_p, hist)
+            hist_p = run.parent / "cta_history.json"
+            if not sr.failed and (cta.get("needed") or hist_p.exists()):   # remember only CTAs of videos that really ship
+                with FileLock(run.parent / ".cta_history.lock", f"PACKAGE {run.name}/{vid}", wait_s=60):  # shared by runs
+                    hist = read_json(hist_p) if hist_p.exists() else {"ctas": []}
+                    # a video re-made after a reset replaces its own entry (Phase 5) instead of keeping the old CTA
+                    kept = [h for h in hist["ctas"] if not (h["run"] == run.name and h["video_id"] == vid)]
+                    if cta.get("needed"):
+                        kept.append({"run": run.name, "video_id": vid, "type": cta.get("type"),
+                                     "text": " ".join(x for x in (cta.get("spoken", ""), cta.get("on_screen", "")) if x)})
+                    if kept != hist["ctas"]:
+                        write_json(hist_p, {**hist, "ctas": kept})
             need = NEED + (NEED_V4 if sel else [])
             missing = [n for n in need if not (out / n).exists()]
             sr.check("PKG.FILES", not missing, "blocking", f"missing {missing}", fix=fix("PACKAGE", "retry"))
@@ -280,9 +287,14 @@ def main_cmd(a) -> int:
     files = sorted(f for f in (run / "package").rglob("*") if f.is_file() and f.name != "checksums.sha256")
     (run / "package" / "checksums.sha256").write_text(
         "".join(f"{sha256_file(f)}  {f.relative_to(run / 'package').as_posix()}\n" for f in files), encoding="utf-8")
-    if a.zip:
-        shutil.make_archive(str(run / f"{run.name}_package"), "zip", run / "package")
-    return 0 if all(r["status"] in PASSED for _, r in results) else 2
+    ok = all(r["status"] in PASSED for _, r in results)
+    zp = run / f"{run.name}_package.zip"
+    if a.zip and ok:
+        shutil.make_archive(str(zp.with_suffix("")), "zip", run / "package")
+    elif a.zip:                 # Phase 5: never ship (or keep) a run zip while a video's package failed
+        zp.unlink(missing_ok=True)
+        log(f"no {zp.name}: package failed for {[v for v, r in results if r['status'] not in PASSED]}")
+    return 0 if ok else 2
 
 
 def main() -> int:

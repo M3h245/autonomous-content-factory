@@ -32,8 +32,10 @@ from cf_common import ffmpeg_bin  # noqa: E402
 
 ALLOWED_FORMAT_TAGS = {"major_brand", "minor_version", "compatible_brands"}
 ALLOWED_STREAM_TAGS = {"language": None, "handler_name": {"VideoHandler", "SoundHandler"}, "vendor_id": {"[0][0][0][0]"}}
-# printable strings (≥5 chars) that must never appear anywhere in a publishable file
-DENY = [r"/home/", r"/mnt/", r"/tmp/", r"/Users/", r"[A-Za-z]:\\\\", r"cf-provenance", r"provenance", r"checkpoint",
+# printable strings (≥5 chars) that must never appear anywhere in a publishable file. Phase 5: a Windows path must look
+# like one (drive, a name, a separator, a name; single or JSON-escaped backslashes) — the old 4-byte drive-letter
+# pattern matched random bytes in the compressed video (~1 file in 7), and a deterministic encode can never clear that.
+DENY = [r"/home/", r"/mnt/", r"/tmp/", r"/Users/", r"[A-Za-z]:\\{1,2}[\w .-]{3,}\\{1,2}[\w.-]{2,}", r"cf-provenance", r"provenance", r"checkpoint",
         r"v\d+\.\d+\.\d+-alpha", r"kokoro", r"onnx", r"Claude", r"anthropic", r"x264 - core", r"Lav[fc]\d", r"pipeline",
         r"debug", r"run-video", r"hook_id", r"factory", r"storyboard", r"manifest"]
 DENY_RE = re.compile("|".join(DENY), re.IGNORECASE)

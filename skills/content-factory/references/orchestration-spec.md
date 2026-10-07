@@ -84,7 +84,8 @@ on failed envelope E for stage S (video V):
   regenerations[V] += 1; log REGENERATION event
 ```
 Escalation freezes only that video; others continue. `factory.py reset --stage … --note …` is the audited human
-override after fixing a root cause (fresh retry budget, downstream stale).
+override after fixing a root cause (fresh retry budget for the stage and, since v3.0.0, for every later stage, which
+becomes stale). `factory.py unlock --run … --note …` is the audited override for a held run lock.
 
 ## 7. Human checkpoints
 Publishing/uploads · escalated videos · `PROV.MODEL_LICENSE` · YouTube audience ("made for kids") · providing any credential.
@@ -162,3 +163,18 @@ VIDEO fix-route audio parameters now reach render_video (media_cmds pass-through
 | PKG.MEDIA_METADATA_CLEAN · PKG.FINAL_DECODES · PKG.DISCLOSURE | PACKAGE | blocking | PACKAGE retry / VIDEO rerender |
 New runs carry `cta_engine: v1` (a CTA decision is required); older runs replay unchanged. cta_history.json (runs
 directory) records the CTAs of packaged videos.
+
+## Phase 5 additions (v3.0.0 — final)
+| Code | Stage | Severity | Fix route |
+|---|---|---|---|
+| CAPABILITY_MISSING | factory init | refusal (no run created) | install what doctor's `fix` names (e.g. apt libegl1), rerun setup_env |
+| TOPIC_REPEATED | factory init | refusal (no run created) | new topic, or `--allow-similar-topic REASON` (recorded in brief.memory and an INIT event) |
+| MEMORY_FAILED | factory init | refusal | fix the database path/permissions; `--no-db` only for tests |
+| LOCKED | any mutating command | refusal | wait; a dead holder's lock is taken over automatically; `unlock --note` (audited) |
+| STALE_RESULT | factory record | refusal | the envelope was already recorded; run the stage again |
+| INTERNAL.NO_RESULT | media chain | blocking (error envelope) | the stage wrote no (or an old) result.json; rerun |
+| HOOK.NOT_REPEATED | HOOK | minor (candidate not selectable) | HOOK regenerate with a new strategy |
+| VIS.DOODLE_FALLBACK | VISUAL_PLAN (rendered) | major | VISUAL_PLAN repair_scene (or install the doodle engine) |
+Memory is on by default: `init` checks the topic, the HOOK gate gets `--history`, `package` ingests the run. A reviewer
+judgment may add `fix_stage` (HOOK | VISUAL_PLAN) to `hook_strength`; the route follows it. The SCRIPT and VIDEO gates
+see the CTAs of other videos only (`videos/<v>/cta_history.others.json`).
