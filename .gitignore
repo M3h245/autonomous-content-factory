@@ -42,6 +42,10 @@ tts-cache/
 # ---- generated runs, fixtures rendered by tests, temp output ----
 runs/
 runs_*/
+# Idea Engine: batch folders and your ideas files stay local (the example is tracked)
+/batches/
+/input/*.json
+!/input/ideas.example.json
 /out/
 /outputs/
 /scratch/

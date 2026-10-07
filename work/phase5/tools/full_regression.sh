@@ -11,6 +11,7 @@ run test_phase2_hooks python3 -m unittest content-factory.tests.test_phase2_hook
 run test_phase4 python3 -m unittest content-factory.tests.test_phase4
 run test_phase5 python3 -m unittest content-factory.tests.test_phase5
 run test_final_media_metadata python3 -m unittest content-factory.tests.test_final_media_metadata
+run test_idea_engine python3 -m unittest content-factory.tests.test_idea_engine
 run smoke_v2 python3 content-factory/tests/smoke_v2.py
 for k in A B C D; do run bad_$k python3 -m unittest content-factory/tests/test_bad_videos.py -k $k; done
 cd $R/fixtures/v1_regression && V=$O/v1 && rm -rf $V && mkdir -p $V && sed "s#{FIXTURE}#$PWD#g" video/storyboard.timed.template.json > $V/timed.json

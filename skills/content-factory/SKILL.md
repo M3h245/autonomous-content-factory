@@ -67,6 +67,16 @@ media ≈ 3–5 min per 30 s video on one vCPU (TTS ≈ 1.25× real time, render
 Phase 5 (4 vCPU): 5–14 min of stage time per video including retries, 20–35 min elapsed per authoring round; a
 strict judge needs 1–3 rounds. Videos of one run and runs in one folder are isolated (tested); one process per run.
 
+### Idea batch (≈50 ideas → 5 videos, no LLM API)
+`python $CF/content-factory/scripts/idea_engine.py run --ideas-file input/ideas.json --output-dir D:\shorts` validates a
+hand-written or chat-pasted ideas file, filters it against this factory's memory (init's topic rule, SELECTION's
+novelty rule), scores and ranks every candidate with explained reasons, and picks 5 different ones. It then creates
+one run per winner with `init` and drives each through the existing unattended `claude -p "/content-factory …"`
+driver. Only packages that V3.0.1 itself recorded as passed are copied to the output folder. `select` stops after the
+manifest; `produce --batch …` resumes. Format, prompt template, scoring and troubleshooting:
+`references/idea-engine.md`. When asked to continue a run "prepared by the idea batch", loop on that existing run
+(`next --run RUN`) and never `init` a new one.
+
 ## Quality gates
 Every stage ends with a gate script that writes a `result.json` envelope; nothing proceeds unless it passed.
 Table of gates, error codes and fix routes: `references/orchestration-spec.md`.
@@ -85,7 +95,7 @@ Publishing; escalations; `PROV.MODEL_LICENSE` confirmations; YouTube "made for k
 
 ## Scripts
 `setup_env.py` (bootstrap) · `doctor.py` (capability probe) · `factory.py` (state machine) · `package_run.py`
-(FINAL PACKAGE) · `cf_common.py` (contract library shared by every skill — keep all copies byte-identical;
+(FINAL PACKAGE) · `idea_engine.py` (ideas file → 5 runs → packages; above the state machine, changes nothing in it) · `cf_common.py` (contract library shared by every skill — keep all copies byte-identical;
 `python cf_common.py export-schemas DIR`) · `tests/` (unit, regression, reviewer, bad-video and factory-integration tests; see PROJECT_STATE.md) · `tests/smoke_v2.py` (end-to-end media-chain test with a corrupted-file
 negative test; no TTS/network, ≈1 min — run it after any engine change).
 
@@ -94,7 +104,9 @@ negative test; no TTS/network, ≈1 min — run it after any engine change).
 - `references/capability-matrix.md` — what is verified available, where, and with which credential
 - `references/external-services.md` — APIs: auth, inputs, outputs, role, limits
 - `references/platform-policies.md` — formats, safe areas, AI-label and monetization rules (dated)
-- `schemas/*.schema.json` — JSON Schemas of every inter-skill artifact
+- `references/idea-engine.md` — the Idea Engine: ideas-file format, ChatGPT/Claude prompt template, memory filter,
+  scoring, selection, hand-off, outputs, troubleshooting
+- `schemas/*.schema.json` — JSON Schemas of every inter-skill artifact (`idea_candidates.schema.json`: the ideas file)
 
 ## Dependencies
 Python 3.10+, ffmpeg with libass/HarfBuzz/FriBidi, the 15 sibling skills; v2 doodle engine: skia-python, svgelements

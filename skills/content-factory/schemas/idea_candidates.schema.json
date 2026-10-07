@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cf-idea-candidates/1.0",
+  "title": "Idea Engine input — topic candidates for one batch (input/ideas.json)",
+  "description": "About 50 candidates written by hand or pasted from ChatGPT/Claude. Only id and topic are required. No scores: the engine scores every candidate itself. The engine (idea_engine.py validate) checks more than this schema: unique ids, non-empty topics, the exact problems per candidate.",
+  "type": "object",
+  "required": ["version", "candidates"],
+  "properties": {
+    "version": {"type": "string", "enum": ["1.0"]},
+    "generated_at": {"type": ["string", "null"], "description": "optional, informational (e.g. 2026-10-07)"},
+    "generator": {"type": ["string", "null"], "description": "optional, informational: who wrote the list (\"chatgpt\", \"claude\", \"me\", a future generator)"},
+    "candidates": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 500,
+      "items": {
+        "type": "object",
+        "required": ["id", "topic"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[A-Za-z0-9._-]{1,64}$",
+                 "description": "unique in the file: letters, digits, '.', '_' or '-'"},
+          "topic": {"type": "string", "minLength": 1, "maxLength": 200, "pattern": "\\S",
+                    "description": "one question or claim the video answers, e.g. \"Why do cats purr?\""},
+          "angle": {"type": ["string", "null"], "maxLength": 400,
+                    "description": "the specific answer or mechanism the video pays off (one or two sentences)"},
+          "hook": {"type": ["string", "null"], "maxLength": 200,
+                   "description": "optional hook idea; V3.0.1's hook engine writes and selects the real hook"},
+          "visual": {"type": ["string", "null"], "maxLength": 300,
+                     "description": "optional visual concept: one concrete thing to draw"},
+          "category": {"type": ["string", "null"], "maxLength": 40,
+                       "description": "free text; suggested: curiosity, science, everyday, psychology, technology, nature, human_body, space, history, engineering, strange_facts, counterintuitive, discoveries, common_questions, visual_phenomena"},
+          "source_hint": {"type": ["string", "array", "null"], "items": {"type": "string"},
+                          "description": "optional URL(s) or source names; never treated as verified"},
+          "notes": {"type": ["string", "null"], "maxLength": 400, "description": "optional, ignored by scoring"}
+        }
+      }
+    }
+  }
+}

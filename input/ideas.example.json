@@ -1,0 +1,37 @@
+{
+  "version": "1.0",
+  "generated_at": "2026-10-07",
+  "generator": "example",
+  "candidates": [
+    {
+      "id": "metal-feels-colder",
+      "topic": "Why does metal feel colder than wood at the same temperature?",
+      "angle": "Metal pulls heat out of your hand faster, so your skin reads the speed of heat loss, not the temperature.",
+      "hook": "Metal isn't colder than wood. It's faster.",
+      "visual": "a hand touching a metal bar and a wooden plank, with heat arrows leaving the hand",
+      "category": "counterintuitive",
+      "source_hint": "https://www.nist.gov/",
+      "notes": null
+    },
+    {
+      "id": "stale-bread",
+      "topic": "Why does bread go stale?",
+      "angle": "Stale bread isn't dry: the starch recrystallises, which is why toasting it brings the softness back.",
+      "hook": "Stale bread isn't dry. It's crystallised.",
+      "visual": "a bread slice with starch crystals forming inside",
+      "category": "everyday",
+      "source_hint": null,
+      "notes": null
+    },
+    {
+      "id": "blue-snow-shadows",
+      "topic": "Why are shadows blue in the snow?",
+      "angle": "Shadows are lit by the blue sky instead of the sun, so on white snow they turn visibly blue.",
+      "hook": "Shadows on snow are blue, not grey.",
+      "visual": "blue shadows of trees on white snow",
+      "category": "visual_phenomena",
+      "source_hint": ["https://www.metoffice.gov.uk/"],
+      "notes": "three entries only: a real file has about 50"
+    }
+  ]
+}

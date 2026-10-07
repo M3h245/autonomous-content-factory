@@ -4,3 +4,15 @@ Short-form video production system built as Claude skills. Status, rules and ope
 
 **v3.0.0 — final release; development is frozen.** Post-freeze patch v3.0.1 (owner decision): the publishable media
 carry only playback metadata and no embedded AI-label metadata; platform disclosure is done by hand at upload. Phases 0–5 are complete. The factory runs brief → publishing package through gated stages, with deterministic narration and renders, content memory, and an independent reviewer. Nothing is ever published automatically.
+
+**Production system: V3.0.1 + Idea Engine 1.0.** The Idea Engine takes about 50 ideas from a file (written by hand
+or pasted from ChatGPT/Claude; no LLM API, no API key). It filters them against the factory's memory, scores and
+ranks them with stated reasons, and picks 5 different topics. It then has V3.0.1 produce one isolated run per topic
+and copies each verified package to your output folder:
+
+```
+python3 .claude/skills/content-factory/scripts/idea_engine.py run --ideas-file input/ideas.json --output-dir /path/to/hdd
+```
+Run it from a project folder set up with `skills/automation-engineering/scripts/install_skills.py --project <folder>`.
+
+Format, prompt template and details: [references/idea-engine.md](skills/content-factory/references/idea-engine.md).

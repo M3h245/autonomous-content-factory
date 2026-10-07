@@ -1,9 +1,16 @@
-# PROJECT STATE — Autonomous Content Factory · v3.0.1 (frozen; post-freeze patch of v3.0.0) · 2026-10-07
+# PROJECT STATE — Autonomous Content Factory · v3.0.1 + Idea Engine 1.0 (frozen; post-freeze additions to v3.0.0) · 2026-10-07
 
 ## Status
-**Development is frozen at v3.0.0** (tag `v3.0.0`). One post-freeze patch was applied by owner decision: **v3.0.1**,
-final-media metadata only (CHANGELOG). Phases 0–5 are complete. Only operation remains: making videos with the factory,
-uploading by hand, and logging analytics. Any further change is a new decision by the owner.
+**Development is frozen at v3.0.0** (tag `v3.0.0`). Two post-freeze additions were made by owner decision, both
+untagged (CHANGELOG):
+- **v3.0.1**: final-media metadata only.
+- **Idea Engine 1.0**: a batch layer above V3.0.1 (`content-factory/scripts/idea_engine.py`). It takes an ideas file,
+  filters it against memory, scores and selects 5 topics, and hands them to 5 V3.0.1 runs, which are packaged and
+  copied to the output folder. No LLM API is needed, and the production engine is unchanged.
+
+**The production system is V3.0.1 + Idea Engine 1.0.** Phases 0–5 are complete. Only operation remains: making
+videos (one topic with `factory.py`, or five from an ideas file with `idea_engine.py`), uploading by hand, and
+logging analytics. Any further change is a new decision by the owner.
 
 ## Where things are
 - `checkpoints/v3.0.0/` (in git):
@@ -44,6 +51,7 @@ python3 -m unittest content-factory.tests.test_phase2_hooks
 python3 -m unittest content-factory.tests.test_phase4
 python3 -m unittest content-factory.tests.test_phase5
 python3 -m unittest content-factory.tests.test_final_media_metadata
+python3 -m unittest content-factory.tests.test_idea_engine
 python3 content-factory/tests/smoke_v2.py
 python3 -m unittest content-factory/tests/test_bad_videos.py -k A   (then B, C, D)
 ```
@@ -63,6 +71,15 @@ For the v1 regression, see CLOUD_HANDOFF.md. To replay a run: `python3 work/phas
   - masking and clean-ending gates
 - Phase 3.5: every new video records a CTA decision; CTAs are never in the hook, before the payoff or after the loop
   line; the ending stands without the CTA; CTAs are relevant and not repeated across videos.
+- Idea Engine 1.0:
+  - the ideas file is the only input (no LLM API);
+  - memory is the factory's own database and rules;
+  - research before selection is an offline screen, never claimed as verified;
+  - scoring is deterministic with stated reasons;
+  - exactly 5 diverse winners, or a clear failure;
+  - each winner becomes its own V3.0.1 run through `init`;
+  - a package is delivered only when V3.0.1 recorded it as passed;
+  - nothing is overwritten.
 - Publishable media carry only the metadata playback needs, and **no embedded AI-label or disclosure metadata**
   (v3.0.1, PKG.MEDIA_METADATA_CLEAN). Platform AI labels are still mandatory in metadata.json (PKG.DISCLOSURE); the
   owner sets them by hand at upload.
@@ -78,5 +95,8 @@ For the v1 regression, see CLOUD_HANDOFF.md. To replay a run: `python3 work/phas
     a fallback.
 
 ## Next
-None — frozen. Operation: `factory.py init --topic …` → loop `next` → `package --zip` → upload by hand →
-`cfdb.py publish` / content-analytics.
+None — frozen. Operation, either:
+- `factory.py init --topic …` → loop `next` → `package --zip`; or
+- `idea_engine.py run --ideas-file input/ideas.json --output-dir <HDD>` → read `batches/<id>/report.md`.
+
+Then upload by hand → `cfdb.py publish` / content-analytics.

@@ -1,5 +1,46 @@
 # Changelog — Autonomous Content Factory
 
+## Idea Engine 1.0 — 2026-10-07 · batch layer above V3.0.1 (owner decision) · production engine unchanged (VERSION 3.0.1) · untagged
+Scope: a new entry point, `scripts/idea_engine.py`. No stage, gate, reviewer, packaging, memory or media-cleaning code
+changed; V3.0.1 stays the source of truth for how every video is made.
+### Added
+- `idea_engine.py validate | select | run | produce`. It turns `input/ideas.json` (≈50 candidates written by hand or
+  pasted from a ChatGPT/Claude chat; no LLM API, no API key, no network) into:
+  - validation that lists every problem;
+  - a memory filter with the factory's own database and rules: init's topic repetition, SELECTION's novelty below
+    0.35, and the hook engine's used-hook rule;
+  - an offline research screen that is explicitly marked "web research: not performed";
+  - nine-component deterministic scoring with reasons;
+  - diversity selection of exactly 5 (MMR, never two on one subject), failing with TOO_FEW_CANDIDATES rather than
+    inventing topics;
+  - `batches/<id>/` with candidates, filtered, research, ranking, selected, manifest (self-hashed), slots and report
+    (json + md).
+- Hand-off through V3.0.1's own interfaces:
+  - one `factory.py init` per winner, in `batches/<id>/runs/`, with the shared memory and the angle/hook/visual as
+    constraints;
+  - the existing unattended driver (`claude -p "/content-factory …"`, run_factory flags) per run, or `--driver-cmd`.
+  A run is delivered only when V3.0.1 recorded it as packaged (PACKAGE passed, result sha256 matches). It is then
+  copied with its checksums verified to `--output-dir`/`CF_OUTPUT_DIR`, never overwriting.
+- Stale protection:
+  - a reused ideas file, an edited manifest or a changed input.json is refused;
+  - a missing memory is refused;
+  - foreign, missing or older runs are refused, and a package result that differs from the recorded one is not
+    delivered;
+  - one producer per batch (FileLock); driver logs are kept per attempt.
+- `schemas/idea_candidates.schema.json`, `input/ideas.example.json`, and `references/idea-engine.md` (format,
+  copy-ready prompt template, commands, outputs, scoring, selection, hand-off, troubleshooting, limitations).
+- `env.example`: `CF_OUTPUT_DIR`, `CF_BATCHES_DIR`. `.gitignore`: `batches/`, `input/*.json` (except the example).
+### Tests
+- test_idea_engine (31). It covers:
+  - the 50-candidate file; malformed JSON; missing candidates; empty topic; duplicate ids;
+  - memory rejection, including rephrasings and a never-made idea, agreeing with `factory.py init`;
+  - explained ranking; diversity; exactly 5; fewer than 5 fails; determinism; the manifest;
+  - hand-off to 5 real `init` runs; isolated runs and outputs;
+  - a failed run that leaves the others byte-identical and is retried alone;
+  - produced topics remembered (database and dump.json);
+  - stale manifest, input, memory, run, package and output protection; the batch lock.
+  Production is a stub that runs the real `factory.py package --zip` on the packaged-run fixture.
+
 ## v3.0.1 — 2026-10-07 · post-freeze patch (owner decision): final-media metadata only · contract cf/1.1 · untagged
 Scope: the metadata inside the publishable media files (final.mp4, thumbnail/cover and preview JPEGs). Content
 generation, QA, reviewer, memory, packaging selection and the platform-compliance gates are unchanged.

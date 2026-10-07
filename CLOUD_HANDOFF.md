@@ -8,12 +8,16 @@ Read this file first, then `PROJECT_STATE.md`. Written 2026-10-07; updated at th
 | Phases complete | **0, 1, 2, 3, 3.5, 4, 5** |
 | Authoritative release | **`v3.0.0`** (git tag `v3.0.0`, `checkpoints/v3.0.0/`) |
 | Post-freeze patch | **v3.0.1** (owner decision, untagged): final-media metadata only — see CHANGELOG; `skills/content-factory/VERSION` |
+| Batch layer | **Idea Engine 1.0** (owner decision, untagged): `scripts/idea_engine.py` — ideas file → memory filter → scoring → 5 diverse topics → 5 V3.0.1 runs → packages; `references/idea-engine.md` |
+| Production system | **V3.0.1 + Idea Engine 1.0** |
 | Phase 5 (productionization + validation) | **PASS WITH LIMITATIONS** — `skills/content-factory/PHASE_5_REPORT.md` |
 | Remaining development | **none — development is FROZEN** (no features, phases or optimisation) |
 
 Rules for any later session:
 1. **Development is frozen.** Do not change code, gates or policies. Operating the factory (making videos, packaging,
-   logging analytics) is allowed; a change needs a new, explicit decision by the owner.
+   logging analytics, running idea batches) is allowed; a change needs a new, explicit decision by the owner. The Idea
+   Engine sits above V3.0.1 and calls only its interfaces (`factory.py init`, the unattended `claude -p` driver,
+   `package`); it never changes how a video is made.
 2. Never publish anything automatically; the owner uploads by hand.
 3. Never expose or commit secrets. API keys are read from environment variables only. `ANTHROPIC_API_KEY` is
    recommended for production QA; without it the reviewer falls back to its generous heuristic judge.
@@ -29,6 +33,11 @@ Rules for any later session:
 2. Optional: verify with the test commands below.
 3. `factory.py init --topic "…" --runs-dir runs`. Memory is on: `runs/factory.db`; import `memory/dump.json` first on a
    new machine. Then loop on `next`, then `package --zip`, then upload by hand.
+4. Or, five topics at once: write about 50 ideas into `input/ideas.json` (by hand, or paste them from ChatGPT/Claude with the
+   prompt in `skills/content-factory/references/idea-engine.md`; no API key). Then, from a project folder set up with
+   `install_skills.py --project <folder>` (Claude Code finds skills only under `.claude/skills/`), run
+   `python3 .claude/skills/content-factory/scripts/idea_engine.py run --ideas-file input/ideas.json --output-dir <HDD folder>`.
+   Read `batches/<id>/report.md`, then upload by hand. `validate` and `select` also work from this repository.
 
 ## Repository layout
 ```
@@ -48,7 +57,8 @@ fixtures/phase4_package_run/<knuckle run>   trimmed finished run for test_phase4
 fixtures/v1_regression/     v1 Ken Burns + karaoke regression inputs (storyboard paths templated: {FIXTURE})
 seeds/<run>/                authored inputs of the 2 Phase 4 and 3 Phase 5 runs (dossier, ideas, hooks+SVG, script
                             variants, storyboard+SVG, package candidates+SVG, external judgment) for deterministic replay
-memory/dump.json            channel memory (every topic made so far; imported by the automation templates)
+memory/dump.json            channel memory (every topic made so far; imported by the automation templates and the Idea Engine)
+input/ideas.example.json    Idea Engine input format (your own input/ideas.json and batches/ stay local, git-ignored)
 work/phase4/, work/phase5/  operator scripts (authoring helpers per topic, replay driver, seed builder)
 ```
 
@@ -107,6 +117,7 @@ python3 -m unittest content-factory.tests.test_phase4              # ~2.5 min; u
                                                                    # (override: CF_PACKAGE_RUN=<finished run>)
 python3 -m unittest content-factory.tests.test_phase5              # ~3 min; Phase 5 production + memory tests
 python3 -m unittest content-factory.tests.test_final_media_metadata  # ~15 s; v3.0.1 final-media metadata policy
+python3 -m unittest content-factory.tests.test_idea_engine         # ~80 s; Idea Engine (5 real factory.py init runs)
 python3 content-factory/tests/smoke_v2.py                          # ~1 min
 python3 -m unittest content-factory/tests/test_bad_videos.py -k A  # then -k B (4 tests, ~7 min), -k C, -k D
 ```
