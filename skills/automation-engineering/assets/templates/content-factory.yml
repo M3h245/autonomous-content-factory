@@ -1,0 +1,45 @@
+# GitHub Actions: produce a batch on demand or weekly; the package zip is uploaded as a workflow artifact.
+# Secrets: ANTHROPIC_API_KEY. Variables: TOPIC_DEFAULT. Copy the 16 skill folders into ./skills/ of the repo.
+name: content-factory
+on:
+  workflow_dispatch:
+    inputs:
+      topic: { description: "Topic", required: true }
+      count: { description: "Number of videos", default: "3" }
+  schedule:
+    - cron: "0 6 * * 1"
+jobs:
+  produce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    env:
+      CF_RUNS_DIR: ${{ github.workspace }}/runs
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - name: System packages
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg tesseract-ocr librsvg2-bin
+      - name: Claude Code, skills, models
+        run: |
+          npm install -g @anthropic-ai/claude-code
+          python skills/automation-engineering/scripts/install_skills.py --project .
+          python .claude/skills/content-factory/scripts/setup_env.py --out capabilities.json
+      - name: Produce videos
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TOPIC: ${{ github.event.inputs.topic || vars.TOPIC_DEFAULT }}
+          COUNT: ${{ github.event.inputs.count || '3' }}
+        run: |
+          claude -p "/content-factory Create $COUNT high-quality short videos on $TOPIC. Unattended run: never publish; stop after FINAL PACKAGE." \
+            --permission-mode acceptEdits --permission-prompts none \
+            --allowedTools "Bash,Read,Write,Edit,WebSearch,WebFetch" --output-format json > run-log.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: content-package
+          path: |
+            runs/**/*_package.zip
+            run-log.json

@@ -1,0 +1,325 @@
+{
+  "kind": "script",
+  "thresholds": {
+    "message_clarity": 4,
+    "pacing_retention": 4,
+    "payoff_coherence": 4,
+    "hook_strength": 4,
+    "cta_quality": 4,
+    "cta_naturalness": 4,
+    "cta_relevance": 4,
+    "cta_retention_risk": 4
+  },
+  "results": [
+    {
+      "candidate": "A",
+      "verdict": "PASS",
+      "judge": "heuristic",
+      "scores": {
+        "message_clarity": {
+          "score": 4,
+          "anchor": "strong",
+          "evidence": [
+            "✓ speech rate 2.3-3.3 w/s (calibrated): 2.79",
+            "✓ avg sentence ≤16 words: 6.8",
+            "✓ no sentence >24 words: max 13",
+            "✓ claims mapped to the dossier (≥3): ['f1', 'f2', 'f3', 'f4', 'f5']",
+            "✓ ending returns to the hook: callback"
+          ],
+          "explanation": "",
+          "judge": "heuristic",
+          "cap": 4
+        },
+        "pacing_retention": {
+          "score": 4,
+          "anchor": "strong",
+          "evidence": [
+            "✓ estimated duration in window: 32.4s in 20.0-45.0",
+            "✓ explanation starts by 8.0 s: 2.96",
+            "✓ varied rhythm (sentence-length spread ≥3 words): σ=3.3",
+            "✓ at least one punchy line (≤6 words): min 2",
+            "✓ no sentence >24 words: max 13"
+          ],
+          "explanation": "",
+          "judge": "heuristic",
+          "cap": 4
+        },
+        "payoff_coherence": {
+          "score": 4,
+          "anchor": "strong",
+          "evidence": [
+            "✓ promised facts are delivered: promised ['f1'], used ['f1', 'f2', 'f3', 'f4', 'f5']",
+            "✓ the body addresses the hook's tension: hook words reappear in the body",
+            "✓ ending calls back to the hook: yes",
+            "✓ title words are spoken: What actually pops when you crack your knuckles",
+            "✓ hook not repeated verbatim mid-script: checked"
+          ],
+          "explanation": "",
+          "judge": "heuristic",
+          "cap": 4
+        },
+        "hook_strength": {
+          "score": 4,
+          "anchor": "strong",
+          "evidence": [
+            "✓ hook-stage score (line + frame 0): 4",
+            "✓ opening is the selected hook: yes",
+            "✓ first line ≤3.2 s: 2.64s",
+            "✓ no generic intro: checked"
+          ],
+          "explanation": "",
+          "judge": "heuristic",
+          "cap": 4,
+          "note": "carries the independent hook-stage score"
+        },
+        "cta_quality": {
+          "score": 4,
+          "anchor": "strong",
+          "evidence": [
+            "✓ single ask (one action verb): 0 ask verbs",
+            "✓ action matches the CTA type: type comment",
+            "✓ short (≤12 words): 4 words",
+            "✓ no stock outro phrase: none",
+            "✓ on-screen text ≤6 words: 'DO YOU CRACK YOURS?'"
+          ],
+          "explanation": "",
+          "judge": "heuristic",
+          "cap": 4
+        },
+        "cta_naturalness": {
+          "score": 4,
+          "anchor": "strong",
+          "evidence": [
+            "✓ integrated into the content or a question: placement integrated",
+            "✓ tied to the content words: ['crack']",
+            "✓ no pushy phrasing: none",
+            "✓ brief when spoken (≤2.2 s): 1.09s"
+          ],
+          "explanation": "",
+          "judge": "heuristic",
+          "cap": 4
+        },
+        "cta_relevance": {
+          "score": 4,
+          "anchor": "strong",
+          "evidence": [
+            "✓ points at the video's subject (title words): ['crack']",
+            "✓ ≥1 content word shared with the body: ['crack']",
+            "✓ not a stock phrase: none"
+          ],
+          "explanation": "",
+          "judge": "heuristic",
+          "cap": 4
+        },
+        "cta_retention_risk": {
+          "score": 5,
+          "anchor": "publish-ready",
+          "evidence": [
+            "✓ gate not_in_hook: passed",
+            "✓ gate after_payoff: passed",
+            "✓ gate duration: passed",
+            "✓ gate ending: passed",
+            "✓ gate standalone_ending: passed",
+            "✓ CTA in the last quarter of the video: starts 30.8s of 32.4s"
+          ],
+          "explanation": "",
+          "judge": "heuristic",
+          "cap": 5,
+          "note": "5 = no measurable risk to hook, payoff or ending"
+        }
+      },
+      "objective": [],
+      "failures": [],
+      "packet_manifest_sha256": "1af94f448d4239636f9b4d724e8ea36a6dbb83fa81496233b98e3081941efb59",
+      "boundary": {
+        "process": {
+          "pid": 3357,
+          "ppid": 3355,
+          "argv": [
+            "/home/claude/cf2/video-quality-assurance/scripts/reviewer.py",
+            "review-script",
+            "--packets",
+            "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/script/variants/A/packet",
+            "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/script/variants/B/packet",
+            "--out",
+            "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/script/review"
+          ]
+        },
+        "judge": "heuristic",
+        "packet_root": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/script/variants/A/packet",
+        "manifest_sha256": "1af94f448d4239636f9b4d724e8ea36a6dbb83fa81496233b98e3081941efb59",
+        "files_read": [
+          {
+            "name": "text/transcript.json",
+            "sha256": "05512bcddaad93a7"
+          },
+          {
+            "name": "text/hook.json",
+            "sha256": "10f5648baba55a3e"
+          },
+          {
+            "name": "text/publish.json",
+            "sha256": "f21020d97f20a56e"
+          },
+          {
+            "name": "evidence/claims.json",
+            "sha256": "2344a54346062263"
+          },
+          {
+            "name": "measurements/script_checks.json",
+            "sha256": "af8157c262f53088"
+          },
+          {
+            "name": "measurements/hook_review.json",
+            "sha256": "e731afc2016492a6"
+          },
+          {
+            "name": "text/cta.json",
+            "sha256": "82ec8cb8beab2b26"
+          }
+        ],
+        "refused": [],
+        "authoring_modules_loaded": [],
+        "authoring_files_in_packet": [],
+        "statement": "reviewer read only hash-verified packet files; no authoring module, state or reasoning available"
+      }
+    },
+    {
+      "candidate": "B",
+      "verdict": "FAIL",
+      "judge": "heuristic",
+      "scores": {
+        "message_clarity": {
+          "score": 3,
+          "anchor": "acceptable",
+          "evidence": [
+            "✓ speech rate 2.3-3.3 w/s (calibrated): 2.92",
+            "✓ avg sentence ≤16 words: 5.7",
+            "✓ no sentence >24 words: max 11",
+            "✓ claims mapped to the dossier (≥3): ['f1', 'f2', 'f5', 'f6', 'f7']",
+            "✗ ending returns to the hook: none"
+          ],
+          "explanation": "Not met: ending returns to the hook (none)",
+          "judge": "heuristic",
+          "cap": 4
+        },
+        "pacing_retention": {
+          "score": 3,
+          "anchor": "acceptable",
+          "evidence": [
+            "✓ estimated duration in window: 24.3s in 20.0-45.0",
+            "✓ explanation starts by 8.0 s: 2.96",
+            "✗ varied rhythm (sentence-length spread ≥3 words): σ=2.3",
+            "✓ at least one punchy line (≤6 words): min 3",
+            "✓ no sentence >24 words: max 11"
+          ],
+          "explanation": "Not met: varied rhythm (sentence-length spread ≥3 words) (σ=2.3)",
+          "judge": "heuristic",
+          "cap": 4
+        },
+        "payoff_coherence": {
+          "score": 3,
+          "anchor": "acceptable",
+          "evidence": [
+            "✓ promised facts are delivered: promised ['f1'], used ['f1', 'f2', 'f5', 'f6', 'f7']",
+            "✓ the body addresses the hook's tension: hook words reappear in the body",
+            "✗ ending calls back to the hook: no",
+            "✓ title words are spoken: What actually pops when you crack your knuckles",
+            "✓ hook not repeated verbatim mid-script: checked"
+          ],
+          "explanation": "Not met: ending calls back to the hook (no)",
+          "judge": "heuristic",
+          "cap": 4
+        },
+        "hook_strength": {
+          "score": 4,
+          "anchor": "strong",
+          "evidence": [
+            "✓ hook-stage score (line + frame 0): 4",
+            "✓ opening is the selected hook: yes",
+            "✓ first line ≤3.2 s: 2.64s",
+            "✓ no generic intro: checked"
+          ],
+          "explanation": "",
+          "judge": "heuristic",
+          "cap": 4,
+          "note": "carries the independent hook-stage score"
+        }
+      },
+      "objective": [],
+      "failures": [
+        {
+          "id": "message_clarity",
+          "score": 3,
+          "threshold": 4,
+          "evidence": "Not met: ending returns to the hook (none)"
+        },
+        {
+          "id": "pacing_retention",
+          "score": 3,
+          "threshold": 4,
+          "evidence": "Not met: varied rhythm (sentence-length spread ≥3 words) (σ=2.3)"
+        },
+        {
+          "id": "payoff_coherence",
+          "score": 3,
+          "threshold": 4,
+          "evidence": "Not met: ending calls back to the hook (no)"
+        }
+      ],
+      "packet_manifest_sha256": "e49922e080d3c6113063d9bbfadaad420841feb54aff077b27f84b86ef7e6434",
+      "boundary": {
+        "process": {
+          "pid": 3357,
+          "ppid": 3355,
+          "argv": [
+            "/home/claude/cf2/video-quality-assurance/scripts/reviewer.py",
+            "review-script",
+            "--packets",
+            "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/script/variants/A/packet",
+            "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/script/variants/B/packet",
+            "--out",
+            "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/script/review"
+          ]
+        },
+        "judge": "heuristic",
+        "packet_root": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/script/variants/B/packet",
+        "manifest_sha256": "e49922e080d3c6113063d9bbfadaad420841feb54aff077b27f84b86ef7e6434",
+        "files_read": [
+          {
+            "name": "text/transcript.json",
+            "sha256": "893cd5ef72a21afb"
+          },
+          {
+            "name": "text/hook.json",
+            "sha256": "10f5648baba55a3e"
+          },
+          {
+            "name": "text/publish.json",
+            "sha256": "f21020d97f20a56e"
+          },
+          {
+            "name": "evidence/claims.json",
+            "sha256": "c6fd5e8708818b01"
+          },
+          {
+            "name": "measurements/script_checks.json",
+            "sha256": "8a074d99637769ba"
+          },
+          {
+            "name": "measurements/hook_review.json",
+            "sha256": "e731afc2016492a6"
+          },
+          {
+            "name": "text/cta.json",
+            "sha256": "f67ea8b5d57a1ed4"
+          }
+        ],
+        "refused": [],
+        "authoring_modules_loaded": [],
+        "authoring_files_in_packet": [],
+        "statement": "reviewer read only hash-verified packet files; no authoring module, state or reasoning available"
+      }
+    }
+  ]
+}

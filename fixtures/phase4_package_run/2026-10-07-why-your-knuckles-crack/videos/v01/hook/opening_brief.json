@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "visual_mode": "doodle",
+  "future_modes": [
+    "doodle",
+    "motion_graphics",
+    "diagram",
+    "kinetic_typography",
+    "generated_visual",
+    "character",
+    "hybrid"
+  ],
+  "note": "Interface for the Visual Plan; Phase 3 may route the opening to another mode without changing these fields.",
+  "opening_beat": {
+    "hook_id": "h3",
+    "spoken_line": "What actually pops when you crack your knuckles?",
+    "on_screen_text": "WHAT POPS?",
+    "subject": "fist",
+    "subject_size_target": {
+      "min_height_ratio": 0.35,
+      "measured": 0.365
+    },
+    "composition": "fist with a burst and a question mark",
+    "first_frame_text": "WHAT POPS?",
+    "first_frame_state": {
+      "elements_at_t0": 2,
+      "texts_at_t0": [
+        "WHAT POPS?"
+      ],
+      "subject_bbox": [
+        272,
+        350,
+        710,
+        1050
+      ]
+    },
+    "visual_action": "burst at 0.2 s, question mark at 0.4 s",
+    "emphasis_words": [
+      "pops"
+    ],
+    "camera_intent": "hold frame 0 (no drift needed to read it); punch-in only on an emphasis word, centred, never cropping text",
+    "safe_margin": {
+      "x_ratio": 0.05,
+      "y_ratio": 0.05,
+      "text_min_px": 60
+    },
+    "frame0_svg": "svg/h3_frame0.svg",
+    "hook_exception": null,
+    "review_scores": {
+      "hook_strength": 4,
+      "first_frame_clarity": 5,
+      "visual_verbal_sync": 5
+    },
+    "estimated_hook_s": 2.64,
+    "visual_intent": "frame 0: big fist, pop burst, question mark, WHAT POPS?"
+  }
+}

@@ -1,0 +1,299 @@
+{
+  "contract": "cf/1.1",
+  "stage": "VISUAL_PLAN",
+  "skill": "visual-storyboarding",
+  "run_id": null,
+  "video_id": "v01",
+  "attempt": 3,
+  "status": "passed",
+  "started_at": "2026-10-07T06:37:25+00:00",
+  "finished_at": "2026-10-07T06:37:35+00:00",
+  "inputs": [
+    {
+      "role": "storyboard",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/storyboard.json",
+      "sha256": "6da553da0546cb733deee1141f2dec23eb1a69fff72a8e1dba327b9aacf546de"
+    },
+    {
+      "role": "script",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/script/script.json",
+      "sha256": "4973be8f50303a3c8fc2fae89dc97755a89471c41a5e58ed0b12d6a82e2da81f"
+    },
+    {
+      "role": "voice_timing",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/audio/timing.json",
+      "sha256": "5decb4d424bc23b35a675d93ff7cff45264da15b0a69ca73bbb1d853272da07b"
+    }
+  ],
+  "outputs": [
+    {
+      "role": "storyboard_rendered",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/storyboard.rendered.json",
+      "media_type": "application/json",
+      "sha256": "2cf3a7beba9016f7e3299ea16fe9bbbec59dfcac6cbc160e7db4868aacb10b4a"
+    }
+  ],
+  "gate": {
+    "checks": [
+      {
+        "id": "VIS.BEAT_COVERAGE",
+        "passed": true,
+        "severity": "blocking",
+        "value": null,
+        "threshold": null,
+        "message": "scenes must cover every beat once, in order (scenes=['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7'], script=['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7'])"
+      },
+      {
+        "id": "VIS.ASSETS_RENDERED",
+        "passed": true,
+        "severity": "blocking",
+        "value": [],
+        "threshold": [],
+        "message": "unrendered scenes: []"
+      },
+      {
+        "id": "VIS.NOT_BLANK",
+        "passed": true,
+        "severity": "blocking",
+        "value": [],
+        "threshold": [],
+        "message": "near-uniform images: []"
+      },
+      {
+        "id": "VIS.VISUAL_VARIETY",
+        "passed": true,
+        "severity": "major",
+        "value": 7,
+        "threshold": 5,
+        "message": "7 distinct visuals, need ≥ 5"
+      },
+      {
+        "id": "VIS.NO_BAKED_TEXT",
+        "passed": true,
+        "severity": "minor",
+        "value": null,
+        "threshold": null,
+        "message": "SVG scenes containing <text> (clash with captions): []"
+      },
+      {
+        "id": "VIS.CUE_WORDS",
+        "passed": true,
+        "severity": "major",
+        "value": 0,
+        "threshold": 0,
+        "message": "word cues that never get spoken: {}"
+      },
+      {
+        "id": "VIS.DOODLE_LINT",
+        "passed": true,
+        "severity": "minor",
+        "value": 0,
+        "threshold": 0,
+        "message": "doodle scene warnings: {}"
+      },
+      {
+        "id": "VIS.DOODLE_ACTORS",
+        "passed": true,
+        "severity": "major",
+        "value": [],
+        "threshold": [],
+        "message": "scenes with fewer than 3 animated elements: []"
+      },
+      {
+        "id": "VIS.LAYOUT_REPEAT",
+        "passed": true,
+        "severity": "major",
+        "value": null,
+        "threshold": null,
+        "message": "layouts {'s1': 'hero', 's2': 'hero', 's3': 'split', 's4': 'hero', 's5': 'panel', 's6': 'text_led', 's7': 'hero'}; repeated >2 in a row: []"
+      },
+      {
+        "id": "VIS.SUBJECT_REPEAT",
+        "passed": true,
+        "severity": "major",
+        "value": 0.17,
+        "threshold": 0.5,
+        "message": "main subject per scene {'s1': 'fist', 's2': 'joint', 's3': 'openj', 's4': 'mri', 's5': 'rect1', 's6': 'f1', 's7': 'fist'}; same subject 17% of non-loop scenes; >2 in a row: []"
+      },
+      {
+        "id": "VIS.SUBJECT_SIZE",
+        "passed": true,
+        "severity": "minor",
+        "value": null,
+        "threshold": null,
+        "message": "main subject smaller than 25 % of frame height: []"
+      },
+      {
+        "id": "VIS.DEAD_SPACE",
+        "passed": true,
+        "severity": "major",
+        "value": null,
+        "threshold": null,
+        "message": "content zone mostly empty (≥5 of 9 cells): []"
+      },
+      {
+        "id": "VIS.OPENING_DENSITY",
+        "passed": true,
+        "severity": "major",
+        "value": 2,
+        "threshold": 2,
+        "message": "2 visual event(s) in the first 1.5 s (needs ≥2 to carry the hook)"
+      },
+      {
+        "id": "VIS.OPENING",
+        "passed": true,
+        "severity": "major",
+        "value": null,
+        "threshold": null,
+        "message": "frame 0 honours the opening brief"
+      },
+      {
+        "id": "VIS.HOOK_AT_ZERO",
+        "passed": true,
+        "severity": "major",
+        "value": null,
+        "threshold": null,
+        "message": "the first scene must show its hook subject at t=0 (data-in=\"none\" or data-at=\"0\")"
+      }
+    ],
+    "passed": true
+  },
+  "errors": [],
+  "metrics": {
+    "cue_timing": "narration",
+    "composition": {
+      "s1": {
+        "layout": "hero",
+        "main_subject": "fist",
+        "main_height_ratio": 0.365,
+        "empty_cells": 1
+      },
+      "s2": {
+        "layout": "hero",
+        "main_subject": "joint",
+        "main_height_ratio": 0.349,
+        "empty_cells": 0
+      },
+      "s3": {
+        "layout": "split",
+        "main_subject": "openj",
+        "main_height_ratio": 0.344,
+        "empty_cells": 0
+      },
+      "s4": {
+        "layout": "hero",
+        "main_subject": "mri",
+        "main_height_ratio": 0.359,
+        "empty_cells": 0
+      },
+      "s5": {
+        "layout": "panel",
+        "main_subject": "rect1",
+        "main_height_ratio": 0.292,
+        "empty_cells": 2
+      },
+      "s6": {
+        "layout": "text_led",
+        "main_subject": "f1",
+        "main_height_ratio": 0.164,
+        "empty_cells": 3
+      },
+      "s7": {
+        "layout": "hero",
+        "main_subject": "fist",
+        "main_height_ratio": 0.365,
+        "empty_cells": 1
+      }
+    },
+    "scenes": 7,
+    "backends_used": {
+      "doodle": 7
+    }
+  },
+  "provenance": [
+    {
+      "source": "generated",
+      "license": "self-generated",
+      "generator": {
+        "tool": "doodle engine (Claude-authored SVG)",
+        "renderer": "skia-python"
+      },
+      "contains_text": true,
+      "realistic": false,
+      "role": "visual:s1",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/assets/s1.png"
+    },
+    {
+      "source": "generated",
+      "license": "self-generated",
+      "generator": {
+        "tool": "doodle engine (Claude-authored SVG)",
+        "renderer": "skia-python"
+      },
+      "contains_text": true,
+      "realistic": false,
+      "role": "visual:s2",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/assets/s2.png"
+    },
+    {
+      "source": "generated",
+      "license": "self-generated",
+      "generator": {
+        "tool": "doodle engine (Claude-authored SVG)",
+        "renderer": "skia-python"
+      },
+      "contains_text": true,
+      "realistic": false,
+      "role": "visual:s3",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/assets/s3.png"
+    },
+    {
+      "source": "generated",
+      "license": "self-generated",
+      "generator": {
+        "tool": "doodle engine (Claude-authored SVG)",
+        "renderer": "skia-python"
+      },
+      "contains_text": true,
+      "realistic": false,
+      "role": "visual:s4",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/assets/s4.png"
+    },
+    {
+      "source": "generated",
+      "license": "self-generated",
+      "generator": {
+        "tool": "doodle engine (Claude-authored SVG)",
+        "renderer": "skia-python"
+      },
+      "contains_text": true,
+      "realistic": false,
+      "role": "visual:s5",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/assets/s5.png"
+    },
+    {
+      "source": "generated",
+      "license": "self-generated",
+      "generator": {
+        "tool": "doodle engine (Claude-authored SVG)",
+        "renderer": "skia-python"
+      },
+      "contains_text": true,
+      "realistic": false,
+      "role": "visual:s6",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/assets/s6.png"
+    },
+    {
+      "source": "generated",
+      "license": "self-generated",
+      "generator": {
+        "tool": "doodle engine (Claude-authored SVG)",
+        "renderer": "skia-python"
+      },
+      "contains_text": true,
+      "realistic": false,
+      "role": "visual:s7",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/assets/s7.png"
+    }
+  ]
+}

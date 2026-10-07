@@ -1,0 +1,57 @@
+{
+  "contract": "cf/1.1",
+  "stage": "SELECTION",
+  "skill": "content-strategy",
+  "run_id": null,
+  "video_id": null,
+  "attempt": 1,
+  "status": "passed",
+  "started_at": "2026-10-07T06:29:31+00:00",
+  "finished_at": "2026-10-07T06:29:31+00:00",
+  "inputs": [],
+  "outputs": [
+    {
+      "role": "selection",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/selection/selection.json",
+      "media_type": "application/json",
+      "sha256": "8bb7a14384f899b299ca4831e0a4b5dcc5da5a77a0a95a8fb4e55964926f961f"
+    }
+  ],
+  "gate": {
+    "checks": [
+      {
+        "id": "SEL.COUNT",
+        "passed": true,
+        "severity": "blocking",
+        "value": 1,
+        "threshold": 1,
+        "message": "selected 1/1"
+      },
+      {
+        "id": "SEL.FORMAT_VARIETY",
+        "passed": true,
+        "severity": "major",
+        "value": null,
+        "threshold": null,
+        "message": "formats in batch ['myth-bust']"
+      },
+      {
+        "id": "SEL.NOVELTY",
+        "passed": true,
+        "severity": "minor",
+        "value": null,
+        "threshold": null,
+        "message": "some picks are close to past videos"
+      }
+    ],
+    "passed": true
+  },
+  "errors": [],
+  "metrics": {
+    "selected": [
+      "i1"
+    ],
+    "rejected": 2
+  },
+  "provenance": []
+}

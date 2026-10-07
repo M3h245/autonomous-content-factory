@@ -1,0 +1,90 @@
+{
+ "checks": [
+  {
+   "id": "SCRIPT.HOOK_IS_OPENING",
+   "passed": true,
+   "severity": "blocking",
+   "evidence": "beat 1 = 'What actually pops when you crack your knuckles?' vs hook 'What actually pops when you crack your knuckles?'"
+  },
+  {
+   "id": "SCRIPT.HOOK_ON_SCREEN",
+   "passed": true,
+   "severity": "minor",
+   "evidence": "'WHAT POPS?' vs 'WHAT POPS?'"
+  },
+  {
+   "id": "SCRIPT.NO_GENERIC_INTRO",
+   "passed": true,
+   "severity": "major",
+   "evidence": "beats 2-3 checked for throat-clearing"
+  },
+  {
+   "id": "SCRIPT.FAST_EXPLANATION",
+   "passed": true,
+   "severity": "major",
+   "evidence": "first evidence beat starts at 2.96s"
+  },
+  {
+   "id": "SCRIPT.PROMISE_PAID",
+   "passed": true,
+   "severity": "blocking",
+   "evidence": "hook promises ['f1']; body uses ['f1', 'f2', 'f5', 'f6', 'f7']"
+  },
+  {
+   "id": "SCRIPT.CLAIMS_TRACEABLE",
+   "passed": true,
+   "severity": "blocking",
+   "evidence": "unknown claim ids []"
+  },
+  {
+   "id": "SCRIPT.HOOK_NOT_REPEATED",
+   "passed": true,
+   "severity": "major",
+   "evidence": "hook repeated in []"
+  },
+  {
+   "id": "SCRIPT.DURATION",
+   "passed": true,
+   "severity": "major",
+   "evidence": "calibrated estimate 24.29s (window 20.0-45.0, 0.5 s margin)"
+  },
+  {
+   "id": "SCRIPT.VISUAL_INTENT",
+   "passed": true,
+   "severity": "major",
+   "evidence": "beats without visual intent: []"
+  },
+  {
+   "id": "SCRIPT.PAUSES",
+   "passed": true,
+   "severity": "major",
+   "evidence": "pauses on ['b5']; out of range []"
+  },
+  {
+   "id": "CTA.SCHEMA",
+   "passed": true,
+   "severity": "blocking",
+   "evidence": "valid"
+  },
+  {
+   "id": "CTA.SINGLE",
+   "passed": true,
+   "severity": "major",
+   "evidence": "at most one CTA, declared"
+  },
+  {
+   "id": "CTA.DECIDED",
+   "passed": true,
+   "severity": "major",
+   "evidence": "every variant records a CTA decision (needed true/false + reason)"
+  }
+ ],
+ "explanation_start_s": 2.96,
+ "hook_is_opening": true,
+ "hook_repeated_mid": false,
+ "rhythm": {
+  "sentences": 11,
+  "mean_words": 5.73,
+  "std_words": 2.26
+ }
+}

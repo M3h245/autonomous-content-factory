@@ -1,0 +1,106 @@
+{
+ "video_id": "v01",
+ "language": "en",
+ "topic": "Why your knuckles crack",
+ "candidates": [
+  {
+   "hook_id": "h1",
+   "spoken_text": "That knuckle crack? A bubble. Not bones.",
+   "visual_concept": "Big cross-section of a finger joint; a bubble pops into the gap.",
+   "on_screen_text": "NOT BONES",
+   "curiosity_mechanism": "misconception_reversal",
+   "tension": "everyone pictures bones grinding",
+   "target_emotion": "surprise",
+   "first_frame_concept": "joint cross-section with a bubble appearing in the gap",
+   "first_frame_subject": "finger joint",
+   "first_frame_text": "NOT BONES",
+   "visual_action": "bubble pops into the joint gap at 0.2 s",
+   "payoff_connection": "the crack is a gas cavity forming (f1, f3)",
+   "why_it_should_work": "replaces the bone image in the viewer's head with a bubble, instantly",
+   "first_frame_svg": "svg/h1_frame0.svg",
+   "fact_ids": [
+    "f1",
+    "f3"
+   ]
+  },
+  {
+   "hook_id": "h2",
+   "spoken_text": "Scientists filmed a knuckle crack inside an MRI.",
+   "visual_concept": "An MRI ring around a finger joint.",
+   "on_screen_text": "MRI FOOTAGE",
+   "curiosity_mechanism": "surprising_claim",
+   "tension": "a silly habit studied with a hospital scanner",
+   "target_emotion": "intrigue",
+   "first_frame_concept": "MRI ring framing a joint",
+   "first_frame_subject": "MRI ring with joint",
+   "first_frame_text": "MRI FOOTAGE",
+   "visual_action": "sparkle at 0.15 s, bubble at 0.3 s",
+   "payoff_connection": "the MRI showed the cavity forming (f2, f1)",
+   "why_it_should_work": "unexpected seriousness",
+   "first_frame_svg": "svg/h2_frame0.svg",
+   "fact_ids": [
+    "f2",
+    "f1"
+   ]
+  },
+  {
+   "hook_id": "h3",
+   "spoken_text": "What actually pops when you crack your knuckles?",
+   "visual_concept": "A big fist with a pop burst and a question mark.",
+   "on_screen_text": "WHAT POPS?",
+   "curiosity_mechanism": "question",
+   "tension": "a sound everyone makes but nobody can explain",
+   "target_emotion": "curiosity",
+   "first_frame_concept": "fist with a burst and a question mark",
+   "first_frame_subject": "fist",
+   "first_frame_text": "WHAT POPS?",
+   "visual_action": "burst at 0.2 s, question mark at 0.4 s",
+   "payoff_connection": "a gas cavity forming (f1)",
+   "why_it_should_work": "universal experience",
+   "first_frame_svg": "svg/h3_frame0.svg",
+   "fact_ids": [
+    "f1"
+   ]
+  },
+  {
+   "hook_id": "h4",
+   "spoken_text": "One hand cracked for sixty years. One never did.",
+   "visual_concept": "Two fists side by side, only the left one popping.",
+   "on_screen_text": "60 YEARS",
+   "curiosity_mechanism": "visual_mystery",
+   "tension": "a lifelong experiment with a hidden result",
+   "target_emotion": "curiosity",
+   "first_frame_concept": "left fist popping, right fist still",
+   "first_frame_subject": "two fists",
+   "first_frame_text": "60 YEARS",
+   "visual_action": "pops on the left fist at 0.15 and 0.35 s",
+   "payoff_connection": "no arthritis difference (f6, f5)",
+   "why_it_should_work": "viewers want the result of the experiment",
+   "first_frame_svg": "svg/h4_frame0.svg",
+   "fact_ids": [
+    "f6",
+    "f5"
+   ]
+  },
+  {
+   "hook_id": "h5",
+   "spoken_text": "Cracking knuckles causes arthritis? Not really.",
+   "visual_concept": "A fist next to a big cross over the arthritis myth.",
+   "on_screen_text": "ARTHRITIS?",
+   "curiosity_mechanism": "direct_challenge",
+   "tension": "the warning everyone heard as a kid",
+   "target_emotion": "relief",
+   "first_frame_concept": "fist and a cross drawn beside it",
+   "first_frame_subject": "fist",
+   "first_frame_text": "ARTHRITIS?",
+   "visual_action": "cross draws at 0.25 s",
+   "payoff_connection": "studies find no link (f5, f6)",
+   "why_it_should_work": "answers a common worry",
+   "first_frame_svg": "svg/h5_frame0.svg",
+   "fact_ids": [
+    "f5",
+    "f6"
+   ]
+  }
+ ]
+}

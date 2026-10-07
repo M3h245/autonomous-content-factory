@@ -1,0 +1,650 @@
+{
+  "contract": "cf/1.1",
+  "stage": "VIDEO",
+  "skill": "video-production",
+  "run_id": null,
+  "video_id": "v01",
+  "attempt": 3,
+  "status": "passed",
+  "started_at": "2026-10-07T06:37:36+00:00",
+  "finished_at": "2026-10-07T06:38:55+00:00",
+  "inputs": [
+    {
+      "role": "storyboard_timed",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/video/storyboard.timed.json",
+      "sha256": "4b0b1f8a5dcaf9ebac0da50ee34d36b7eb6105d09446fcc04c35df5afcfcb766"
+    },
+    {
+      "role": "voice_audio",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/audio/voice.wav",
+      "sha256": "1e81db7fd1854dcfb0d7847b7b29bd4f624c54e3d4618d7fbb7e46dbb76a51ae"
+    },
+    {
+      "role": "voice_timing",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/audio/timing.json",
+      "sha256": "5decb4d424bc23b35a675d93ff7cff45264da15b0a69ca73bbb1d853272da07b"
+    }
+  ],
+  "outputs": [
+    {
+      "role": "visual_audit",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/video/work/visual_audit.json",
+      "media_type": "application/json",
+      "sha256": "de8cf94bfe51d8df33984427bd5a2fbc9ed8b4c795f0304fe4e379f9d6b2d832"
+    },
+    {
+      "role": "cta_report",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/video/work/cta_report.json",
+      "media_type": "application/json",
+      "sha256": "8a6923a376e8ba520d6badfef6f3c111aca170c4e00cd804d6c63144e506d099"
+    },
+    {
+      "role": "mix_report",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/video/work/mix_report.json",
+      "media_type": "application/json",
+      "sha256": "a343e48af908d10b98237bde6570282a803d989053d4ade322deac85c10b19e9"
+    },
+    {
+      "role": "video_nosubs",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/video/video_nosubs.mp4",
+      "media_type": "video/mp4",
+      "sha256": "b5075c1bf1233657c010dc3b033a4b9cf1af606355ee64351fd93e48a6fc371c"
+    }
+  ],
+  "gate": {
+    "checks": [
+      {
+        "id": "VID.DECODE_OK",
+        "passed": true,
+        "severity": "blocking",
+        "value": 0,
+        "threshold": 0,
+        "message": "every packet decodes"
+      },
+      {
+        "id": "VID.SPEC",
+        "passed": true,
+        "severity": "blocking",
+        "value": null,
+        "threshold": null,
+        "message": "1080x1920 yuv420p h264"
+      },
+      {
+        "id": "VID.DURATION_MATCH",
+        "passed": true,
+        "severity": "blocking",
+        "value": 32.521,
+        "threshold": 32.521,
+        "message": "video 32.52s vs voice 32.52s"
+      },
+      {
+        "id": "VID.LOUDNESS",
+        "passed": true,
+        "severity": "major",
+        "value": -14.1,
+        "threshold": [
+          -15.5,
+          -12.5
+        ],
+        "message": "integrated -14.1 LUFS"
+      },
+      {
+        "id": "VID.PEAK",
+        "passed": true,
+        "severity": "major",
+        "value": -1.4,
+        "threshold": -0.5,
+        "message": "sample peak -1.4 dBFS"
+      },
+      {
+        "id": "VID.MOTION_GAP",
+        "passed": true,
+        "severity": "major",
+        "value": 2.22,
+        "threshold": 3.5,
+        "message": "longest stretch without a new visual event 2.22s (starting 7.76s)"
+      },
+      {
+        "id": "VID.FIRST_FRAME",
+        "passed": true,
+        "severity": "major",
+        "value": 0.0271,
+        "threshold": 0.004,
+        "message": "ink coverage of frame 0 = 2.71% (hook needs a drawing at t=0)"
+      },
+      {
+        "id": "VID.EMPTY_FRAMES",
+        "passed": true,
+        "severity": "major",
+        "value": 0.25,
+        "threshold": 0.5,
+        "message": "longest blank-paper stretch 0.25s (starting 17.75s)"
+      },
+      {
+        "id": "VID.SCENE_LINT",
+        "passed": true,
+        "severity": "minor",
+        "value": 0,
+        "threshold": 0,
+        "message": "scenes parsed cleanly"
+      },
+      {
+        "id": "VID.MEANING_CROPPED",
+        "passed": true,
+        "severity": "blocking",
+        "value": 0,
+        "threshold": 0,
+        "message": "on-screen text loses a negation (meaning flips): []"
+      },
+      {
+        "id": "VID.TEXT_CROPPED",
+        "passed": true,
+        "severity": "major",
+        "value": 0,
+        "threshold": 0,
+        "message": "labels partly/fully outside the frame: []"
+      },
+      {
+        "id": "VID.CONTAINMENT",
+        "passed": true,
+        "severity": "blocking",
+        "value": 0,
+        "threshold": 0,
+        "message": "elements escape their data-inside container: []"
+      },
+      {
+        "id": "VID.OFF_CANVAS",
+        "passed": true,
+        "severity": "major",
+        "value": 0,
+        "threshold": 0,
+        "message": "settled elements outside the frame (not during a punch-in): []"
+      },
+      {
+        "id": "VID.OVERHANG",
+        "passed": true,
+        "severity": "major",
+        "value": 0,
+        "threshold": 0,
+        "message": "lines run past the edge of the shape they sit on: []"
+      },
+      {
+        "id": "VID.TEXT_SMALL",
+        "passed": true,
+        "severity": "minor",
+        "value": 0,
+        "threshold": 0,
+        "message": "labels smaller than 34 px on screen: []"
+      },
+      {
+        "id": "VID.OPENING_DENSITY",
+        "passed": true,
+        "severity": "major",
+        "value": 2,
+        "threshold": 2,
+        "message": "2 visual event(s) in the first 1.5 s"
+      },
+      {
+        "id": "VID.PACING_CADENCE",
+        "passed": true,
+        "severity": "major",
+        "value": 2.22,
+        "threshold": 3.0,
+        "message": "longest gap 2.22s (≤3.0), median 0.93s (≤1.8)"
+      },
+      {
+        "id": "VID.LOOP_ENDING",
+        "passed": true,
+        "severity": "major",
+        "value": 0.982,
+        "threshold": 0.85,
+        "message": "loop beat: last scene subject matches the opening; last/first frame similarity 0.98"
+      },
+      {
+        "id": "VID.FIRST_FRAME_SUBJECT",
+        "passed": true,
+        "severity": "major",
+        "value": 0.365,
+        "threshold": 0.35,
+        "message": "main subject 36% of frame height at t=0"
+      },
+      {
+        "id": "VID.HOOK_TEXT_T0",
+        "passed": true,
+        "severity": "major",
+        "value": 0,
+        "threshold": 0,
+        "message": "frame-0 text not fully readable: []"
+      },
+      {
+        "id": "VID.FIRST_EVENT",
+        "passed": true,
+        "severity": "major",
+        "value": 0.2,
+        "threshold": 0.5,
+        "message": "first visual event at 0.2 s"
+      },
+      {
+        "id": "VID.CTA_SINGLE",
+        "passed": true,
+        "severity": "major",
+        "value": null,
+        "threshold": null,
+        "message": "at most one CTA, declared"
+      },
+      {
+        "id": "VID.CTA_NOT_IN_HOOK",
+        "passed": true,
+        "severity": "blocking",
+        "value": null,
+        "threshold": null,
+        "message": "CTA starts 30.81s; hook ends 2.46s"
+      },
+      {
+        "id": "VID.CTA_AFTER_PAYOFF",
+        "passed": true,
+        "severity": "blocking",
+        "value": null,
+        "threshold": null,
+        "message": "CTA starts 30.81s; payoff ends 29.1s"
+      },
+      {
+        "id": "VID.CTA_DURATION",
+        "passed": true,
+        "severity": "major",
+        "value": null,
+        "threshold": null,
+        "message": "spoken CTA 1.21s (cap 2.80s = min 2.8 s, 12 % of runtime)"
+      },
+      {
+        "id": "VID.CTA_SHORT_VIDEO",
+        "passed": true,
+        "severity": "major",
+        "value": null,
+        "threshold": null,
+        "message": "32.5s video: a separate spoken CTA beat needs ≥20 s"
+      },
+      {
+        "id": "VID.CTA_ENDING",
+        "passed": true,
+        "severity": "blocking",
+        "value": null,
+        "threshold": null,
+        "message": "CTA rides on the loop line"
+      },
+      {
+        "id": "VID.CTA_STANDALONE_ENDING",
+        "passed": true,
+        "severity": "blocking",
+        "value": null,
+        "threshold": null,
+        "message": "without the CTA the video ends on beat b7 (loop): 'so it's just a bubble'"
+      },
+      {
+        "id": "VID.CTA_RELEVANCE",
+        "passed": true,
+        "severity": "major",
+        "value": null,
+        "threshold": null,
+        "message": "shares ['crack'] with the video"
+      },
+      {
+        "id": "VID.CTA_NOT_REPEATED",
+        "passed": true,
+        "severity": "major",
+        "value": null,
+        "threshold": null,
+        "message": "checked against 0 earlier CTAs"
+      },
+      {
+        "id": "VID.CTA_ON_SCREEN_SHOWN",
+        "passed": true,
+        "severity": "major",
+        "value": null,
+        "threshold": null,
+        "message": "label 'DO YOU CRACK YOURS?' appears at [30.808] (window 30.81-32.02s)"
+      },
+      {
+        "id": "VID.MIX_BALANCE",
+        "passed": true,
+        "severity": "major",
+        "value": 17.0,
+        "threshold": [
+          16.0,
+          18.0
+        ],
+        "message": "music 17.0 dB under the voice (policy 16.0-18.0 dB; requested 17.0)"
+      },
+      {
+        "id": "VID.SFX_DENSITY",
+        "passed": true,
+        "severity": "major",
+        "value": 0.8,
+        "threshold": 0.8,
+        "message": "0.8 SFX/s (cap 0.8)"
+      },
+      {
+        "id": "VID.SPEECH_MASKING",
+        "passed": true,
+        "severity": "major",
+        "value": 12.8,
+        "threshold": 10,
+        "message": "speech-band SIR p5 12.8 dB, median 23.4 dB, 0.3% (1 of 320) speech frames < 10 dB"
+      },
+      {
+        "id": "VID.CLEAN_ENDING",
+        "passed": true,
+        "severity": "major",
+        "value": -59.4,
+        "threshold": -45,
+        "message": "last 30 ms -59.4 dBFS (≤ −45); music fade 20.1 dB (≥ 6)"
+      }
+    ],
+    "passed": true
+  },
+  "errors": [],
+  "metrics": {
+    "visual_audit_composition": [
+      {
+        "scene": "s1",
+        "layout": "hero",
+        "main_subject": "fist",
+        "main_signature": "geo:575cceb107",
+        "main_height_ratio": 0.365,
+        "occupied_cells": 7,
+        "empty_cells": 2,
+        "elements": 3,
+        "texts": 1,
+        "layout_slots": [
+          [
+            0.45,
+            0.36,
+            0.36
+          ],
+          [
+            0.7,
+            0.2,
+            0.06
+          ]
+        ]
+      },
+      {
+        "scene": "s2",
+        "layout": "hero",
+        "main_subject": "joint",
+        "main_signature": "geo:060781f54c",
+        "main_height_ratio": 0.349,
+        "occupied_cells": 9,
+        "empty_cells": 0,
+        "elements": 5,
+        "texts": 2,
+        "layout_slots": [
+          [
+            0.5,
+            0.37,
+            0.35
+          ],
+          [
+            0.77,
+            0.32,
+            0.05
+          ],
+          [
+            0.19,
+            0.24,
+            0.05
+          ]
+        ]
+      },
+      {
+        "scene": "s3",
+        "layout": "split",
+        "main_subject": "openj",
+        "main_signature": "geo:0c871d757f",
+        "main_height_ratio": 0.344,
+        "occupied_cells": 9,
+        "empty_cells": 0,
+        "elements": 3,
+        "texts": 1,
+        "layout_slots": [
+          [
+            0.74,
+            0.38,
+            0.34
+          ],
+          [
+            0.26,
+            0.38,
+            0.32
+          ]
+        ]
+      },
+      {
+        "scene": "s4",
+        "layout": "hero",
+        "main_subject": "mri",
+        "main_signature": "geo:e1107d2a4f",
+        "main_height_ratio": 0.359,
+        "occupied_cells": 9,
+        "empty_cells": 0,
+        "elements": 5,
+        "texts": 2,
+        "layout_slots": [
+          [
+            0.5,
+            0.37,
+            0.36
+          ],
+          [
+            0.86,
+            0.48,
+            0.15
+          ],
+          [
+            0.2,
+            0.24,
+            0.05
+          ]
+        ]
+      },
+      {
+        "scene": "s5",
+        "layout": "panel",
+        "main_subject": "rect1",
+        "main_signature": "geo:c1409eb5e7",
+        "main_height_ratio": 0.292,
+        "occupied_cells": 7,
+        "empty_cells": 2,
+        "elements": 2,
+        "texts": 1,
+        "layout_slots": [
+          [
+            0.5,
+            0.36,
+            0.29
+          ]
+        ]
+      },
+      {
+        "scene": "s6",
+        "layout": "text_led",
+        "main_subject": "f1",
+        "main_signature": "geo:527750b04b",
+        "main_height_ratio": 0.164,
+        "occupied_cells": 6,
+        "empty_cells": 3,
+        "elements": 6,
+        "texts": 3,
+        "layout_slots": [
+          [
+            0.22,
+            0.46,
+            0.16
+          ],
+          [
+            0.74,
+            0.46,
+            0.16
+          ],
+          [
+            0.51,
+            0.47,
+            0.07
+          ]
+        ]
+      },
+      {
+        "scene": "s7",
+        "layout": "hero",
+        "main_subject": "fist",
+        "main_signature": "geo:575cceb107",
+        "main_height_ratio": 0.365,
+        "occupied_cells": 8,
+        "empty_cells": 1,
+        "elements": 4,
+        "texts": 1,
+        "layout_slots": [
+          [
+            0.45,
+            0.36,
+            0.36
+          ],
+          [
+            0.8,
+            0.29,
+            0.09
+          ],
+          [
+            0.7,
+            0.2,
+            0.06
+          ]
+        ]
+      }
+    ],
+    "engine": "doodle",
+    "sfx_events": 26,
+    "first_frame_ink": 0.0271,
+    "visual_audit": {
+      "issues": 0,
+      "hook": {
+        "elements_at_t0": 2,
+        "text_at_t0": true,
+        "subject_bbox_share_t0": 0.1774,
+        "subject": "fist",
+        "subject_height_ratio": 0.365,
+        "subject_bbox": [
+          272,
+          350,
+          710,
+          1050
+        ],
+        "texts_t0": [
+          {
+            "actor": "text4",
+            "text": "WHAT POPS?",
+            "on_screen": "WHAT POPS?",
+            "lost_words": [],
+            "size_px": 110.0,
+            "bbox": [
+              184,
+              177,
+              905,
+              262
+            ],
+            "inside_safe": true,
+            "negation_hidden": false
+          }
+        ],
+        "safe_margin_violations_t0": [],
+        "first_visual_event_s": 0.2,
+        "idle_motion_at_t0": false,
+        "hook_exception": null,
+        "visual_events_first_1_5s": 2,
+        "first_text_s": 0.0
+      }
+    },
+    "music": {
+      "bpm": 98.0,
+      "key": "A major",
+      "progression": [
+        0,
+        5,
+        3,
+        4
+      ],
+      "seed": 30038
+    },
+    "transitions": [
+      "whip",
+      "cut",
+      "paper",
+      "whip-up",
+      "pop",
+      "paper"
+    ],
+    "cta": {
+      "present": true,
+      "type": "comment",
+      "timeline": "actual",
+      "start_s": 30.81,
+      "end_s": 32.02,
+      "duration_s": 1.21,
+      "recommendation": {
+        "spoken_ok": true,
+        "loop_ending": true,
+        "placement_ok": [
+          "integrated",
+          "on_screen_only",
+          "after_payoff"
+        ],
+        "notes": [
+          "loop ending: the loop line must stay last — CTA goes before it or rides on it (integrated question / on-screen)"
+        ]
+      }
+    },
+    "mix": {
+      "music_under_voice_db": 17.0,
+      "sfx_per_s": 0.8,
+      "sfx_near_voice_share": 0.046
+    },
+    "duration_s": 32.52,
+    "lufs": -14.1,
+    "peak_dbfs": -1.4,
+    "shots": 7
+  },
+  "provenance": [
+    {
+      "role": "music",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/video/work/music_bed.wav",
+      "source": "generated",
+      "license": "self-generated",
+      "generator": {
+        "tool": "audio_design.playful_bed (numpy synthesis)",
+        "bpm": 98.0,
+        "key": "A major",
+        "progression": [
+          0,
+          5,
+          3,
+          4
+        ],
+        "seed": 30038
+      },
+      "realistic": false,
+      "ai_generated_music": false
+    },
+    {
+      "role": "sfx",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/video/work/sfx.wav",
+      "source": "generated",
+      "license": "self-generated",
+      "generator": {
+        "tool": "audio_design SFX synthesis (numpy)",
+        "events": 26
+      },
+      "realistic": false,
+      "ai_generated_music": false
+    }
+  ]
+}

@@ -1,0 +1,155 @@
+{
+  "generated_at": "2026-10-07T06:29:16+00:00",
+  "tools": {
+    "python": "3.13.16",
+    "os": "Linux-6.18.44-fc-v77-x86_64-with-glibc2.39",
+    "cpus": 2,
+    "ffmpeg": true,
+    "ffmpeg_version": "ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers",
+    "ffmpeg_filters_missing": [],
+    "tesseract_langs": [
+      "in",
+      "\"/usr/share/tesseract-ocr/5/tessdata/\"",
+      "(2):",
+      "eng",
+      "osd"
+    ],
+    "rsvg_convert": false,
+    "py.numpy": "2.5.3",
+    "py.PIL": "12.3.0",
+    "py.fontTools": "4.65.0",
+    "py.soundfile": "0.14.0",
+    "py.onnxruntime": "1.29.0",
+    "py.kokoro_onnx": "installed",
+    "py.cv2": "5.0.0",
+    "py.pandas": "3.0.5",
+    "py.cairosvg": null,
+    "py.pytesseract": "0.3.13",
+    "py.skia": "144.0.post2",
+    "py.svgelements": "installed",
+    "py.arabic_reshaper": "3.0.0",
+    "py.bidi": "installed",
+    "kokoro": {
+      "model": true,
+      "voices": true,
+      "timings": null
+    },
+    "bundled_fonts": [
+      "Anton-Regular.ttf",
+      "ArchivoBlack-Regular.ttf",
+      "PermanentMarker-Regular.ttf",
+      "Vazirmatn-Bold.ttf"
+    ]
+  },
+  "network": {
+    "api.elevenlabs.io": "unreachable",
+    "api.openai.com": "unreachable",
+    "www.googleapis.com": "unreachable",
+    "youtubeanalytics.googleapis.com": "unreachable",
+    "api.pexels.com": "unreachable",
+    "pixabay.com": "unreachable",
+    "huggingface.co": "unreachable",
+    "open.tiktokapis.com": "unreachable",
+    "graph.facebook.com": "unreachable"
+  },
+  "local_services": {
+    "sd_forge": "unreachable"
+  },
+  "credentials_present": {
+    "ELEVENLABS_API_KEY": false,
+    "OPENAI_API_KEY": false,
+    "PEXELS_API_KEY": false,
+    "PIXABAY_API_KEY": false,
+    "YOUTUBE_API_KEY": false,
+    "YOUTUBE_OAUTH_CLIENT_SECRETS": false,
+    "TIKTOK_ACCESS_TOKEN": false,
+    "IG_ACCESS_TOKEN": false,
+    "ANTHROPIC_API_KEY": false
+  },
+  "capabilities": {
+    "tts.kokoro": {
+      "available": true,
+      "languages": [
+        "en-gb",
+        "en-us",
+        "es",
+        "fr-fr",
+        "hi",
+        "it",
+        "ja",
+        "pt-br",
+        "zh"
+      ],
+      "word_timing": "model phoneme durations",
+      "fix": "python setup_env.py"
+    },
+    "tts.elevenlabs": {
+      "available": false,
+      "word_timing": "character alignment"
+    },
+    "tts.openai": {
+      "available": false,
+      "word_timing": "estimated"
+    },
+    "visual.doodle": {
+      "available": true,
+      "note": "v2 animated doodle engine (video-production/scripts/doodle_engine.py)"
+    },
+    "visual.svg": {
+      "available": false
+    },
+    "visual.procedural": {
+      "available": true
+    },
+    "visual.sd_forge": {
+      "available": false,
+      "url": "http://127.0.0.1:7860",
+      "fix": "start WebUI Forge with --api on this machine"
+    },
+    "visual.image_api.openai": {
+      "available": false
+    },
+    "visual.stock.pexels": {
+      "available": false
+    },
+    "visual.stock.pixabay": {
+      "available": false
+    },
+    "video.render": {
+      "available": true
+    },
+    "subtitles.burn": {
+      "available": true
+    },
+    "qa.probes": {
+      "available": true
+    },
+    "qa.ocr": {
+      "available": true,
+      "langs": [
+        "in",
+        "\"/usr/share/tesseract-ocr/5/tessdata/\"",
+        "(2):",
+        "eng",
+        "osd"
+      ]
+    },
+    "trends.youtube_data": {
+      "available": false
+    },
+    "analytics.youtube_api": {
+      "available": false
+    },
+    "analytics.csv_import": {
+      "available": true
+    },
+    "publish.youtube_api": {
+      "available": false,
+      "note": "never autonomous: requires OAuth + explicit human approval per upload"
+    },
+    "research.web": {
+      "available": "agent-tool",
+      "note": "web_search/web_fetch are Claude tools; not probed from the shell"
+    }
+  }
+}

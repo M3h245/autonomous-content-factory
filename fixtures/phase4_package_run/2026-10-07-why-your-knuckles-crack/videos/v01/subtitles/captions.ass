@@ -1,0 +1,181 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Cap,Permanent Marker,136,&H00FFFFFF,&H00FFFFFF,&H00000000,&H78000000,0,0,0,0,100,100,1,0,1,10,4,5,90,90,0,1
+Style: Clean,Permanent Marker,136,&H00FFFFFF,&H00FFFFFF,&H00000000,&H96000000,0,0,0,0,100,100,0,0,3,14,0,2,90,90,711,1
+Style: Doodle,Permanent Marker,136,&H001A1B1D&,&H001A1B1D&,&H00FFFFFF,&H64000000,0,0,0,0,100,100,1,0,1,12,4,5,90,90,0,1
+Style: Marker,Permanent Marker,136,&H003FD2FF&,&H003FD2FF&,&H003FD2FF&,&HFF000000,0,0,0,0,100,100,1,0,1,27,0,5,90,90,0,1
+Style: Title,Permanent Marker,104,&H00FFFFFF,&H00FFFFFF,&H00000000,&H78000000,0,0,0,0,100,100,1,0,1,8,3,8,90,90,300,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.16,0:00:00.44,Marker,,0,0,0,,{\an5\pos(544,1214)\frz1.2\t(0,110,\frz-1.8)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}What{\1a&HFF&\3a&HFF&\fscx100\fscy100} actually
+Dialogue: 1,0:00:00.16,0:00:00.44,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz1.2\t(0,110,\frz-1.8)}{\fscx106\fscy106}What{\fscx100\fscy100} actually
+Dialogue: 0,0:00:00.44,0:00:00.84,Marker,,0,0,0,,{\an5\pos(544,1214)\frz-1.8\blur1.5\1a&HFF&\3a&HFF&}What {\1a&H10&\3a&H10&\fscx106\fscy106}actually{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:00.44,0:00:00.84,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz-1.8}What {\fscx106\fscy106}actually{\fscx100\fscy100}
+Dialogue: 0,0:00:00.84,0:00:01.24,Marker,,0,0,0,,{\an5\pos(544,1214)\frz2.4\t(0,110,\frz-0.6)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}pops{\1a&HFF&\3a&HFF&\fscx100\fscy100} when you
+Dialogue: 1,0:00:00.84,0:00:01.24,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz2.4\t(0,110,\frz-0.6)}{\fscx106\fscy106}pops{\fscx100\fscy100} when you
+Dialogue: 0,0:00:01.24,0:00:01.36,Marker,,0,0,0,,{\an5\pos(544,1214)\frz-0.6\blur1.5\1a&HFF&\3a&HFF&}pops {\1a&H10&\3a&H10&\fscx106\fscy106}when{\1a&HFF&\3a&HFF&\fscx100\fscy100} you
+Dialogue: 1,0:00:01.24,0:00:01.36,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz-0.6}pops {\fscx106\fscy106}when{\fscx100\fscy100} you
+Dialogue: 0,0:00:01.36,0:00:01.49,Marker,,0,0,0,,{\an5\pos(544,1214)\frz-0.6\blur1.5\1a&HFF&\3a&HFF&}pops when {\1a&H10&\3a&H10&\fscx106\fscy106}you{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:01.36,0:00:01.49,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz-0.6}pops when {\fscx106\fscy106}you{\fscx100\fscy100}
+Dialogue: 0,0:00:01.49,0:00:01.81,Marker,,0,0,0,,{\an5\pos(544,1214)\frz3.6\t(0,110,\frz0.6)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}crack{\1a&HFF&\3a&HFF&\fscx100\fscy100} your
+Dialogue: 1,0:00:01.49,0:00:01.81,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz3.6\t(0,110,\frz0.6)}{\fscx106\fscy106}crack{\fscx100\fscy100} your
+Dialogue: 0,0:00:01.81,0:00:01.94,Marker,,0,0,0,,{\an5\pos(544,1214)\frz0.6\blur1.5\1a&HFF&\3a&HFF&}crack {\1a&H10&\3a&H10&\fscx106\fscy106}your{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:01.81,0:00:01.94,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz0.6}crack {\fscx106\fscy106}your{\fscx100\fscy100}
+Dialogue: 0,0:00:01.94,0:00:02.71,Marker,,0,0,0,,{\an5\pos(544,1214)\frz4.8\t(0,110,\frz1.8)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}knuckles?{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:01.94,0:00:02.71,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz4.8\t(0,110,\frz1.8)}{\fscx106\fscy106}knuckles?{\fscx100\fscy100}
+Dialogue: 0,0:00:02.81,0:00:03.06,Marker,,0,0,0,,{\an5\pos(544,1214)\frz1.8\t(0,110,\frz-1.2)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}Not{\1a&HFF&\3a&HFF&\fscx100\fscy100} your bones.
+Dialogue: 1,0:00:02.81,0:00:03.06,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz1.8\t(0,110,\frz-1.2)}{\fscx106\fscy106}Not{\fscx100\fscy100} your bones.
+Dialogue: 0,0:00:03.06,0:00:03.26,Marker,,0,0,0,,{\an5\pos(544,1214)\frz-1.2\blur1.5\1a&HFF&\3a&HFF&}Not {\1a&H10&\3a&H10&\fscx106\fscy106}your{\1a&HFF&\3a&HFF&\fscx100\fscy100} bones.
+Dialogue: 1,0:00:03.06,0:00:03.26,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz-1.2}Not {\fscx106\fscy106}your{\fscx100\fscy100} bones.
+Dialogue: 0,0:00:03.26,0:00:04.10,Marker,,0,0,0,,{\an5\pos(544,1214)\frz-1.2\blur1.5\1a&HFF&\3a&HFF&}Not your {\1a&H10&\3a&H10&\fscx106\fscy106}bones.{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:03.26,0:00:04.10,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz-1.2}Not your {\fscx106\fscy106}bones.{\fscx100\fscy100}
+Dialogue: 0,0:00:04.10,0:00:04.28,Marker,,0,0,0,,{\an5\pos(544,1214)\frz3.0\t(0,110,\frz0.0)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}Your{\1a&HFF&\3a&HFF&\fscx100\fscy100} joints sit
+Dialogue: 1,0:00:04.10,0:00:04.28,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz3.0\t(0,110,\frz0.0)}{\fscx106\fscy106}Your{\fscx100\fscy100} joints sit
+Dialogue: 0,0:00:04.28,0:00:04.70,Marker,,0,0,0,,{\an5\pos(544,1214)\frz0.0\blur1.5\1a&HFF&\3a&HFF&}Your {\1a&H10&\3a&H10&\fscx106\fscy106}joints{\1a&HFF&\3a&HFF&\fscx100\fscy100} sit
+Dialogue: 1,0:00:04.28,0:00:04.70,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz0.0}Your {\fscx106\fscy106}joints{\fscx100\fscy100} sit
+Dialogue: 0,0:00:04.70,0:00:04.90,Marker,,0,0,0,,{\an5\pos(544,1214)\frz0.0\blur1.5\1a&HFF&\3a&HFF&}Your joints {\1a&H10&\3a&H10&\fscx106\fscy106}sit{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:04.70,0:00:04.90,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz0.0}Your joints {\fscx106\fscy106}sit{\fscx100\fscy100}
+Dialogue: 0,0:00:04.90,0:00:05.00,Marker,,0,0,0,,{\an5\pos(544,1214)\frz4.2\t(0,110,\frz1.2)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}in{\1a&HFF&\3a&HFF&\fscx100\fscy100} a capsule
+Dialogue: 1,0:00:04.90,0:00:05.00,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz4.2\t(0,110,\frz1.2)}{\fscx106\fscy106}in{\fscx100\fscy100} a capsule
+Dialogue: 0,0:00:05.00,0:00:05.05,Marker,,0,0,0,,{\an5\pos(544,1214)\frz1.2\blur1.5\1a&HFF&\3a&HFF&}in {\1a&H10&\3a&H10&\fscx106\fscy106}a{\1a&HFF&\3a&HFF&\fscx100\fscy100} capsule
+Dialogue: 1,0:00:05.00,0:00:05.05,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz1.2}in {\fscx106\fscy106}a{\fscx100\fscy100} capsule
+Dialogue: 0,0:00:05.05,0:00:05.58,Marker,,0,0,0,,{\an5\pos(544,1214)\frz1.2\blur1.5\1a&HFF&\3a&HFF&}in a {\1a&H10&\3a&H10&\fscx106\fscy106}capsule{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:05.05,0:00:05.58,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz1.2}in a {\fscx106\fscy106}capsule{\fscx100\fscy100}
+Dialogue: 0,0:00:05.58,0:00:05.75,Marker,,0,0,0,,{\an5\pos(544,1214)\frz1.2\t(0,110,\frz-1.8)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}of{\1a&HFF&\3a&HFF&\fscx100\fscy100} fluid.
+Dialogue: 1,0:00:05.58,0:00:05.75,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz1.2\t(0,110,\frz-1.8)}{\fscx106\fscy106}of{\fscx100\fscy100} fluid.
+Dialogue: 0,0:00:05.75,0:00:06.45,Marker,,0,0,0,,{\an5\pos(544,1214)\frz-1.8\blur1.5\1a&HFF&\3a&HFF&}of {\1a&H10&\3a&H10&\fscx106\fscy106}fluid.{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:05.75,0:00:06.45,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz-1.8}of {\fscx106\fscy106}fluid.{\fscx100\fscy100}
+Dialogue: 0,0:00:06.49,0:00:06.74,Marker,,0,0,0,,{\an5\pos(544,1214)\frz2.4\t(0,110,\frz-0.6)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}Pull{\1a&HFF&\3a&HFF&\fscx100\fscy100} the joint
+Dialogue: 1,0:00:06.49,0:00:06.74,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz2.4\t(0,110,\frz-0.6)}{\fscx106\fscy106}Pull{\fscx100\fscy100} the joint
+Dialogue: 0,0:00:06.74,0:00:06.84,Marker,,0,0,0,,{\an5\pos(544,1214)\frz-0.6\blur1.5\1a&HFF&\3a&HFF&}Pull {\1a&H10&\3a&H10&\fscx106\fscy106}the{\1a&HFF&\3a&HFF&\fscx100\fscy100} joint
+Dialogue: 1,0:00:06.74,0:00:06.84,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz-0.6}Pull {\fscx106\fscy106}the{\fscx100\fscy100} joint
+Dialogue: 0,0:00:06.84,0:00:07.19,Marker,,0,0,0,,{\an5\pos(544,1214)\frz-0.6\blur1.5\1a&HFF&\3a&HFF&}Pull the {\1a&H10&\3a&H10&\fscx106\fscy106}joint{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:06.84,0:00:07.19,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz-0.6}Pull the {\fscx106\fscy106}joint{\fscx100\fscy100}
+Dialogue: 0,0:00:07.19,0:00:07.72,Marker,,0,0,0,,{\an5\pos(544,1214)\frz3.6\t(0,110,\frz0.6)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}apart,{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:07.19,0:00:07.72,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz3.6\t(0,110,\frz0.6)}{\fscx106\fscy106}apart,{\fscx100\fscy100}
+Dialogue: 0,0:00:07.72,0:00:07.82,Marker,,0,0,0,,{\an5\pos(544,1214)\frz4.8\t(0,110,\frz1.8)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}the{\1a&HFF&\3a&HFF&\fscx100\fscy100} pressure
+Dialogue: 1,0:00:07.72,0:00:07.82,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz4.8\t(0,110,\frz1.8)}{\fscx106\fscy106}the{\fscx100\fscy100} pressure
+Dialogue: 0,0:00:07.82,0:00:08.17,Marker,,0,0,0,,{\an5\pos(544,1214)\frz1.8\blur1.5\1a&HFF&\3a&HFF&}the {\1a&H10&\3a&H10&\fscx106\fscy106}pressure{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:07.82,0:00:08.17,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz1.8}the {\fscx106\fscy106}pressure{\fscx100\fscy100}
+Dialogue: 0,0:00:08.17,0:00:08.97,Marker,,0,0,0,,{\an5\pos(544,1214)\frz1.8\t(0,110,\frz-1.2)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}drops,{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:08.17,0:00:08.97,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz1.8\t(0,110,\frz-1.2)}{\fscx106\fscy106}drops,{\fscx100\fscy100}
+Dialogue: 0,0:00:08.97,0:00:09.12,Marker,,0,0,0,,{\an5\pos(544,1214)\frz3.0\t(0,110,\frz0.0)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}and{\1a&HFF&\3a&HFF&\fscx100\fscy100} a gas
+Dialogue: 1,0:00:08.97,0:00:09.12,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz3.0\t(0,110,\frz0.0)}{\fscx106\fscy106}and{\fscx100\fscy100} a gas
+Dialogue: 0,0:00:09.12,0:00:09.20,Marker,,0,0,0,,{\an5\pos(544,1214)\frz0.0\blur1.5\1a&HFF&\3a&HFF&}and {\1a&H10&\3a&H10&\fscx106\fscy106}a{\1a&HFF&\3a&HFF&\fscx100\fscy100} gas
+Dialogue: 1,0:00:09.12,0:00:09.20,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz0.0}and {\fscx106\fscy106}a{\fscx100\fscy100} gas
+Dialogue: 0,0:00:09.20,0:00:09.57,Marker,,0,0,0,,{\an5\pos(544,1214)\frz0.0\blur1.5\1a&HFF&\3a&HFF&}and a {\1a&H10&\3a&H10&\fscx106\fscy106}gas{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:09.20,0:00:09.57,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz0.0}and a {\fscx106\fscy106}gas{\fscx100\fscy100}
+Dialogue: 0,0:00:09.57,0:00:10.05,Marker,,0,0,0,,{\an5\pos(544,1214)\frz4.2\t(0,110,\frz1.2)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}cavity{\1a&HFF&\3a&HFF&\fscx100\fscy100} snaps open.
+Dialogue: 1,0:00:09.57,0:00:10.05,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz4.2\t(0,110,\frz1.2)}{\fscx106\fscy106}cavity{\fscx100\fscy100} snaps open.
+Dialogue: 0,0:00:10.05,0:00:10.50,Marker,,0,0,0,,{\an5\pos(544,1214)\frz1.2\blur1.5\1a&HFF&\3a&HFF&}cavity {\1a&H10&\3a&H10&\fscx106\fscy106}snaps{\1a&HFF&\3a&HFF&\fscx100\fscy100} open.
+Dialogue: 1,0:00:10.05,0:00:10.50,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz1.2}cavity {\fscx106\fscy106}snaps{\fscx100\fscy100} open.
+Dialogue: 0,0:00:10.50,0:00:11.07,Marker,,0,0,0,,{\an5\pos(544,1214)\frz1.2\blur1.5\1a&HFF&\3a&HFF&}cavity snaps {\1a&H10&\3a&H10&\fscx106\fscy106}open.{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:10.50,0:00:11.07,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz1.2}cavity snaps {\fscx106\fscy106}open.{\fscx100\fscy100}
+Dialogue: 0,0:00:11.13,0:00:11.28,Marker,,0,0,0,,{\an5\pos(544,1214)\frz1.2\t(0,110,\frz-1.8)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}In{\1a&HFF&\3a&HFF&\fscx100\fscy100} 2015,
+Dialogue: 1,0:00:11.13,0:00:11.28,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz1.2\t(0,110,\frz-1.8)}{\fscx106\fscy106}In{\fscx100\fscy100} 2015,
+Dialogue: 0,0:00:11.28,0:00:12.81,Marker,,0,0,0,,{\an5\pos(544,1214)\frz-1.8\blur1.5\1a&HFF&\3a&HFF&}In {\1a&H10&\3a&H10&\fscx106\fscy106}2015,{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:11.28,0:00:12.81,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz-1.8}In {\fscx106\fscy106}2015,{\fscx100\fscy100}
+Dialogue: 0,0:00:12.81,0:00:13.46,Marker,,0,0,0,,{\an5\pos(544,1214)\frz2.4\t(0,110,\frz-0.6)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}scientists{\1a&HFF&\3a&HFF&\fscx100\fscy100} filmed
+Dialogue: 1,0:00:12.81,0:00:13.46,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz2.4\t(0,110,\frz-0.6)}{\fscx106\fscy106}scientists{\fscx100\fscy100} filmed
+Dialogue: 0,0:00:13.46,0:00:13.78,Marker,,0,0,0,,{\an5\pos(544,1214)\frz-0.6\blur1.5\1a&HFF&\3a&HFF&}scientists {\1a&H10&\3a&H10&\fscx106\fscy106}filmed{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:13.46,0:00:13.78,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz-0.6}scientists {\fscx106\fscy106}filmed{\fscx100\fscy100}
+Dialogue: 0,0:00:13.78,0:00:13.96,Marker,,0,0,0,,{\an5\pos(544,1214)\frz3.6\t(0,110,\frz0.6)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}it{\1a&HFF&\3a&HFF&\fscx100\fscy100} inside an
+Dialogue: 1,0:00:13.78,0:00:13.96,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz3.6\t(0,110,\frz0.6)}{\fscx106\fscy106}it{\fscx100\fscy100} inside an
+Dialogue: 0,0:00:13.96,0:00:14.51,Marker,,0,0,0,,{\an5\pos(544,1214)\frz0.6\blur1.5\1a&HFF&\3a&HFF&}it {\1a&H10&\3a&H10&\fscx106\fscy106}inside{\1a&HFF&\3a&HFF&\fscx100\fscy100} an
+Dialogue: 1,0:00:13.96,0:00:14.51,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz0.6}it {\fscx106\fscy106}inside{\fscx100\fscy100} an
+Dialogue: 0,0:00:14.51,0:00:14.68,Marker,,0,0,0,,{\an5\pos(544,1214)\frz0.6\blur1.5\1a&HFF&\3a&HFF&}it inside {\1a&H10&\3a&H10&\fscx106\fscy106}an{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:14.51,0:00:14.68,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz0.6}it inside {\fscx106\fscy106}an{\fscx100\fscy100}
+Dialogue: 0,0:00:14.68,0:00:15.64,Marker,,0,0,0,,{\an5\pos(544,1214)\frz4.8\t(0,110,\frz1.8)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}MRI.{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:14.68,0:00:15.64,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz4.8\t(0,110,\frz1.8)}{\fscx106\fscy106}MRI.{\fscx100\fscy100}
+Dialogue: 0,0:00:15.64,0:00:15.74,Marker,,0,0,0,,{\an5\pos(544,1214)\frz1.8\t(0,110,\frz-1.2)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}The{\1a&HFF&\3a&HFF&\fscx100\fscy100} pop happened
+Dialogue: 1,0:00:15.64,0:00:15.74,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz1.8\t(0,110,\frz-1.2)}{\fscx106\fscy106}The{\fscx100\fscy100} pop happened
+Dialogue: 0,0:00:15.74,0:00:16.09,Marker,,0,0,0,,{\an5\pos(544,1214)\frz-1.2\blur1.5\1a&HFF&\3a&HFF&}The {\1a&H10&\3a&H10&\fscx106\fscy106}pop{\1a&HFF&\3a&HFF&\fscx100\fscy100} happened
+Dialogue: 1,0:00:15.74,0:00:16.09,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz-1.2}The {\fscx106\fscy106}pop{\fscx100\fscy100} happened
+Dialogue: 0,0:00:16.09,0:00:16.69,Marker,,0,0,0,,{\an5\pos(544,1214)\frz-1.2\blur1.5\1a&HFF&\3a&HFF&}The pop {\1a&H10&\3a&H10&\fscx106\fscy106}happened{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:16.09,0:00:16.69,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz-1.2}The pop {\fscx106\fscy106}happened{\fscx100\fscy100}
+Dialogue: 0,0:00:16.69,0:00:16.81,Marker,,0,0,0,,{\an5\pos(544,1214)\frz3.0\t(0,110,\frz0.0)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}as{\1a&HFF&\3a&HFF&\fscx100\fscy100} the bubble
+Dialogue: 1,0:00:16.69,0:00:16.81,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz3.0\t(0,110,\frz0.0)}{\fscx106\fscy106}as{\fscx100\fscy100} the bubble
+Dialogue: 0,0:00:16.81,0:00:16.91,Marker,,0,0,0,,{\an5\pos(544,1214)\frz0.0\blur1.5\1a&HFF&\3a&HFF&}as {\1a&H10&\3a&H10&\fscx106\fscy106}the{\1a&HFF&\3a&HFF&\fscx100\fscy100} bubble
+Dialogue: 1,0:00:16.81,0:00:16.91,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz0.0}as {\fscx106\fscy106}the{\fscx100\fscy100} bubble
+Dialogue: 0,0:00:16.91,0:00:17.31,Marker,,0,0,0,,{\an5\pos(544,1214)\frz0.0\blur1.5\1a&HFF&\3a&HFF&}as the {\1a&H10&\3a&H10&\fscx106\fscy106}bubble{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:16.91,0:00:17.31,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz0.0}as the {\fscx106\fscy106}bubble{\fscx100\fscy100}
+Dialogue: 0,0:00:17.31,0:00:18.06,Marker,,0,0,0,,{\an5\pos(544,1214)\frz4.2\t(0,110,\frz1.2)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}formed.{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:17.31,0:00:18.06,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz4.2\t(0,110,\frz1.2)}{\fscx106\fscy106}formed.{\fscx100\fscy100}
+Dialogue: 0,0:00:18.13,0:00:18.26,Marker,,0,0,0,,{\an5\pos(544,1214)\frz1.2\t(0,110,\frz-1.8)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}A{\1a&HFF&\3a&HFF&\fscx100\fscy100} 2018 model
+Dialogue: 1,0:00:18.13,0:00:18.26,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz1.2\t(0,110,\frz-1.8)}{\fscx106\fscy106}A{\fscx100\fscy100} 2018 model
+Dialogue: 0,0:00:18.26,0:00:19.36,Marker,,0,0,0,,{\an5\pos(544,1214)\frz-1.8\blur1.5\1a&HFF&\3a&HFF&}A {\1a&H10&\3a&H10&\fscx106\fscy106}2018{\1a&HFF&\3a&HFF&\fscx100\fscy100} model
+Dialogue: 1,0:00:18.26,0:00:19.36,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz-1.8}A {\fscx106\fscy106}2018{\fscx100\fscy100} model
+Dialogue: 0,0:00:19.36,0:00:19.83,Marker,,0,0,0,,{\an5\pos(544,1214)\frz-1.8\blur1.5\1a&HFF&\3a&HFF&}A 2018 {\1a&H10&\3a&H10&\fscx106\fscy106}model{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:19.36,0:00:19.83,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz-1.8}A 2018 {\fscx106\fscy106}model{\fscx100\fscy100}
+Dialogue: 0,0:00:19.83,0:00:20.23,Marker,,0,0,0,,{\an5\pos(544,1214)\frz2.4\t(0,110,\frz-0.6)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}says{\1a&HFF&\3a&HFF&\fscx100\fscy100} a partial
+Dialogue: 1,0:00:19.83,0:00:20.23,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz2.4\t(0,110,\frz-0.6)}{\fscx106\fscy106}says{\fscx100\fscy100} a partial
+Dialogue: 0,0:00:20.23,0:00:20.30,Marker,,0,0,0,,{\an5\pos(544,1214)\frz-0.6\blur1.5\1a&HFF&\3a&HFF&}says {\1a&H10&\3a&H10&\fscx106\fscy106}a{\1a&HFF&\3a&HFF&\fscx100\fscy100} partial
+Dialogue: 1,0:00:20.23,0:00:20.30,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz-0.6}says {\fscx106\fscy106}a{\fscx100\fscy100} partial
+Dialogue: 0,0:00:20.30,0:00:20.78,Marker,,0,0,0,,{\an5\pos(544,1214)\frz-0.6\blur1.5\1a&HFF&\3a&HFF&}says a {\1a&H10&\3a&H10&\fscx106\fscy106}partial{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:20.30,0:00:20.78,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz-0.6}says a {\fscx106\fscy106}partial{\fscx100\fscy100}
+Dialogue: 0,0:00:20.78,0:00:21.28,Marker,,0,0,0,,{\an5\pos(544,1214)\frz3.6\t(0,110,\frz0.6)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}collapse{\1a&HFF&\3a&HFF&\fscx100\fscy100} could
+Dialogue: 1,0:00:20.78,0:00:21.28,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz3.6\t(0,110,\frz0.6)}{\fscx106\fscy106}collapse{\fscx100\fscy100} could
+Dialogue: 0,0:00:21.28,0:00:21.48,Marker,,0,0,0,,{\an5\pos(544,1214)\frz0.6\blur1.5\1a&HFF&\3a&HFF&}collapse {\1a&H10&\3a&H10&\fscx106\fscy106}could{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:21.28,0:00:21.48,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz0.6}collapse {\fscx106\fscy106}could{\fscx100\fscy100}
+Dialogue: 0,0:00:21.48,0:00:21.78,Marker,,0,0,0,,{\an5\pos(544,1214)\frz4.8\t(0,110,\frz1.8)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}still{\1a&HFF&\3a&HFF&\fscx100\fscy100} make the
+Dialogue: 1,0:00:21.48,0:00:21.78,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz4.8\t(0,110,\frz1.8)}{\fscx106\fscy106}still{\fscx100\fscy100} make the
+Dialogue: 0,0:00:21.78,0:00:22.00,Marker,,0,0,0,,{\an5\pos(544,1214)\frz1.8\blur1.5\1a&HFF&\3a&HFF&}still {\1a&H10&\3a&H10&\fscx106\fscy106}make{\1a&HFF&\3a&HFF&\fscx100\fscy100} the
+Dialogue: 1,0:00:21.78,0:00:22.00,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz1.8}still {\fscx106\fscy106}make{\fscx100\fscy100} the
+Dialogue: 0,0:00:22.00,0:00:22.16,Marker,,0,0,0,,{\an5\pos(544,1214)\frz1.8\blur1.5\1a&HFF&\3a&HFF&}still make {\1a&H10&\3a&H10&\fscx106\fscy106}the{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:22.00,0:00:22.16,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz1.8}still make {\fscx106\fscy106}the{\fscx100\fscy100}
+Dialogue: 0,0:00:22.16,0:00:22.89,Marker,,0,0,0,,{\an5\pos(544,1214)\frz1.8\t(0,110,\frz-1.2)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}sound.{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:22.16,0:00:22.89,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz1.8\t(0,110,\frz-1.2)}{\fscx106\fscy106}sound.{\fscx100\fscy100}
+Dialogue: 0,0:00:22.89,0:00:22.99,Marker,,0,0,0,,{\an5\pos(544,1214)\frz3.0\t(0,110,\frz0.0)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}The{\1a&HFF&\3a&HFF&\fscx100\fscy100} debate isn't
+Dialogue: 1,0:00:22.89,0:00:22.99,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz3.0\t(0,110,\frz0.0)}{\fscx106\fscy106}The{\fscx100\fscy100} debate isn't
+Dialogue: 0,0:00:22.99,0:00:23.44,Marker,,0,0,0,,{\an5\pos(544,1214)\frz0.0\blur1.5\1a&HFF&\3a&HFF&}The {\1a&H10&\3a&H10&\fscx106\fscy106}debate{\1a&HFF&\3a&HFF&\fscx100\fscy100} isn't
+Dialogue: 1,0:00:22.99,0:00:23.44,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz0.0}The {\fscx106\fscy106}debate{\fscx100\fscy100} isn't
+Dialogue: 0,0:00:23.44,0:00:23.74,Marker,,0,0,0,,{\an5\pos(544,1214)\frz0.0\blur1.5\1a&HFF&\3a&HFF&}The debate {\1a&H10&\3a&H10&\fscx106\fscy106}isn't{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:23.44,0:00:23.74,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz0.0}The debate {\fscx106\fscy106}isn't{\fscx100\fscy100}
+Dialogue: 0,0:00:23.74,0:00:24.37,Marker,,0,0,0,,{\an5\pos(544,1214)\frz4.2\t(0,110,\frz1.2)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}over.{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:23.74,0:00:24.37,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz4.2\t(0,110,\frz1.2)}{\fscx106\fscy106}over.{\fscx100\fscy100}
+Dialogue: 0,0:00:24.61,0:00:24.76,Marker,,0,0,0,,{\an5\pos(544,1214)\frz1.2\t(0,110,\frz-1.8)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}And{\1a&HFF&\3a&HFF&\fscx100\fscy100} arthritis?
+Dialogue: 1,0:00:24.61,0:00:24.76,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz1.2\t(0,110,\frz-1.8)}{\fscx106\fscy106}And{\fscx100\fscy100} arthritis?
+Dialogue: 0,0:00:24.76,0:00:25.84,Marker,,0,0,0,,{\an5\pos(544,1214)\frz-1.8\blur1.5\1a&HFF&\3a&HFF&}And {\1a&H10&\3a&H10&\fscx106\fscy106}arthritis?{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:24.76,0:00:25.84,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz-1.8}And {\fscx106\fscy106}arthritis?{\fscx100\fscy100}
+Dialogue: 0,0:00:25.84,0:00:25.97,Marker,,0,0,0,,{\an5\pos(544,1214)\frz2.4\t(0,110,\frz-0.6)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}A{\1a&HFF&\3a&HFF&\fscx100\fscy100} study of
+Dialogue: 1,0:00:25.84,0:00:25.97,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz2.4\t(0,110,\frz-0.6)}{\fscx106\fscy106}A{\fscx100\fscy100} study of
+Dialogue: 0,0:00:25.97,0:00:26.34,Marker,,0,0,0,,{\an5\pos(544,1214)\frz-0.6\blur1.5\1a&HFF&\3a&HFF&}A {\1a&H10&\3a&H10&\fscx106\fscy106}study{\1a&HFF&\3a&HFF&\fscx100\fscy100} of
+Dialogue: 1,0:00:25.97,0:00:26.34,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz-0.6}A {\fscx106\fscy106}study{\fscx100\fscy100} of
+Dialogue: 0,0:00:26.34,0:00:26.52,Marker,,0,0,0,,{\an5\pos(544,1214)\frz-0.6\blur1.5\1a&HFF&\3a&HFF&}A study {\1a&H10&\3a&H10&\fscx106\fscy106}of{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:26.34,0:00:26.52,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz-0.6}A study {\fscx106\fscy106}of{\fscx100\fscy100}
+Dialogue: 0,0:00:26.52,0:00:27.64,Marker,,0,0,0,,{\an5\pos(544,1214)\frz3.6\t(0,110,\frz0.6)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}215{\1a&HFF&\3a&HFF&\fscx100\fscy100} people found
+Dialogue: 1,0:00:26.52,0:00:27.64,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz3.6\t(0,110,\frz0.6)}{\fscx106\fscy106}215{\fscx100\fscy100} people found
+Dialogue: 0,0:00:27.64,0:00:28.19,Marker,,0,0,0,,{\an5\pos(544,1214)\frz0.6\blur1.5\1a&HFF&\3a&HFF&}215 {\1a&H10&\3a&H10&\fscx106\fscy106}people{\1a&HFF&\3a&HFF&\fscx100\fscy100} found
+Dialogue: 1,0:00:27.64,0:00:28.19,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz0.6}215 {\fscx106\fscy106}people{\fscx100\fscy100} found
+Dialogue: 0,0:00:28.19,0:00:28.52,Marker,,0,0,0,,{\an5\pos(544,1214)\frz0.6\blur1.5\1a&HFF&\3a&HFF&}215 people {\1a&H10&\3a&H10&\fscx106\fscy106}found{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:28.19,0:00:28.52,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz0.6}215 people {\fscx106\fscy106}found{\fscx100\fscy100}
+Dialogue: 0,0:00:28.52,0:00:28.77,Marker,,0,0,0,,{\an5\pos(544,1214)\frz4.8\t(0,110,\frz1.8)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}no{\1a&HFF&\3a&HFF&\fscx100\fscy100} link.
+Dialogue: 1,0:00:28.52,0:00:28.77,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz4.8\t(0,110,\frz1.8)}{\fscx106\fscy106}no{\fscx100\fscy100} link.
+Dialogue: 0,0:00:28.77,0:00:29.35,Marker,,0,0,0,,{\an5\pos(544,1214)\frz1.8\blur1.5\1a&HFF&\3a&HFF&}no {\1a&H10&\3a&H10&\fscx106\fscy106}link.{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:28.77,0:00:29.35,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz1.8}no {\fscx106\fscy106}link.{\fscx100\fscy100}
+Dialogue: 0,0:00:29.45,0:00:29.63,Marker,,0,0,0,,{\an5\pos(544,1214)\frz1.8\t(0,110,\frz-1.2)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}So{\1a&HFF&\3a&HFF&\fscx100\fscy100} it's just
+Dialogue: 1,0:00:29.45,0:00:29.63,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz1.8\t(0,110,\frz-1.2)}{\fscx106\fscy106}So{\fscx100\fscy100} it's just
+Dialogue: 0,0:00:29.63,0:00:29.83,Marker,,0,0,0,,{\an5\pos(544,1214)\frz-1.2\blur1.5\1a&HFF&\3a&HFF&}So {\1a&H10&\3a&H10&\fscx106\fscy106}it's{\1a&HFF&\3a&HFF&\fscx100\fscy100} just
+Dialogue: 1,0:00:29.63,0:00:29.83,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz-1.2}So {\fscx106\fscy106}it's{\fscx100\fscy100} just
+Dialogue: 0,0:00:29.83,0:00:30.18,Marker,,0,0,0,,{\an5\pos(544,1214)\frz-1.2\blur1.5\1a&HFF&\3a&HFF&}So it's {\1a&H10&\3a&H10&\fscx106\fscy106}just{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:29.83,0:00:30.18,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz-1.2}So it's {\fscx106\fscy106}just{\fscx100\fscy100}
+Dialogue: 0,0:00:30.18,0:00:30.25,Marker,,0,0,0,,{\an5\pos(544,1214)\frz3.0\t(0,110,\frz0.0)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}a{\1a&HFF&\3a&HFF&\fscx100\fscy100} bubble.
+Dialogue: 1,0:00:30.18,0:00:30.25,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz3.0\t(0,110,\frz0.0)}{\fscx106\fscy106}a{\fscx100\fscy100} bubble.
+Dialogue: 0,0:00:30.25,0:00:30.87,Marker,,0,0,0,,{\an5\pos(544,1214)\frz0.0\blur1.5\1a&HFF&\3a&HFF&}a {\1a&H10&\3a&H10&\fscx106\fscy106}bubble.{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:30.25,0:00:30.87,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz0.0}a {\fscx106\fscy106}bubble.{\fscx100\fscy100}
+Dialogue: 0,0:00:30.87,0:00:30.99,Marker,,0,0,0,,{\an5\pos(544,1214)\frz4.2\t(0,110,\frz1.2)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}Do{\1a&HFF&\3a&HFF&\fscx100\fscy100} you crack
+Dialogue: 1,0:00:30.87,0:00:30.99,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz4.2\t(0,110,\frz1.2)}{\fscx106\fscy106}Do{\fscx100\fscy100} you crack
+Dialogue: 0,0:00:30.99,0:00:31.12,Marker,,0,0,0,,{\an5\pos(544,1214)\frz1.2\blur1.5\1a&HFF&\3a&HFF&}Do {\1a&H10&\3a&H10&\fscx106\fscy106}you{\1a&HFF&\3a&HFF&\fscx100\fscy100} crack
+Dialogue: 1,0:00:30.99,0:00:31.12,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz1.2}Do {\fscx106\fscy106}you{\fscx100\fscy100} crack
+Dialogue: 0,0:00:31.12,0:00:31.49,Marker,,0,0,0,,{\an5\pos(544,1214)\frz1.2\blur1.5\1a&HFF&\3a&HFF&}Do you {\1a&H10&\3a&H10&\fscx106\fscy106}crack{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:31.12,0:00:31.49,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz1.2}Do you {\fscx106\fscy106}crack{\fscx100\fscy100}
+Dialogue: 0,0:00:31.49,0:00:32.27,Marker,,0,0,0,,{\an5\pos(544,1214)\frz1.2\t(0,110,\frz-1.8)\blur1.5\1a&HFF&\3a&HFF&}{\1a&H10&\3a&H10&\fscx106\fscy106}yours?{\1a&HFF&\3a&HFF&\fscx100\fscy100}
+Dialogue: 1,0:00:31.49,0:00:32.27,Doodle,,0,0,0,,{\an5\pos(540,1209)\frz1.2\t(0,110,\frz-1.8)}{\fscx106\fscy106}yours?{\fscx100\fscy100}

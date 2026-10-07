@@ -1,0 +1,133 @@
+{
+ "topic": "Why ice cream gives you brain freeze",
+ "sources": [
+  {
+   "id": "s1",
+   "url": "https://ichd-3.org/other-primary-headache-disorders/4-5-cold-stimulus-headache/4-5-2-headache-attributed-to-ingestion-or-inhalation-of-a-cold-stimulus/",
+   "title": "ICHD-3 4.5.2 Headache attributed to ingestion or inhalation of a cold stimulus",
+   "publisher": "International Headache Society (ICHD-3)",
+   "accessed": "2026-10-07",
+   "kind": "reference"
+  },
+  {
+   "id": "s2",
+   "url": "https://doi.org/10.1177/0333102416650704",
+   "title": "Experimental provocation of 'ice-cream headache' by ice cubes and ice water",
+   "publisher": "Cephalalgia (Mages et al., 2017)",
+   "accessed": "2026-10-07",
+   "kind": "primary"
+  },
+  {
+   "id": "s3",
+   "url": "https://doi.org/10.1136/bmj.325.7378.1445",
+   "title": "Ice cream evoked headaches (ICE-H) study: randomised trial of accelerated versus cautious ice cream eating regimen",
+   "publisher": "BMJ (Kaczorowski & Kaczorowski, 2002)",
+   "accessed": "2026-10-07",
+   "kind": "primary"
+  },
+  {
+   "id": "s4",
+   "url": "https://universityofgalway.ie/about-us/news-and-events/news-archive/2012/april2012/brain-freeze-find-might-help-solve-migraine-mysteries-1.html",
+   "title": "Brain freeze find might help solve migraine mysteries (Serrador et al., Experimental Biology 2012)",
+   "publisher": "University of Galway",
+   "published": "2012-04-22",
+   "accessed": "2026-10-07",
+   "kind": "secondary"
+  },
+  {
+   "id": "s5",
+   "url": "https://www.medicalnewstoday.com/articles/244458",
+   "title": "Brain freeze: the science behind it (report on Serrador et al., FASEB J 26:685.4, 2012)",
+   "publisher": "Medical News Today",
+   "published": "2012-04",
+   "accessed": "2026-10-07",
+   "kind": "news"
+  },
+  {
+   "id": "s6",
+   "url": "https://www.scientificamerican.com/article/brain-freeze-explained",
+   "title": "Blood-Flow Changes Cause Brain Freeze",
+   "publisher": "Scientific American",
+   "published": "2012",
+   "accessed": "2026-10-07",
+   "kind": "news"
+  }
+ ],
+ "facts": [
+  {
+   "id": "f1",
+   "claim": "Brain freeze is a short frontal or temporal headache triggered when cold food, drink or air passes over the palate or the back of the throat.",
+   "source_ids": [
+    "s1"
+   ],
+   "risk": "low",
+   "confidence": 0.95
+  },
+  {
+   "id": "f2",
+   "claim": "By the diagnostic criteria, brain freeze resolves within 10 minutes after the cold stimulus is removed.",
+   "source_ids": [
+    "s1"
+   ],
+   "risk": "low",
+   "confidence": 0.95
+  },
+  {
+   "id": "f3",
+   "claim": "In a 2017 experiment, gulping 200 ml of ice water triggered brain freeze in 39 of 77 volunteers (51%), while pressing an ice cube to the palate triggered it in only 9 (12%).",
+   "source_ids": [
+    "s2"
+   ],
+   "risk": "low",
+   "confidence": 0.9
+  },
+  {
+   "id": "f4",
+   "claim": "With ice water, the pain started a median 15 seconds after drinking and was mostly described as stabbing.",
+   "source_ids": [
+    "s2"
+   ],
+   "risk": "low",
+   "confidence": 0.9
+  },
+  {
+   "id": "f5",
+   "claim": "In a 2002 randomised trial with 145 students, eating ice cream in under 5 seconds caused brain freeze in 27%, versus 13% when eating slowly over more than 30 seconds.",
+   "source_ids": [
+    "s3"
+   ],
+   "risk": "low",
+   "confidence": 0.9
+  },
+  {
+   "id": "f6",
+   "claim": "In a small 2012 study of 13 volunteers, the anterior cerebral artery dilated quickly as the pain began and narrowed again as the pain faded.",
+   "source_ids": [
+    "s4",
+    "s5",
+    "s6"
+   ],
+   "risk": "medium",
+   "confidence": 0.6
+  },
+  {
+   "id": "f7",
+   "claim": "Brain freeze is common in the general population, especially among people with migraine.",
+   "source_ids": [
+    "s1"
+   ],
+   "risk": "low",
+   "confidence": 0.85
+  },
+  {
+   "id": "f8",
+   "claim": "The cold hits the palate, but the pain is felt in the forehead or temples: it is referred pain, not the brain itself freezing.",
+   "source_ids": [
+    "s1",
+    "s2"
+   ],
+   "risk": "medium",
+   "confidence": 0.75
+  }
+ ]
+}

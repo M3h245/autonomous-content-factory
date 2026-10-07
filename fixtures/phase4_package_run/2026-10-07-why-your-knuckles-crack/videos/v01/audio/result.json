@@ -1,0 +1,206 @@
+{
+  "contract": "cf/1.1",
+  "stage": "AUDIO",
+  "skill": "voice-production",
+  "run_id": null,
+  "video_id": "v01",
+  "attempt": 1,
+  "status": "passed",
+  "started_at": "2026-10-07T06:32:16+00:00",
+  "finished_at": "2026-10-07T06:32:41+00:00",
+  "inputs": [
+    {
+      "role": "script",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/script/script.json",
+      "sha256": "4973be8f50303a3c8fc2fae89dc97755a89471c41a5e58ed0b12d6a82e2da81f"
+    }
+  ],
+  "outputs": [
+    {
+      "role": "voice_audio",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/audio/voice.wav",
+      "media_type": "audio/wav",
+      "sha256": "1e81db7fd1854dcfb0d7847b7b29bd4f624c54e3d4618d7fbb7e46dbb76a51ae"
+    },
+    {
+      "role": "voice_timing",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/audio/timing.json",
+      "media_type": "application/json",
+      "sha256": "5decb4d424bc23b35a675d93ff7cff45264da15b0a69ca73bbb1d853272da07b"
+    }
+  ],
+  "gate": {
+    "checks": [
+      {
+        "id": "AUDIO.SCHEMA",
+        "passed": true,
+        "severity": "blocking",
+        "value": null,
+        "threshold": null,
+        "message": "timing.json schema"
+      },
+      {
+        "id": "AUDIO.ALL_SENTENCES",
+        "passed": true,
+        "severity": "blocking",
+        "value": null,
+        "threshold": null,
+        "message": "every sentence synthesized"
+      },
+      {
+        "id": "AUDIO.WORD_COVERAGE",
+        "passed": true,
+        "severity": "blocking",
+        "value": 82,
+        "threshold": 82,
+        "message": "82/82 words timed"
+      },
+      {
+        "id": "AUDIO.TIMING_MONOTONIC",
+        "passed": true,
+        "severity": "blocking",
+        "value": null,
+        "threshold": null,
+        "message": "word times monotonic"
+      },
+      {
+        "id": "AUDIO.DURATION_IN_RANGE",
+        "passed": true,
+        "severity": "major",
+        "value": 32.52,
+        "threshold": [
+          20.0,
+          45.0
+        ],
+        "message": ""
+      },
+      {
+        "id": "AUDIO.SPEECH_RATE",
+        "passed": true,
+        "severity": "minor",
+        "value": 2.78,
+        "threshold": [
+          1.8,
+          3.8
+        ],
+        "message": "2.78 words/s"
+      },
+      {
+        "id": "AUDIO.MAX_GAP",
+        "passed": true,
+        "severity": "major",
+        "value": 0.355,
+        "threshold": 0.75,
+        "message": "no unplanned dead air > 0.75 s between words"
+      },
+      {
+        "id": "AUDIO.HOOK_START",
+        "passed": true,
+        "severity": "major",
+        "value": 0.162,
+        "threshold": 0.35,
+        "message": "first word starts within 0.35 s"
+      }
+    ],
+    "passed": true
+  },
+  "errors": [],
+  "metrics": {
+    "intentional_pauses": [
+      {
+        "before_sentence": 8,
+        "seconds": 0.4
+      }
+    ],
+    "duration_s": 32.52,
+    "words": 82,
+    "words_per_s": 2.78,
+    "tts_cache": {
+      "enabled": true,
+      "hits": 1,
+      "misses": 11,
+      "rejected_entries": 0,
+      "sentences": 12,
+      "version": 1,
+      "detail": [
+        {
+          "key": "5b051ab40d0ec810",
+          "hit": true,
+          "text": "What actually pops when you crack your knuckles?"
+        },
+        {
+          "key": "afb9c285a5150fba",
+          "hit": false,
+          "text": "Not your bones."
+        },
+        {
+          "key": "8a4f57febbb2bc95",
+          "hit": false,
+          "text": "Your joints sit in a capsule of fluid."
+        },
+        {
+          "key": "12a240d832597fe5",
+          "hit": false,
+          "text": "Pull the joint apart, the pressure drops, and a "
+        },
+        {
+          "key": "14ce978a18c19554",
+          "hit": false,
+          "text": "In 2015, scientists filmed it inside an MRI."
+        },
+        {
+          "key": "2834f0cdf4c2c1db",
+          "hit": false,
+          "text": "The pop happened as the bubble formed."
+        },
+        {
+          "key": "f63b81e548df62f2",
+          "hit": false,
+          "text": "A 2018 model says a partial collapse could still"
+        },
+        {
+          "key": "da0c2740e9559037",
+          "hit": false,
+          "text": "The debate isn't over."
+        },
+        {
+          "key": "a2d23ecc9fbeae18",
+          "hit": false,
+          "text": "And arthritis?"
+        },
+        {
+          "key": "ad407cff230ce830",
+          "hit": false,
+          "text": "A study of 215 people found no link."
+        },
+        {
+          "key": "0b46820901157369",
+          "hit": false,
+          "text": "So it's just a bubble."
+        },
+        {
+          "key": "99e11a97364486ff",
+          "hit": false,
+          "text": "Do you crack yours?"
+        }
+      ]
+    }
+  },
+  "provenance": [
+    {
+      "role": "voiceover",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/audio/voice.wav",
+      "source": "generated",
+      "license": "self-generated",
+      "generator": {
+        "tool": "kokoro-onnx",
+        "model": "Kokoro-82M v1.0 (onnx fp32, kokoro-onnx 0.6.1)",
+        "voice": "am_michael",
+        "speed": 1.0,
+        "model_license": "Apache-2.0"
+      },
+      "synthetic_voice": true,
+      "realistic_human_voice": true
+    }
+  ]
+}

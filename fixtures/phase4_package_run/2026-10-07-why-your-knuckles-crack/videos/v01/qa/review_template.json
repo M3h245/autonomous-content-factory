@@ -1,0 +1,86 @@
+{
+  "video_id": "v01",
+  "images": [
+    "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/qa/contact_sheet.jpg",
+    "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/qa/hook.jpg"
+  ],
+  "instructions": "View both images. For each item set passed true/false and a short note. Save as review.json next to this file, then run `qa_video.py finalize`.",
+  "items": [
+    {
+      "id": "V.CAPTIONS_READABLE",
+      "question": "Are captions legible against every background in the contact sheet?",
+      "severity": "blocking",
+      "fix_route": {
+        "stage": "SUBTITLES",
+        "action": "rebuild",
+        "params": {
+          "font_scale": 1.1
+        }
+      }
+    },
+    {
+      "id": "V.NO_COLLISION",
+      "question": "Do captions avoid covering the key subject or any baked-in text?",
+      "severity": "major",
+      "fix_route": {
+        "stage": "SUBTITLES",
+        "action": "rebuild",
+        "params": {
+          "y": 0.7
+        }
+      }
+    },
+    {
+      "id": "V.HOOK_FRAME",
+      "question": "Is the first frame (hook.jpg) striking and clearly about the topic?",
+      "severity": "major",
+      "fix_route": {
+        "stage": "VISUAL_PLAN",
+        "action": "redesign_scene",
+        "params": {
+          "scene": "first"
+        }
+      }
+    },
+    {
+      "id": "V.VISUALS_MATCH",
+      "question": "Does each visual match what the narration says at that moment?",
+      "severity": "major",
+      "fix_route": {
+        "stage": "VISUAL_PLAN",
+        "action": "redesign_scene",
+        "params": {}
+      }
+    },
+    {
+      "id": "V.NO_ARTIFACTS",
+      "question": "No broken renders, distorted shapes, garbled text, watermarks or glitches?",
+      "severity": "blocking",
+      "fix_route": {
+        "stage": "VISUAL_PLAN",
+        "action": "rerender",
+        "params": {}
+      }
+    },
+    {
+      "id": "V.SAFE_AND_ORIGINAL",
+      "question": "Nothing misleading, unsafe, or infringing (no real logos, characters, people)?",
+      "severity": "blocking",
+      "fix_route": {
+        "stage": "VISUAL_PLAN",
+        "action": "redesign_scene",
+        "params": {}
+      }
+    },
+    {
+      "id": "V.CLAIMS_SUPPORTED",
+      "question": "Every factual statement in the captions is backed by the research dossier?",
+      "severity": "blocking",
+      "fix_route": {
+        "stage": "SCRIPT",
+        "action": "revise_claims",
+        "params": {}
+      }
+    }
+  ]
+}

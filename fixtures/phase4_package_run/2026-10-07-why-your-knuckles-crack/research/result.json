@@ -1,0 +1,107 @@
+{
+  "contract": "cf/1.1",
+  "stage": "RESEARCH",
+  "skill": "content-research",
+  "run_id": null,
+  "video_id": null,
+  "attempt": 2,
+  "status": "passed",
+  "started_at": "2026-10-07T06:29:30+00:00",
+  "finished_at": "2026-10-07T06:29:30+00:00",
+  "inputs": [
+    {
+      "role": "dossier",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/research/dossier.json",
+      "sha256": "f68d55571925df47472f1e7a1dbcb2cb08a7cf688591a705a9cce1f2cbe51d65"
+    }
+  ],
+  "outputs": [
+    {
+      "role": "dossier_scored",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/research/dossier.scored.json",
+      "media_type": "application/json",
+      "sha256": "f1b1a7d985f1d0e7c202bfaa5c7f2b6e6aba6b70f04b5ca1c73d4568f194084f"
+    }
+  ],
+  "gate": {
+    "checks": [
+      {
+        "id": "RES.CITATIONS_RESOLVE",
+        "passed": true,
+        "severity": "blocking",
+        "value": null,
+        "threshold": null,
+        "message": "facts cite unknown sources []"
+      },
+      {
+        "id": "RES.HIGH_RISK_CORROBORATED",
+        "passed": true,
+        "severity": "blocking",
+        "value": null,
+        "threshold": null,
+        "message": "high-risk facts need a tier-1 source or 2 independent domains: []"
+      },
+      {
+        "id": "RES.MEDIUM_RISK_SOURCED",
+        "passed": true,
+        "severity": "major",
+        "value": null,
+        "threshold": null,
+        "message": "medium-risk facts lack a tier ≤2 source: []"
+      },
+      {
+        "id": "RES.QUOTE_LENGTH",
+        "passed": true,
+        "severity": "blocking",
+        "value": null,
+        "threshold": null,
+        "message": "quotes over 15 words (paraphrase instead): []"
+      },
+      {
+        "id": "RES.ONE_QUOTE_PER_SOURCE",
+        "passed": true,
+        "severity": "major",
+        "value": null,
+        "threshold": null,
+        "message": "sources quoted more than once: []"
+      },
+      {
+        "id": "RES.NO_DUPLICATES",
+        "passed": true,
+        "severity": "minor",
+        "value": null,
+        "threshold": null,
+        "message": "near-duplicate facts []"
+      },
+      {
+        "id": "RES.ENOUGH_FACTS",
+        "passed": true,
+        "severity": "major",
+        "value": 7,
+        "threshold": 5,
+        "message": "7 facts (need ≥ 5)"
+      },
+      {
+        "id": "RES.SOURCE_QUALITY",
+        "passed": true,
+        "severity": "major",
+        "value": 0.0,
+        "threshold": 0.5,
+        "message": "0% of sources are social/UGC"
+      }
+    ],
+    "passed": true
+  },
+  "errors": [],
+  "metrics": {
+    "facts": 7,
+    "sources": 4,
+    "tiers": {
+      "1": 3,
+      "2": 0,
+      "3": 1,
+      "4": 0
+    }
+  },
+  "provenance": []
+}

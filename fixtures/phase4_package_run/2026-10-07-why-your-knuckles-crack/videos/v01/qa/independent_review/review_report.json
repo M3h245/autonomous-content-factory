@@ -1,0 +1,242 @@
+{
+  "verdict": "PASS",
+  "judge": "heuristic",
+  "packet": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/qa/review_packet",
+  "packet_manifest_sha256": "f319f56c1e85f19d9fadea6c3cdbf6ee735f9d6c3c3f2ae3d4407be9ee44bbdb",
+  "final_sha256": "8ea61a514ca3604a59fe2b152f0b9c13446bb966f3e8bff08afc2fb1a49b2db9",
+  "thresholds": {
+    "overall_publishability": 4,
+    "hook_strength": 4,
+    "first_frame_clarity": 4,
+    "visual_verbal_sync": 4,
+    "ending_quality": 3
+  },
+  "min_any_dimension": 3,
+  "objective": [],
+  "scores": {
+    "hook_strength": {
+      "score": 4,
+      "anchor": "strong",
+      "evidence": [
+        "✓ speech onset ≤0.35 s: 0.16s",
+        "✓ first line ≤3.2 s: 2.38s 'What actually pops when you crack your k'",
+        "✓ tension device in the opening: negation/contrast/question/number",
+        "✓ ≥2 visual events in first 1.5 s: 2",
+        "✓ frame 0 shows ≥2 elements or on-screen text: 2 element(s), text=True",
+        "✓ on-screen text by 2.0 s: first label at 0.0"
+      ],
+      "explanation": "",
+      "judge": "heuristic",
+      "cap": 4,
+      "note": "a strong hook needs a visual hook in frame 0, not only a spoken one"
+    },
+    "first_frame_clarity": {
+      "score": 5,
+      "anchor": "publish-ready",
+      "evidence": [
+        "✓ subject visible (≥6 % of frame): 17.7%",
+        "✓ substantial subject (≥10 %): 17.7%",
+        "✓ ≥2 elements or text at t=0: 2 element(s)",
+        "✓ nothing cropped at t=0: 0 issue(s)",
+        "✓ main subject ≥35 % of frame height (or documented exception): 36%"
+      ],
+      "explanation": "",
+      "judge": "heuristic",
+      "cap": 5
+    },
+    "message_clarity": {
+      "score": 3,
+      "anchor": "acceptable",
+      "evidence": [
+        "✓ speech rate 2.0-3.4 w/s: 2.52",
+        "✓ avg sentence ≤16 words: 6.8",
+        "✓ no sentence >24 words: max 13",
+        "✓ claims backed by a dossier with a tier-1 source: 7 facts, 3 tier-1",
+        "✗ ending returns to the core message: no callback"
+      ],
+      "explanation": "Not met: ending returns to the core message (no callback)",
+      "judge": "heuristic",
+      "cap": 4,
+      "note": "truth of each claim needs an LLM/human check against evidence/claims.json"
+    },
+    "visual_verbal_sync": {
+      "score": 4,
+      "anchor": "strong",
+      "evidence": [
+        "✗ labels spoken within ±2.5 s: 6/15",
+        "✓ visual events land on words (±0.3 s): 41/41",
+        "✓ no cropped or meaning-changed text: none",
+        "✓ captions in sync: QA/SUB sync passed"
+      ],
+      "explanation": "",
+      "judge": "heuristic",
+      "cap": 5
+    },
+    "pacing_retention": {
+      "score": 4,
+      "anchor": "strong",
+      "evidence": [
+        "✓ no visual gap >3.0 s: max 2.22s",
+        "✓ ≥4 visual events per 10 s: 12.6",
+        "✓ duration in target window: 32.5s in 20.0-45.0",
+        "✓ no speech pause >0.7 s: max 0.49s",
+        "✓ speech rate ≥2.2 w/s: 2.52",
+        "✓ no frozen picture: QA.NO_FREEZE"
+      ],
+      "explanation": "",
+      "judge": "heuristic",
+      "cap": 4
+    },
+    "audio_balance": {
+      "score": 4,
+      "anchor": "strong",
+      "evidence": [
+        "✓ loudness −14 ±1.5 LUFS: -14.1",
+        "✓ true peak ≤ −1 dBTP: -1.4",
+        "✓ music 12-30 dB under voice: 17.0",
+        "✓ SFX ≤1.8 per s: 0.8",
+        "✓ SFX rarely competes with voice (≤25 %): 0.046",
+        "✓ no dropouts / late speech: QA audio checks"
+      ],
+      "explanation": "",
+      "judge": "heuristic",
+      "cap": 4,
+      "note": "perceived voice quality is not measured; listen once per voice"
+    },
+    "subtitle_readability": {
+      "score": 4,
+      "anchor": "strong",
+      "evidence": [
+        "✓ OCR agreement ≥90 %: 1.0",
+        "✓ caption size ≥80 (ASS px @1920): median 136",
+        "✓ short chunks (≤24 chars): p90 16",
+        "✗ each chunk shown ≥0.25 s: min 0.05s",
+        "✓ fits safe area / no overlap: SUB/QA gates"
+      ],
+      "explanation": "",
+      "judge": "heuristic",
+      "cap": 5
+    },
+    "ending_quality": {
+      "score": 4,
+      "anchor": "strong",
+      "evidence": [
+        "✓ visual event in the last 3 s: last at 31.1s of 32.5s",
+        "✓ hold after last word ≤1.2 s: 0.50s",
+        "✓ not abrupt (tail ≥0.2 s): 0.50s",
+        "✗ loop / callback to the hook: no callback",
+        "✓ punchy last line (≤12 words): 4 words",
+        "✓ ending stands without the CTA: without the CTA the video ends on beat b7 (loop): 'so it's just a bubble'"
+      ],
+      "explanation": "",
+      "judge": "heuristic",
+      "cap": 4
+    },
+    "cta_quality": {
+      "score": 4,
+      "anchor": "strong",
+      "evidence": [
+        "✓ single ask (one action verb): 0 ask verbs",
+        "✓ action matches the CTA type: type comment",
+        "✓ short (≤12 words): 4 words",
+        "✓ no stock outro phrase: none",
+        "✓ on-screen text ≤6 words: 'DO YOU CRACK YOURS?'"
+      ],
+      "explanation": "",
+      "judge": "heuristic",
+      "cap": 4
+    },
+    "cta_naturalness": {
+      "score": 4,
+      "anchor": "strong",
+      "evidence": [
+        "✓ integrated into the content or a question: placement integrated",
+        "✓ tied to the content words: ['crack']",
+        "✓ no pushy phrasing: none",
+        "✓ brief when spoken (≤2.2 s): 1.21s"
+      ],
+      "explanation": "",
+      "judge": "heuristic",
+      "cap": 4
+    },
+    "cta_relevance": {
+      "score": 4,
+      "anchor": "strong",
+      "evidence": [
+        "✓ points at the video's subject (title words): ['crack']",
+        "✓ ≥1 content word shared with the body: ['crack']",
+        "✓ not a stock phrase: none"
+      ],
+      "explanation": "",
+      "judge": "heuristic",
+      "cap": 4
+    },
+    "cta_retention_risk": {
+      "score": 5,
+      "anchor": "publish-ready",
+      "evidence": [
+        "✓ gate not_in_hook: passed",
+        "✓ gate after_payoff: passed",
+        "✓ gate duration: passed",
+        "✓ gate ending: passed",
+        "✓ gate standalone_ending: passed",
+        "✓ CTA in the last quarter of the video: starts 30.8s of 32.5s"
+      ],
+      "explanation": "",
+      "judge": "heuristic",
+      "cap": 5,
+      "note": "5 = no measurable risk to hook, payoff or ending"
+    },
+    "title_coherence": {
+      "score": 4,
+      "anchor": "strong",
+      "evidence": [
+        "✓ ≤70 characters: 47",
+        "✓ no clickbait phrases: checked",
+        "✓ not shouting (≤40 % caps): 2%",
+        "✓ ≥2 title words are said in the video: ['actually', 'crack', 'knuckl', 'pop', 'what']",
+        "✓ adds to the hook (not a verbatim copy): differs"
+      ],
+      "explanation": "",
+      "judge": "heuristic",
+      "cap": 4,
+      "note": "whether the title's promise is kept needs an LLM/human judge"
+    },
+    "thumbnail_coherence": {
+      "score": 4,
+      "anchor": "strong",
+      "evidence": [
+        "✓ 9:16, ≥720 wide: 1080x1920",
+        "✓ subject fills ≥8 %: 16.6%",
+        "✓ headline text in the upper area: ['WHAT', 'PBPS', 'ilk']",
+        "✓ headline relates to title/video: ['ilk', 'pbp', 'what']"
+      ],
+      "explanation": "",
+      "judge": "heuristic",
+      "cap": 4,
+      "note": "a designed cover is a Phase 4 deliverable"
+    },
+    "overall_publishability": {
+      "score": 4,
+      "anchor": "strong",
+      "evidence": [
+        "mean 4.00, weakest 3 (message_clarity)"
+      ],
+      "judge": "heuristic",
+      "cap": 4,
+      "explanation": ""
+    }
+  },
+  "failures": [],
+  "cta_thresholds": {
+    "cta_quality": 4,
+    "cta_naturalness": 4,
+    "cta_relevance": 4,
+    "cta_retention_risk": 4
+  },
+  "cta_note": "",
+  "heuristic_scores": null,
+  "limits": [
+    "taste dimensions capped at 4 (heuristic judge); an LLM/human judge is needed for 5"
+  ]
+}

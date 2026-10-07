@@ -1,0 +1,138 @@
+{
+ "checks": [
+  {
+   "id": "SCRIPT.HOOK_IS_OPENING",
+   "passed": true,
+   "severity": "blocking",
+   "evidence": "beat 1 = 'What actually pops when you crack your knuckles?' vs hook 'What actually pops when you crack your knuckles?'"
+  },
+  {
+   "id": "SCRIPT.HOOK_ON_SCREEN",
+   "passed": true,
+   "severity": "minor",
+   "evidence": "'WHAT POPS?' vs 'WHAT POPS?'"
+  },
+  {
+   "id": "SCRIPT.NO_GENERIC_INTRO",
+   "passed": true,
+   "severity": "major",
+   "evidence": "beats 2-3 checked for throat-clearing"
+  },
+  {
+   "id": "SCRIPT.FAST_EXPLANATION",
+   "passed": true,
+   "severity": "major",
+   "evidence": "first evidence beat starts at 2.96s"
+  },
+  {
+   "id": "SCRIPT.PROMISE_PAID",
+   "passed": true,
+   "severity": "blocking",
+   "evidence": "hook promises ['f1']; body uses ['f1', 'f2', 'f3', 'f4', 'f5']"
+  },
+  {
+   "id": "SCRIPT.CLAIMS_TRACEABLE",
+   "passed": true,
+   "severity": "blocking",
+   "evidence": "unknown claim ids []"
+  },
+  {
+   "id": "SCRIPT.HOOK_NOT_REPEATED",
+   "passed": true,
+   "severity": "major",
+   "evidence": "hook repeated in []"
+  },
+  {
+   "id": "SCRIPT.DURATION",
+   "passed": true,
+   "severity": "major",
+   "evidence": "calibrated estimate 32.42s (window 20.0-45.0, 0.5 s margin)"
+  },
+  {
+   "id": "SCRIPT.VISUAL_INTENT",
+   "passed": true,
+   "severity": "major",
+   "evidence": "beats without visual intent: []"
+  },
+  {
+   "id": "SCRIPT.PAUSES",
+   "passed": true,
+   "severity": "major",
+   "evidence": "pauses on ['b6']; out of range []"
+  },
+  {
+   "id": "CTA.SCHEMA",
+   "passed": true,
+   "severity": "blocking",
+   "evidence": "valid"
+  },
+  {
+   "id": "CTA.SINGLE",
+   "passed": true,
+   "severity": "major",
+   "evidence": "at most one CTA, declared"
+  },
+  {
+   "id": "CTA.NOT_IN_HOOK",
+   "passed": true,
+   "severity": "blocking",
+   "evidence": "CTA starts 30.82s; hook ends 2.72s"
+  },
+  {
+   "id": "CTA.AFTER_PAYOFF",
+   "passed": true,
+   "severity": "blocking",
+   "evidence": "CTA starts 30.82s; payoff ends 28.84s"
+  },
+  {
+   "id": "CTA.DURATION",
+   "passed": true,
+   "severity": "major",
+   "evidence": "spoken CTA 1.09s (cap 2.80s = min 2.8 s, 12 % of runtime)"
+  },
+  {
+   "id": "CTA.SHORT_VIDEO",
+   "passed": true,
+   "severity": "major",
+   "evidence": "32.4s video: a separate spoken CTA beat needs \u226520 s"
+  },
+  {
+   "id": "CTA.ENDING",
+   "passed": true,
+   "severity": "blocking",
+   "evidence": "CTA rides on the loop line"
+  },
+  {
+   "id": "CTA.STANDALONE_ENDING",
+   "passed": true,
+   "severity": "blocking",
+   "evidence": "without the CTA the video ends on beat b7 (loop): 'so it's just a bubble'"
+  },
+  {
+   "id": "CTA.RELEVANCE",
+   "passed": true,
+   "severity": "major",
+   "evidence": "shares ['crack'] with the video"
+  },
+  {
+   "id": "CTA.NOT_REPEATED",
+   "passed": true,
+   "severity": "major",
+   "evidence": "checked against 0 earlier CTAs"
+  },
+  {
+   "id": "CTA.DECIDED",
+   "passed": true,
+   "severity": "major",
+   "evidence": "every variant records a CTA decision (needed true/false + reason)"
+  }
+ ],
+ "explanation_start_s": 2.96,
+ "hook_is_opening": true,
+ "hook_repeated_mid": false,
+ "rhythm": {
+  "sentences": 12,
+  "mean_words": 6.83,
+  "std_words": 3.26
+ }
+}

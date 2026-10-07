@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cf.voice_timing",
+  "type": "object",
+  "required": [
+    "video_id",
+    "language",
+    "audio_path",
+    "duration_s",
+    "words",
+    "sentences",
+    "backend"
+  ],
+  "properties": {
+    "video_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "language": {
+      "type": "string",
+      "minLength": 1
+    },
+    "audio_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "duration_s": {
+      "type": "number"
+    },
+    "backend": {
+      "type": "string",
+      "minLength": 1
+    },
+    "words": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "w",
+          "start",
+          "end",
+          "sentence"
+        ],
+        "properties": {
+          "w": {
+            "type": "string",
+            "minLength": 1
+          },
+          "start": {
+            "type": "number"
+          },
+          "end": {
+            "type": "number"
+          },
+          "sentence": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "sentences": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "i",
+          "text",
+          "start",
+          "end"
+        ]
+      }
+    }
+  }
+}

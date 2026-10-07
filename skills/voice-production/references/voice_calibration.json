@@ -1,0 +1,21 @@
+{
+ "am_michael": {
+  "coef": [
+   0.16269,
+   0.10205,
+   0.26214,
+   -0.06628,
+   0.09996
+  ],
+  "features": [
+   "syllables",
+   "words",
+   "commas",
+   "question",
+   "bias"
+  ],
+  "mae_s": 0.163,
+  "samples": 40,
+  "source": "corpus calibration_corpus.txt"
+ }
+}

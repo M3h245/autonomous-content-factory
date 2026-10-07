@@ -1,0 +1,23 @@
+{
+  "selected": [
+    {
+      "rank": 1,
+      "video_id": "v01",
+      "idea_id": "i1",
+      "title": "Your knuckle crack is a bubble, not your bones",
+      "format": "myth-bust",
+      "final_score": 0.8875,
+      "novelty": 1.0
+    }
+  ],
+  "rejected": [
+    {
+      "idea_id": "i2",
+      "reason": "lower marginal score"
+    },
+    {
+      "idea_id": "i3",
+      "reason": "lower marginal score"
+    }
+  ]
+}

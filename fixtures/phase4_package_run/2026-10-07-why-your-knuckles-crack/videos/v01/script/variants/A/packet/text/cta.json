@@ -1,0 +1,12 @@
+{
+ "present": true,
+ "type": "comment",
+ "placement": "integrated",
+ "modality": "both",
+ "spoken": "Do you crack yours?",
+ "on_screen": "DO YOU CRACK YOURS?",
+ "window_s": [
+  30.823,
+  31.915
+ ]
+}

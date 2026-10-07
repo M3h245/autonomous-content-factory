@@ -1,0 +1,296 @@
+{
+  "video_id": "v01",
+  "status": "passed",
+  "checks": [
+    {
+      "id": "QA.CONTAINER_SPEC",
+      "passed": true,
+      "severity": "blocking",
+      "value": null,
+      "threshold": null,
+      "message": "1080x1920 h264/High yuv420p 30.00fps audio=aac/48000"
+    },
+    {
+      "id": "QA.DECODE_OK",
+      "passed": true,
+      "severity": "blocking",
+      "value": 0,
+      "threshold": 0,
+      "message": "every packet decodes"
+    },
+    {
+      "id": "QA.FASTSTART",
+      "passed": true,
+      "severity": "minor",
+      "value": null,
+      "threshold": null,
+      "message": "moov atom before mdat (fast start)"
+    },
+    {
+      "id": "QA.PLATFORM_MAX",
+      "passed": true,
+      "severity": "blocking",
+      "value": 32.52,
+      "threshold": 180.0,
+      "message": "32.5s ≤ 180.0s"
+    },
+    {
+      "id": "QA.DURATION_TARGET",
+      "passed": true,
+      "severity": "major",
+      "value": 32.52,
+      "threshold": [
+        20.0,
+        45.0
+      ],
+      "message": "32.5s within [20.0, 45.0]"
+    },
+    {
+      "id": "QA.AV_DURATION",
+      "passed": true,
+      "severity": "blocking",
+      "value": null,
+      "threshold": null,
+      "message": "video 32.52s vs narration 32.52s"
+    },
+    {
+      "id": "QA.NO_BLACK",
+      "passed": true,
+      "severity": "major",
+      "value": [],
+      "threshold": [],
+      "message": "black segments []"
+    },
+    {
+      "id": "QA.NO_FREEZE",
+      "passed": true,
+      "severity": "major",
+      "value": [],
+      "threshold": [],
+      "message": "frozen segments ≥3s []"
+    },
+    {
+      "id": "QA.NO_DROPOUT",
+      "passed": true,
+      "severity": "major",
+      "value": [],
+      "threshold": [],
+      "message": "internal silences []"
+    },
+    {
+      "id": "QA.LOUDNESS",
+      "passed": true,
+      "severity": "major",
+      "value": -14.1,
+      "threshold": [
+        -15.5,
+        -12.5
+      ],
+      "message": "-14.1 LUFS"
+    },
+    {
+      "id": "QA.TRUE_PEAK",
+      "passed": true,
+      "severity": "major",
+      "value": -1.4,
+      "threshold": -1.0,
+      "message": "true peak -1.4 dBTP"
+    },
+    {
+      "id": "QA.HOOK_AUDIO",
+      "passed": true,
+      "severity": "major",
+      "value": 0.0,
+      "threshold": 0.4,
+      "message": "speech starts at 0.00s"
+    },
+    {
+      "id": "QA.CAPTIONS_PRESENT",
+      "passed": true,
+      "severity": "blocking",
+      "value": null,
+      "threshold": null,
+      "message": "82 caption events"
+    },
+    {
+      "id": "QA.HOOK_CAPTION",
+      "passed": true,
+      "severity": "major",
+      "value": 0.16,
+      "threshold": 0.6,
+      "message": "first caption at 0.16s"
+    },
+    {
+      "id": "QA.CAPTION_OVERLAP",
+      "passed": true,
+      "severity": "blocking",
+      "value": null,
+      "threshold": null,
+      "message": "overlapping caption events []"
+    },
+    {
+      "id": "QA.BURNED_IN",
+      "passed": true,
+      "severity": "blocking",
+      "value": [
+        25985,
+        15293,
+        25522
+      ],
+      "threshold": ">=400",
+      "message": "changed caption-band pixels per probe [25985, 15293, 25522]"
+    },
+    {
+      "id": "QA.OCR_MATCH",
+      "passed": true,
+      "severity": "major",
+      "value": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "threshold": ">=60% of samples ≥0.6",
+      "message": "OCR agreement 100% on 6 samples"
+    },
+    {
+      "id": "REV.HOOK_STRENGTH",
+      "passed": true,
+      "severity": "major",
+      "value": 4,
+      "threshold": 4,
+      "message": "4/5 strong (needs ≥4; judge heuristic)"
+    },
+    {
+      "id": "REV.FIRST_FRAME_CLARITY",
+      "passed": true,
+      "severity": "major",
+      "value": 5,
+      "threshold": 4,
+      "message": "5/5 publish-ready (needs ≥4; judge heuristic)"
+    },
+    {
+      "id": "REV.MESSAGE_CLARITY",
+      "passed": true,
+      "severity": "major",
+      "value": 3,
+      "threshold": 3,
+      "message": "3/5 acceptable (needs ≥3; judge heuristic) — Not met: ending returns to the core message (no callback)"
+    },
+    {
+      "id": "REV.VISUAL_VERBAL_SYNC",
+      "passed": true,
+      "severity": "major",
+      "value": 4,
+      "threshold": 4,
+      "message": "4/5 strong (needs ≥4; judge heuristic)"
+    },
+    {
+      "id": "REV.PACING_RETENTION",
+      "passed": true,
+      "severity": "major",
+      "value": 4,
+      "threshold": 3,
+      "message": "4/5 strong (needs ≥3; judge heuristic)"
+    },
+    {
+      "id": "REV.AUDIO_BALANCE",
+      "passed": true,
+      "severity": "major",
+      "value": 4,
+      "threshold": 3,
+      "message": "4/5 strong (needs ≥3; judge heuristic)"
+    },
+    {
+      "id": "REV.SUBTITLE_READABILITY",
+      "passed": true,
+      "severity": "major",
+      "value": 4,
+      "threshold": 3,
+      "message": "4/5 strong (needs ≥3; judge heuristic)"
+    },
+    {
+      "id": "REV.ENDING_QUALITY",
+      "passed": true,
+      "severity": "major",
+      "value": 4,
+      "threshold": 3,
+      "message": "4/5 strong (needs ≥3; judge heuristic)"
+    },
+    {
+      "id": "REV.CTA_QUALITY",
+      "passed": true,
+      "severity": "major",
+      "value": 4,
+      "threshold": 3,
+      "message": "4/5 strong (needs ≥3; judge heuristic)"
+    },
+    {
+      "id": "REV.CTA_NATURALNESS",
+      "passed": true,
+      "severity": "major",
+      "value": 4,
+      "threshold": 3,
+      "message": "4/5 strong (needs ≥3; judge heuristic)"
+    },
+    {
+      "id": "REV.CTA_RELEVANCE",
+      "passed": true,
+      "severity": "major",
+      "value": 4,
+      "threshold": 3,
+      "message": "4/5 strong (needs ≥3; judge heuristic)"
+    },
+    {
+      "id": "REV.CTA_RETENTION_RISK",
+      "passed": true,
+      "severity": "major",
+      "value": 5,
+      "threshold": 3,
+      "message": "5/5 publish-ready (needs ≥3; judge heuristic)"
+    },
+    {
+      "id": "REV.TITLE_COHERENCE",
+      "passed": true,
+      "severity": "major",
+      "value": 4,
+      "threshold": 3,
+      "message": "4/5 strong (needs ≥3; judge heuristic)"
+    },
+    {
+      "id": "REV.THUMBNAIL_COHERENCE",
+      "passed": true,
+      "severity": "major",
+      "value": 4,
+      "threshold": 3,
+      "message": "4/5 strong (needs ≥3; judge heuristic)"
+    },
+    {
+      "id": "REV.OVERALL_PUBLISHABILITY",
+      "passed": true,
+      "severity": "major",
+      "value": 4,
+      "threshold": 4,
+      "message": "4/5 strong (needs ≥4; judge heuristic)"
+    }
+  ],
+  "metrics": {
+    "ocr_rate": 1.0,
+    "duration_s": 32.52,
+    "lufs": -14.1,
+    "true_peak_dbtp": -1.4,
+    "speech_onset_s": 0.0,
+    "caption_events": 82
+  },
+  "images": {
+    "contact_sheet": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/qa/contact_sheet.jpg",
+    "hook": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/qa/hook.jpg"
+  },
+  "independent_review": {
+    "verdict": "PASS",
+    "judge": "heuristic",
+    "report": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/qa/independent_review/review_report.json"
+  }
+}

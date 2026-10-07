@@ -1,0 +1,371 @@
+{
+  "selected": "A",
+  "distinctness": {
+    "role_sequences_differ": true,
+    "rhythm_differs": true,
+    "body_word_overlap": 0.19,
+    "rhythm_a": {
+      "sentences": 12,
+      "mean_words": 6.83,
+      "std_words": 3.26
+    },
+    "rhythm_b": {
+      "sentences": 11,
+      "mean_words": 5.73,
+      "std_words": 2.26
+    }
+  },
+  "variants": [
+    {
+      "variant_id": "A",
+      "structure": "myth-bust → mechanism → MRI evidence → debate → arthritis payoff → loop + comment question (7 beats)",
+      "estimated_s": 32.42,
+      "rhythm": {
+        "sentences": 12,
+        "mean_words": 6.83,
+        "std_words": 3.26
+      },
+      "checks": [
+        {
+          "id": "SCRIPT.HOOK_IS_OPENING",
+          "passed": true,
+          "severity": "blocking",
+          "evidence": "beat 1 = 'What actually pops when you crack your knuckles?' vs hook 'What actually pops when you crack your knuckles?'"
+        },
+        {
+          "id": "SCRIPT.HOOK_ON_SCREEN",
+          "passed": true,
+          "severity": "minor",
+          "evidence": "'WHAT POPS?' vs 'WHAT POPS?'"
+        },
+        {
+          "id": "SCRIPT.NO_GENERIC_INTRO",
+          "passed": true,
+          "severity": "major",
+          "evidence": "beats 2-3 checked for throat-clearing"
+        },
+        {
+          "id": "SCRIPT.FAST_EXPLANATION",
+          "passed": true,
+          "severity": "major",
+          "evidence": "first evidence beat starts at 2.96s"
+        },
+        {
+          "id": "SCRIPT.PROMISE_PAID",
+          "passed": true,
+          "severity": "blocking",
+          "evidence": "hook promises ['f1']; body uses ['f1', 'f2', 'f3', 'f4', 'f5']"
+        },
+        {
+          "id": "SCRIPT.CLAIMS_TRACEABLE",
+          "passed": true,
+          "severity": "blocking",
+          "evidence": "unknown claim ids []"
+        },
+        {
+          "id": "SCRIPT.HOOK_NOT_REPEATED",
+          "passed": true,
+          "severity": "major",
+          "evidence": "hook repeated in []"
+        },
+        {
+          "id": "SCRIPT.DURATION",
+          "passed": true,
+          "severity": "major",
+          "evidence": "calibrated estimate 32.42s (window 20.0-45.0, 0.5 s margin)"
+        },
+        {
+          "id": "SCRIPT.VISUAL_INTENT",
+          "passed": true,
+          "severity": "major",
+          "evidence": "beats without visual intent: []"
+        },
+        {
+          "id": "SCRIPT.PAUSES",
+          "passed": true,
+          "severity": "major",
+          "evidence": "pauses on ['b6']; out of range []"
+        },
+        {
+          "id": "CTA.SCHEMA",
+          "passed": true,
+          "severity": "blocking",
+          "evidence": "valid"
+        },
+        {
+          "id": "CTA.SINGLE",
+          "passed": true,
+          "severity": "major",
+          "evidence": "at most one CTA, declared"
+        },
+        {
+          "id": "CTA.NOT_IN_HOOK",
+          "passed": true,
+          "severity": "blocking",
+          "evidence": "CTA starts 30.82s; hook ends 2.72s"
+        },
+        {
+          "id": "CTA.AFTER_PAYOFF",
+          "passed": true,
+          "severity": "blocking",
+          "evidence": "CTA starts 30.82s; payoff ends 28.84s"
+        },
+        {
+          "id": "CTA.DURATION",
+          "passed": true,
+          "severity": "major",
+          "evidence": "spoken CTA 1.09s (cap 2.80s = min 2.8 s, 12 % of runtime)"
+        },
+        {
+          "id": "CTA.SHORT_VIDEO",
+          "passed": true,
+          "severity": "major",
+          "evidence": "32.4s video: a separate spoken CTA beat needs ≥20 s"
+        },
+        {
+          "id": "CTA.ENDING",
+          "passed": true,
+          "severity": "blocking",
+          "evidence": "CTA rides on the loop line"
+        },
+        {
+          "id": "CTA.STANDALONE_ENDING",
+          "passed": true,
+          "severity": "blocking",
+          "evidence": "without the CTA the video ends on beat b7 (loop): 'so it's just a bubble'"
+        },
+        {
+          "id": "CTA.RELEVANCE",
+          "passed": true,
+          "severity": "major",
+          "evidence": "shares ['crack'] with the video"
+        },
+        {
+          "id": "CTA.NOT_REPEATED",
+          "passed": true,
+          "severity": "major",
+          "evidence": "checked against 0 earlier CTAs"
+        },
+        {
+          "id": "CTA.DECIDED",
+          "passed": true,
+          "severity": "major",
+          "evidence": "every variant records a CTA decision (needed true/false + reason)"
+        }
+      ],
+      "scores": {
+        "message_clarity": 4,
+        "pacing_retention": 4,
+        "payoff_coherence": 4,
+        "hook_strength": 4,
+        "cta_quality": 4,
+        "cta_naturalness": 4,
+        "cta_relevance": 4,
+        "cta_retention_risk": 5
+      },
+      "evidence": {
+        "message_clarity": [
+          "✓ speech rate 2.3-3.3 w/s (calibrated): 2.79",
+          "✓ avg sentence ≤16 words: 6.8",
+          "✓ no sentence >24 words: max 13",
+          "✓ claims mapped to the dossier (≥3): ['f1', 'f2', 'f3', 'f4', 'f5']",
+          "✓ ending returns to the hook: callback"
+        ],
+        "pacing_retention": [
+          "✓ estimated duration in window: 32.4s in 20.0-45.0",
+          "✓ explanation starts by 8.0 s: 2.96",
+          "✓ varied rhythm (sentence-length spread ≥3 words): σ=3.3",
+          "✓ at least one punchy line (≤6 words): min 2",
+          "✓ no sentence >24 words: max 13"
+        ],
+        "payoff_coherence": [
+          "✓ promised facts are delivered: promised ['f1'], used ['f1', 'f2', 'f3', 'f4', 'f5']",
+          "✓ the body addresses the hook's tension: hook words reappear in the body",
+          "✓ ending calls back to the hook: yes",
+          "✓ title words are spoken: What actually pops when you crack your knuckles",
+          "✓ hook not repeated verbatim mid-script: checked"
+        ],
+        "hook_strength": [
+          "✓ hook-stage score (line + frame 0): 4",
+          "✓ opening is the selected hook: yes",
+          "✓ first line ≤3.2 s: 2.64s",
+          "✓ no generic intro: checked"
+        ],
+        "cta_quality": [
+          "✓ single ask (one action verb): 0 ask verbs",
+          "✓ action matches the CTA type: type comment",
+          "✓ short (≤12 words): 4 words",
+          "✓ no stock outro phrase: none",
+          "✓ on-screen text ≤6 words: 'DO YOU CRACK YOURS?'"
+        ],
+        "cta_naturalness": [
+          "✓ integrated into the content or a question: placement integrated",
+          "✓ tied to the content words: ['crack']",
+          "✓ no pushy phrasing: none",
+          "✓ brief when spoken (≤2.2 s): 1.09s"
+        ],
+        "cta_relevance": [
+          "✓ points at the video's subject (title words): ['crack']",
+          "✓ ≥1 content word shared with the body: ['crack']",
+          "✓ not a stock phrase: none"
+        ],
+        "cta_retention_risk": [
+          "✓ gate not_in_hook: passed",
+          "✓ gate after_payoff: passed",
+          "✓ gate duration: passed",
+          "✓ gate ending: passed",
+          "✓ gate standalone_ending: passed",
+          "✓ CTA in the last quarter of the video: starts 30.8s of 32.4s"
+        ]
+      },
+      "review_failures": [],
+      "verdict": "PASS"
+    },
+    {
+      "variant_id": "B",
+      "structure": "fast cause chain → 60-year experiment payoff → loop, no CTA (6 beats)",
+      "estimated_s": 24.29,
+      "rhythm": {
+        "sentences": 11,
+        "mean_words": 5.73,
+        "std_words": 2.26
+      },
+      "checks": [
+        {
+          "id": "SCRIPT.HOOK_IS_OPENING",
+          "passed": true,
+          "severity": "blocking",
+          "evidence": "beat 1 = 'What actually pops when you crack your knuckles?' vs hook 'What actually pops when you crack your knuckles?'"
+        },
+        {
+          "id": "SCRIPT.HOOK_ON_SCREEN",
+          "passed": true,
+          "severity": "minor",
+          "evidence": "'WHAT POPS?' vs 'WHAT POPS?'"
+        },
+        {
+          "id": "SCRIPT.NO_GENERIC_INTRO",
+          "passed": true,
+          "severity": "major",
+          "evidence": "beats 2-3 checked for throat-clearing"
+        },
+        {
+          "id": "SCRIPT.FAST_EXPLANATION",
+          "passed": true,
+          "severity": "major",
+          "evidence": "first evidence beat starts at 2.96s"
+        },
+        {
+          "id": "SCRIPT.PROMISE_PAID",
+          "passed": true,
+          "severity": "blocking",
+          "evidence": "hook promises ['f1']; body uses ['f1', 'f2', 'f5', 'f6', 'f7']"
+        },
+        {
+          "id": "SCRIPT.CLAIMS_TRACEABLE",
+          "passed": true,
+          "severity": "blocking",
+          "evidence": "unknown claim ids []"
+        },
+        {
+          "id": "SCRIPT.HOOK_NOT_REPEATED",
+          "passed": true,
+          "severity": "major",
+          "evidence": "hook repeated in []"
+        },
+        {
+          "id": "SCRIPT.DURATION",
+          "passed": true,
+          "severity": "major",
+          "evidence": "calibrated estimate 24.29s (window 20.0-45.0, 0.5 s margin)"
+        },
+        {
+          "id": "SCRIPT.VISUAL_INTENT",
+          "passed": true,
+          "severity": "major",
+          "evidence": "beats without visual intent: []"
+        },
+        {
+          "id": "SCRIPT.PAUSES",
+          "passed": true,
+          "severity": "major",
+          "evidence": "pauses on ['b5']; out of range []"
+        },
+        {
+          "id": "CTA.SCHEMA",
+          "passed": true,
+          "severity": "blocking",
+          "evidence": "valid"
+        },
+        {
+          "id": "CTA.SINGLE",
+          "passed": true,
+          "severity": "major",
+          "evidence": "at most one CTA, declared"
+        },
+        {
+          "id": "CTA.DECIDED",
+          "passed": true,
+          "severity": "major",
+          "evidence": "every variant records a CTA decision (needed true/false + reason)"
+        }
+      ],
+      "scores": {
+        "message_clarity": 3,
+        "pacing_retention": 3,
+        "payoff_coherence": 3,
+        "hook_strength": 4
+      },
+      "evidence": {
+        "message_clarity": [
+          "✓ speech rate 2.3-3.3 w/s (calibrated): 2.92",
+          "✓ avg sentence ≤16 words: 5.7",
+          "✓ no sentence >24 words: max 11",
+          "✓ claims mapped to the dossier (≥3): ['f1', 'f2', 'f5', 'f6', 'f7']",
+          "✗ ending returns to the hook: none"
+        ],
+        "pacing_retention": [
+          "✓ estimated duration in window: 24.3s in 20.0-45.0",
+          "✓ explanation starts by 8.0 s: 2.96",
+          "✗ varied rhythm (sentence-length spread ≥3 words): σ=2.3",
+          "✓ at least one punchy line (≤6 words): min 3",
+          "✓ no sentence >24 words: max 11"
+        ],
+        "payoff_coherence": [
+          "✓ promised facts are delivered: promised ['f1'], used ['f1', 'f2', 'f5', 'f6', 'f7']",
+          "✓ the body addresses the hook's tension: hook words reappear in the body",
+          "✗ ending calls back to the hook: no",
+          "✓ title words are spoken: What actually pops when you crack your knuckles",
+          "✓ hook not repeated verbatim mid-script: checked"
+        ],
+        "hook_strength": [
+          "✓ hook-stage score (line + frame 0): 4",
+          "✓ opening is the selected hook: yes",
+          "✓ first line ≤3.2 s: 2.64s",
+          "✓ no generic intro: checked"
+        ]
+      },
+      "review_failures": [
+        {
+          "id": "message_clarity",
+          "score": 3,
+          "threshold": 4,
+          "evidence": "Not met: ending returns to the hook (none)"
+        },
+        {
+          "id": "pacing_retention",
+          "score": 3,
+          "threshold": 4,
+          "evidence": "Not met: varied rhythm (sentence-length spread ≥3 words) (σ=2.3)"
+        },
+        {
+          "id": "payoff_coherence",
+          "score": 3,
+          "threshold": 4,
+          "evidence": "Not met: ending calls back to the hook (no)"
+        }
+      ],
+      "verdict": "FAIL"
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "contract": "cf/1.1",
+  "stage": "SCRIPT",
+  "skill": "short-form-script",
+  "run_id": null,
+  "video_id": "v01",
+  "attempt": 2,
+  "status": "passed",
+  "started_at": "2026-10-07T06:32:09+00:00",
+  "finished_at": "2026-10-07T06:32:09+00:00",
+  "inputs": [
+    {
+      "role": "script_variants",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/script/script_variants.json",
+      "sha256": "f1cd67b05751a63ef9922d6fd72e011c1b43fb64d35a0246ddde4fc603116d87"
+    },
+    {
+      "role": "selected_hook",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/hook/selected_hook.json",
+      "sha256": "39bfb4117730a986af9c7273339b6986d0682e58fdb5a2f84f483c7dbd22fe9e"
+    }
+  ],
+  "outputs": [
+    {
+      "role": "script",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/script/script.json",
+      "media_type": "application/json",
+      "sha256": "4973be8f50303a3c8fc2fae89dc97755a89471c41a5e58ed0b12d6a82e2da81f"
+    }
+  ],
+  "gate": {
+    "checks": [
+      {
+        "id": "SCRIPT.SCHEMA",
+        "passed": true,
+        "severity": "blocking",
+        "value": null,
+        "threshold": null,
+        "message": "contract script_variants"
+      },
+      {
+        "id": "SCRIPT.VARIANTS_DISTINCT",
+        "passed": true,
+        "severity": "major",
+        "value": null,
+        "threshold": null,
+        "message": "{'role_sequences_differ': True, 'rhythm_differs': True, 'body_word_overlap': 0.19, 'rhythm_a': {'sentences': 12, 'mean_words': 6.83, 'std_words': 3.26}, 'rhythm_b': {'sentences': 11, 'mean_words': 5.73, 'std_words': 2.26}}"
+      },
+      {
+        "id": "SCRIPT.SELECTED",
+        "passed": true,
+        "severity": "blocking",
+        "value": null,
+        "threshold": null,
+        "message": "selected A {'message_clarity': 4, 'pacing_retention': 4, 'payoff_coherence': 4, 'hook_strength': 4, 'cta_quality': 4, 'cta_naturalness': 4, 'cta_relevance': 4, 'cta_retention_risk': 5}"
+      }
+    ],
+    "passed": true
+  },
+  "errors": [],
+  "metrics": {
+    "selected": "A",
+    "variants": {
+      "A": {
+        "message_clarity": 4,
+        "pacing_retention": 4,
+        "payoff_coherence": 4,
+        "hook_strength": 4,
+        "cta_quality": 4,
+        "cta_naturalness": 4,
+        "cta_relevance": 4,
+        "cta_retention_risk": 5
+      },
+      "B": {
+        "message_clarity": 3,
+        "pacing_retention": 3,
+        "payoff_coherence": 3,
+        "hook_strength": 4
+      }
+    },
+    "est_duration_s": 32.42
+  },
+  "provenance": []
+}

@@ -1,0 +1,73 @@
+{
+  "process": {
+    "pid": 4384,
+    "ppid": 3990,
+    "argv": [
+      "/home/claude/cf2/video-quality-assurance/scripts/reviewer.py",
+      "review",
+      "--packet",
+      "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/qa/review_packet",
+      "--out",
+      "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/qa/independent_review",
+      "--backend",
+      "heuristic"
+    ]
+  },
+  "judge": "heuristic",
+  "packet_root": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/qa/review_packet",
+  "manifest_sha256": "f319f56c1e85f19d9fadea6c3cdbf6ee735f9d6c3c3f2ae3d4407be9ee44bbdb",
+  "files_read": [
+    {
+      "name": "text/transcript.json",
+      "sha256": "77a0bee662f3e898"
+    },
+    {
+      "name": "text/publish.json",
+      "sha256": "34139bbe261fc5f7"
+    },
+    {
+      "name": "measurements/qa_report.json",
+      "sha256": "2b93500754a6f256"
+    },
+    {
+      "name": "measurements/visual_audit.json",
+      "sha256": "de8cf94bfe51d8df"
+    },
+    {
+      "name": "measurements/mix_report.json",
+      "sha256": "a343e48af908d10b"
+    },
+    {
+      "name": "measurements/subtitles_result.json",
+      "sha256": "373925d594c2e5b2"
+    },
+    {
+      "name": "evidence/claims.json",
+      "sha256": "26254b06808e816f"
+    },
+    {
+      "name": "frames/first_frame.png",
+      "sha256": "9165e6031faef775"
+    },
+    {
+      "name": "frames/cover.jpg",
+      "sha256": "08c2a5584af0b307"
+    },
+    {
+      "name": "text/captions.ass",
+      "sha256": "be4c02138efaeccd"
+    },
+    {
+      "name": "measurements/cta_report.json",
+      "sha256": "afb7471ad9b19a79"
+    },
+    {
+      "name": "text/cta.json",
+      "sha256": "ef44bf2f70a62902"
+    }
+  ],
+  "refused": [],
+  "authoring_modules_loaded": [],
+  "authoring_files_in_packet": [],
+  "statement": "reviewer read only hash-verified packet files; no authoring module, state or reasoning available"
+}

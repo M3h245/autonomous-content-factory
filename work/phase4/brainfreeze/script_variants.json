@@ -1,0 +1,219 @@
+{
+ "video_id": "v01",
+ "language": "en",
+ "hook_id": "h3",
+ "variants": [
+  {
+   "variant_id": "A",
+   "structure": "forced choice \u2192 where it starts \u2192 referred pain \u2192 gulp experiment \u2192 ice-cube contrast \u2192 school trial \u2192 payoff (speed) \u2192 loop + comment question (8 beats)",
+   "beats": [
+    {
+     "id": "b1",
+     "role": "hook",
+     "text": "Sip or gulp? One doubles your odds of brain freeze.",
+     "claim_ids": [
+      "f3",
+      "f5"
+     ],
+     "on_screen": "SIP OR GULP?",
+     "emphasis": [
+      "doubles"
+     ],
+     "visual_intent": "frame 0: glass and cone side by side, question mark between"
+    },
+    {
+     "id": "b2",
+     "role": "setup",
+     "text": "Brain freeze starts when cold hits the roof of your mouth.",
+     "claim_ids": [
+      "f1"
+     ],
+     "on_screen": "ROOF OF YOUR MOUTH",
+     "visual_intent": "head cross-section: cold arrow hits the palate"
+    },
+    {
+     "id": "b3",
+     "role": "value",
+     "text": "But you feel it in your forehead. That's referred pain, not a frozen brain.",
+     "claim_ids": [
+      "f8"
+     ],
+     "visual_intent": "arrow from palate up to forehead, pain zigzag"
+    },
+    {
+     "id": "b4",
+     "role": "value",
+     "text": "In one test, 77 people gulped ice water, and half got brain freeze in about 15 seconds.",
+     "claim_ids": [
+      "f3",
+      "f4"
+     ],
+     "on_screen": "51%",
+     "visual_intent": "glass with straw, half of a crowd of dots lights up"
+    },
+    {
+     "id": "b5",
+     "role": "value",
+     "text": "An ice cube on the palate? One in eight.",
+     "claim_ids": [
+      "f3"
+     ],
+     "on_screen": "12%",
+     "visual_intent": "single ice cube, one dot of eight lights up"
+    },
+    {
+     "id": "b6",
+     "role": "twist",
+     "text": "And in a school trial, fast ice cream doubled it: 27 percent versus 13.",
+     "claim_ids": [
+      "f5"
+     ],
+     "visual_intent": "two cones: fast one with speed lines vs slow one; bars 27 vs 13"
+    },
+    {
+     "id": "b7",
+     "role": "payoff",
+     "text": "Same ice cream, different speed. So slow down.",
+     "claim_ids": [
+      "f5"
+     ],
+     "emphasis": [
+      "speed"
+     ],
+     "visual_intent": "slow cone; check mark"
+    },
+    {
+     "id": "b8",
+     "role": "loop",
+     "text": "It fades within 10 minutes anyway. So, do you sip or gulp?",
+     "claim_ids": [
+      "f2"
+     ],
+     "on_screen": "DO YOU SIP OR GULP?",
+     "visual_intent": "back to the glass and cone, question mark"
+    }
+   ],
+   "publish": {
+    "title_options": [
+     "Sip or gulp: which one gives you brain freeze?",
+     "Why eating fast doubles brain freeze"
+    ],
+    "description": "Two experiments show what triggers brain freeze: gulping ice water got half of 77 people, and fast ice cream doubled it in a school trial.",
+    "hashtags": [
+     "#science",
+     "#brainfreeze",
+     "#humanbody",
+     "#shorts"
+    ]
+   },
+   "cta": {
+    "needed": true,
+    "decision_reason": "the loop ends on a two-option personal question; answering in the comments is the natural next step and closes the loop with the hook's choice",
+    "type": "comment",
+    "placement": "integrated",
+    "modality": "both",
+    "beat_id": "b8",
+    "spoken": "So, do you sip or gulp?",
+    "on_screen": "DO YOU SIP OR GULP?"
+   }
+  },
+  {
+   "variant_id": "B",
+   "structure": "forced choice \u2192 artery mechanism \u2192 small-study caveat \u2192 two experiments in one breath \u2192 payoff \u2192 loop (7 beats)",
+   "beats": [
+    {
+     "id": "b1",
+     "role": "hook",
+     "text": "Sip or gulp? One doubles your odds of brain freeze.",
+     "claim_ids": [
+      "f3",
+      "f5"
+     ],
+     "on_screen": "SIP OR GULP?",
+     "emphasis": [
+      "doubles"
+     ],
+     "visual_intent": "frame 0: glass and cone side by side, question mark between"
+    },
+    {
+     "id": "b2",
+     "role": "setup",
+     "text": "Cold on the roof of your mouth sets it off.",
+     "claim_ids": [
+      "f1"
+     ],
+     "visual_intent": "cold arrow hits the palate"
+    },
+    {
+     "id": "b3",
+     "role": "value",
+     "text": "In a small study, an artery near the brain widened as the pain began, and narrowed as it faded.",
+     "claim_ids": [
+      "f6"
+     ],
+     "visual_intent": "artery tube widening then narrowing"
+    },
+    {
+     "id": "b4",
+     "role": "value",
+     "text": "Gulping ice water triggered it in half of 77 people.",
+     "claim_ids": [
+      "f3"
+     ],
+     "on_screen": "51%",
+     "visual_intent": "glass, crowd of dots half lit"
+    },
+    {
+     "id": "b5",
+     "role": "twist",
+     "text": "Eating ice cream fast doubled it in a trial with 145 students.",
+     "claim_ids": [
+      "f5"
+     ],
+     "visual_intent": "fast cone vs slow cone"
+    },
+    {
+     "id": "b6",
+     "role": "payoff",
+     "text": "So the gulp is the problem. Slow down, and it fades within 10 minutes anyway.",
+     "claim_ids": [
+      "f5",
+      "f2"
+     ],
+     "visual_intent": "check mark on the slow side"
+    },
+    {
+     "id": "b7",
+     "role": "loop",
+     "text": "So, do you sip or gulp?",
+     "claim_ids": [],
+     "on_screen": "DO YOU SIP OR GULP?",
+     "visual_intent": "back to glass and cone"
+    }
+   ],
+   "publish": {
+    "title_options": [
+     "What really causes brain freeze",
+     "Brain freeze: sip or gulp?"
+    ],
+    "description": "Cold on the palate, a widening artery, and two experiments on gulping versus sipping.",
+    "hashtags": [
+     "#science",
+     "#brainfreeze",
+     "#humanbody",
+     "#shorts"
+    ]
+   },
+   "cta": {
+    "needed": true,
+    "decision_reason": "a two-option question invites a one-word comment and mirrors the hook",
+    "type": "comment",
+    "placement": "integrated",
+    "modality": "both",
+    "beat_id": "b7",
+    "spoken": "So, do you sip or gulp?",
+    "on_screen": "DO YOU SIP OR GULP?"
+   }
+  }
+ ]
+}

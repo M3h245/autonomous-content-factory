@@ -1,0 +1,362 @@
+{
+  "video_id": "v01",
+  "style": {
+    "palette": [
+      "#ffd23f",
+      "#e8452c",
+      "#3b82c4",
+      "#2f9e44",
+      "#f783ac"
+    ],
+    "paper": "plain",
+    "mood": "playful"
+  },
+  "scenes": [
+    {
+      "id": "s1",
+      "beat_ids": [
+        "b1"
+      ],
+      "visual": {
+        "kind": "image",
+        "path": "{FIXTURE}/visual/assets/s1.png",
+        "used_kind": "image"
+      }
+    },
+    {
+      "id": "s2",
+      "beat_ids": [
+        "b2"
+      ],
+      "visual": {
+        "kind": "image",
+        "path": "{FIXTURE}/visual/assets/s2.png",
+        "used_kind": "image"
+      },
+      "transition": {
+        "type": "whip"
+      }
+    },
+    {
+      "id": "s3",
+      "beat_ids": [
+        "b3"
+      ],
+      "visual": {
+        "kind": "image",
+        "path": "{FIXTURE}/visual/assets/s3.png",
+        "used_kind": "image"
+      },
+      "transition": {
+        "type": "paper"
+      }
+    },
+    {
+      "id": "s4",
+      "beat_ids": [
+        "b4"
+      ],
+      "visual": {
+        "kind": "image",
+        "path": "{FIXTURE}/visual/assets/s4.png",
+        "used_kind": "image"
+      },
+      "transition": {
+        "type": "pop"
+      }
+    },
+    {
+      "id": "s5",
+      "beat_ids": [
+        "b5"
+      ],
+      "visual": {
+        "kind": "image",
+        "path": "{FIXTURE}/visual/assets/s5.png",
+        "used_kind": "image"
+      },
+      "transition": {
+        "type": "whip"
+      }
+    },
+    {
+      "id": "s6",
+      "beat_ids": [
+        "b6"
+      ],
+      "visual": {
+        "kind": "image",
+        "path": "{FIXTURE}/visual/assets/s6.png",
+        "used_kind": "image"
+      },
+      "transition": {
+        "type": "flash"
+      }
+    },
+    {
+      "id": "s7",
+      "beat_ids": [
+        "b7"
+      ],
+      "visual": {
+        "kind": "image",
+        "path": "{FIXTURE}/visual/assets/s7.png",
+        "used_kind": "image"
+      },
+      "transition": {
+        "type": "paper"
+      }
+    }
+  ],
+  "shots": [
+    {
+      "id": "s1",
+      "beat_ids": [
+        "b1"
+      ],
+      "visual": {
+        "kind": "image",
+        "path": "{FIXTURE}/visual/assets/s1.png",
+        "used_kind": "image"
+      },
+      "shot_id": "s1.1",
+      "start": 0.0,
+      "end": 1.795
+    },
+    {
+      "id": "s1",
+      "beat_ids": [
+        "b1"
+      ],
+      "visual": {
+        "kind": "image",
+        "path": "{FIXTURE}/visual/assets/s1.png",
+        "used_kind": "image"
+      },
+      "shot_id": "s1.2",
+      "start": 1.795,
+      "end": 3.73,
+      "motion": {
+        "type": "pan_left",
+        "strength": 0.12
+      },
+      "transition": {
+        "type": "cut",
+        "duration": 0
+      }
+    },
+    {
+      "id": "s2",
+      "beat_ids": [
+        "b2"
+      ],
+      "visual": {
+        "kind": "image",
+        "path": "{FIXTURE}/visual/assets/s2.png",
+        "used_kind": "image"
+      },
+      "transition": {
+        "type": "whip"
+      },
+      "shot_id": "s2.1",
+      "start": 3.73,
+      "end": 7.058
+    },
+    {
+      "id": "s3",
+      "beat_ids": [
+        "b3"
+      ],
+      "visual": {
+        "kind": "image",
+        "path": "{FIXTURE}/visual/assets/s3.png",
+        "used_kind": "image"
+      },
+      "transition": {
+        "type": "paper"
+      },
+      "shot_id": "s3.1",
+      "start": 7.058,
+      "end": 10.106
+    },
+    {
+      "id": "s3",
+      "beat_ids": [
+        "b3"
+      ],
+      "visual": {
+        "kind": "image",
+        "path": "{FIXTURE}/visual/assets/s3.png",
+        "used_kind": "image"
+      },
+      "transition": {
+        "type": "cut",
+        "duration": 0
+      },
+      "shot_id": "s3.2",
+      "start": 10.106,
+      "end": 13.191,
+      "motion": {
+        "type": "pan_left",
+        "strength": 0.12
+      }
+    },
+    {
+      "id": "s4",
+      "beat_ids": [
+        "b4"
+      ],
+      "visual": {
+        "kind": "image",
+        "path": "{FIXTURE}/visual/assets/s4.png",
+        "used_kind": "image"
+      },
+      "transition": {
+        "type": "pop"
+      },
+      "shot_id": "s4.1",
+      "start": 13.191,
+      "end": 15.071
+    },
+    {
+      "id": "s4",
+      "beat_ids": [
+        "b4"
+      ],
+      "visual": {
+        "kind": "image",
+        "path": "{FIXTURE}/visual/assets/s4.png",
+        "used_kind": "image"
+      },
+      "transition": {
+        "type": "cut",
+        "duration": 0
+      },
+      "shot_id": "s4.2",
+      "start": 15.071,
+      "end": 16.883,
+      "motion": {
+        "type": "pan_left",
+        "strength": 0.12
+      }
+    },
+    {
+      "id": "s5",
+      "beat_ids": [
+        "b5"
+      ],
+      "visual": {
+        "kind": "image",
+        "path": "{FIXTURE}/visual/assets/s5.png",
+        "used_kind": "image"
+      },
+      "transition": {
+        "type": "whip"
+      },
+      "shot_id": "s5.1",
+      "start": 16.883,
+      "end": 19.931
+    },
+    {
+      "id": "s5",
+      "beat_ids": [
+        "b5"
+      ],
+      "visual": {
+        "kind": "image",
+        "path": "{FIXTURE}/visual/assets/s5.png",
+        "used_kind": "image"
+      },
+      "transition": {
+        "type": "cut",
+        "duration": 0
+      },
+      "shot_id": "s5.2",
+      "start": 19.931,
+      "end": 22.473,
+      "motion": {
+        "type": "pan_left",
+        "strength": 0.12
+      }
+    },
+    {
+      "id": "s6",
+      "beat_ids": [
+        "b6"
+      ],
+      "visual": {
+        "kind": "image",
+        "path": "{FIXTURE}/visual/assets/s6.png",
+        "used_kind": "image"
+      },
+      "transition": {
+        "type": "flash"
+      },
+      "shot_id": "s6.1",
+      "start": 22.473,
+      "end": 24.543
+    },
+    {
+      "id": "s6",
+      "beat_ids": [
+        "b6"
+      ],
+      "visual": {
+        "kind": "image",
+        "path": "{FIXTURE}/visual/assets/s6.png",
+        "used_kind": "image"
+      },
+      "transition": {
+        "type": "cut",
+        "duration": 0
+      },
+      "shot_id": "s6.2",
+      "start": 24.543,
+      "end": 26.551,
+      "motion": {
+        "type": "pan_left",
+        "strength": 0.12
+      }
+    },
+    {
+      "id": "s7",
+      "beat_ids": [
+        "b7"
+      ],
+      "visual": {
+        "kind": "image",
+        "path": "{FIXTURE}/visual/assets/s7.png",
+        "used_kind": "image"
+      },
+      "transition": {
+        "type": "paper"
+      },
+      "shot_id": "s7.1",
+      "start": 26.551,
+      "end": 28.946
+    },
+    {
+      "id": "s7",
+      "beat_ids": [
+        "b7"
+      ],
+      "visual": {
+        "kind": "image",
+        "path": "{FIXTURE}/visual/assets/s7.png",
+        "used_kind": "image"
+      },
+      "transition": {
+        "type": "cut",
+        "duration": 0
+      },
+      "shot_id": "s7.2",
+      "start": 28.946,
+      "end": 30.819,
+      "motion": {
+        "type": "pan_left",
+        "strength": 0.12
+      }
+    }
+  ],
+  "duration_s": 30.819
+}

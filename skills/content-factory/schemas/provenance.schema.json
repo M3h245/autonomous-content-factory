@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cf.provenance",
+  "type": "object",
+  "required": [
+    "video_id",
+    "final",
+    "assets",
+    "disclosure"
+  ],
+  "properties": {
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "role",
+          "sha256",
+          "license",
+          "source"
+        ]
+      }
+    }
+  }
+}

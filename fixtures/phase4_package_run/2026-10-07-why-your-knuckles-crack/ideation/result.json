@@ -1,0 +1,74 @@
+{
+  "contract": "cf/1.1",
+  "stage": "IDEATION",
+  "skill": "content-strategy",
+  "run_id": null,
+  "video_id": null,
+  "attempt": 1,
+  "status": "passed",
+  "started_at": "2026-10-07T06:29:31+00:00",
+  "finished_at": "2026-10-07T06:29:31+00:00",
+  "inputs": [
+    {
+      "role": "ideas",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/ideation/ideas.json",
+      "sha256": "cfb9cae3da79feb285fe292e9d9ec08c210e65a9ac8e371b1781daf7237b76bd"
+    }
+  ],
+  "outputs": [],
+  "gate": {
+    "checks": [
+      {
+        "id": "IDEA.POOL_SIZE",
+        "passed": true,
+        "severity": "major",
+        "value": 3,
+        "threshold": 3,
+        "message": "3 ideas; generate ≥ 3 (2× the requested count)"
+      },
+      {
+        "id": "IDEA.FORMAT_VARIETY",
+        "passed": true,
+        "severity": "major",
+        "value": null,
+        "threshold": null,
+        "message": "formats {'myth-bust': 1, 'story': 1, 'explainer': 1}"
+      },
+      {
+        "id": "IDEA.FACTS_RESOLVE",
+        "passed": true,
+        "severity": "blocking",
+        "value": null,
+        "threshold": null,
+        "message": "ideas citing unknown fact ids: []"
+      },
+      {
+        "id": "IDEA.EVIDENCE",
+        "passed": true,
+        "severity": "major",
+        "value": null,
+        "threshold": null,
+        "message": "ideas without supporting facts: []"
+      },
+      {
+        "id": "IDEA.DISTINCT",
+        "passed": true,
+        "severity": "major",
+        "value": null,
+        "threshold": null,
+        "message": "near-duplicate ideas []"
+      }
+    ],
+    "passed": true
+  },
+  "errors": [],
+  "metrics": {
+    "ideas": 3,
+    "formats": {
+      "myth-bust": 1,
+      "story": 1,
+      "explainer": 1
+    }
+  },
+  "provenance": []
+}

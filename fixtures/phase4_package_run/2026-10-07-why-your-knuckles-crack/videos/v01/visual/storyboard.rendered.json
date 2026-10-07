@@ -1,0 +1,501 @@
+{
+  "video_id": "v01",
+  "style": {
+    "palette": [
+      "#ffd23f",
+      "#e8452c",
+      "#3b82c4",
+      "#2f9e44",
+      "#f783ac"
+    ],
+    "paper": "plain",
+    "mood": "curious, playful"
+  },
+  "scenes": [
+    {
+      "id": "s1",
+      "beat_ids": [
+        "b1"
+      ],
+      "visual": {
+        "kind": "doodle",
+        "svg_path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/svg/s1.svg",
+        "lint": [],
+        "actors": 4,
+        "frame0": {
+          "elements_at_t0": 2,
+          "text_at_t0": true,
+          "subject_bbox_share_t0": 0.1774,
+          "subject": "fist",
+          "subject_height_ratio": 0.365,
+          "subject_bbox": [
+            272,
+            350,
+            710,
+            1050
+          ],
+          "texts_t0": [
+            {
+              "actor": "text4",
+              "text": "WHAT POPS?",
+              "on_screen": "WHAT POPS?",
+              "lost_words": [],
+              "size_px": 110.0,
+              "bbox": [
+                184,
+                177,
+                905,
+                262
+              ],
+              "inside_safe": true,
+              "negation_hidden": false
+            }
+          ],
+          "safe_margin_violations_t0": [],
+          "first_visual_event_s": 0.2,
+          "idle_motion_at_t0": false,
+          "hook_exception": null,
+          "visual_events_first_1_5s": 2,
+          "first_text_s": 0.0
+        },
+        "composition": {
+          "layout": "hero",
+          "main_subject": "fist",
+          "main_signature": "geo:575cceb107",
+          "main_height_ratio": 0.365,
+          "occupied_cells": 8,
+          "empty_cells": 1,
+          "elements": 4,
+          "texts": 1,
+          "layout_slots": [
+            [
+              0.45,
+              0.36,
+              0.36
+            ],
+            [
+              0.8,
+              0.29,
+              0.09
+            ],
+            [
+              0.7,
+              0.2,
+              0.06
+            ]
+          ]
+        },
+        "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/assets/s1.png",
+        "used_kind": "doodle"
+      },
+      "camera": {
+        "drift": "none"
+      }
+    },
+    {
+      "id": "s2",
+      "beat_ids": [
+        "b2"
+      ],
+      "visual": {
+        "kind": "doodle",
+        "svg_path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/svg/s2.svg",
+        "lint": [],
+        "actors": 5,
+        "frame0": {
+          "elements_at_t0": 1,
+          "text_at_t0": false,
+          "subject_bbox_share_t0": 0.1486,
+          "subject": "joint",
+          "subject_height_ratio": 0.349,
+          "subject_bbox": [
+            310,
+            380,
+            770,
+            1050
+          ],
+          "texts_t0": [],
+          "safe_margin_violations_t0": [],
+          "first_visual_event_s": 0.02,
+          "idle_motion_at_t0": false,
+          "hook_exception": null,
+          "visual_events_first_1_5s": 3,
+          "first_text_s": 0.020000000000000004
+        },
+        "composition": {
+          "layout": "hero",
+          "main_subject": "joint",
+          "main_signature": "geo:060781f54c",
+          "main_height_ratio": 0.349,
+          "occupied_cells": 9,
+          "empty_cells": 0,
+          "elements": 5,
+          "texts": 2,
+          "layout_slots": [
+            [
+              0.5,
+              0.37,
+              0.35
+            ],
+            [
+              0.77,
+              0.32,
+              0.05
+            ],
+            [
+              0.19,
+              0.24,
+              0.05
+            ]
+          ]
+        },
+        "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/assets/s2.png",
+        "used_kind": "doodle"
+      },
+      "camera": {
+        "drift": "in",
+        "punch": [
+          {
+            "at": "w:bones",
+            "zoom": 1.06
+          }
+        ]
+      },
+      "transition": {
+        "type": "whip"
+      }
+    },
+    {
+      "id": "s3",
+      "beat_ids": [
+        "b3"
+      ],
+      "visual": {
+        "kind": "doodle",
+        "svg_path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/svg/s3.svg",
+        "lint": [],
+        "actors": 8,
+        "frame0": {
+          "elements_at_t0": 2,
+          "text_at_t0": false,
+          "subject_bbox_share_t0": 0.1972,
+          "subject": "openj",
+          "subject_height_ratio": 0.344,
+          "subject_bbox": [
+            639,
+            400,
+            961,
+            1060
+          ],
+          "texts_t0": [],
+          "safe_margin_violations_t0": [],
+          "first_visual_event_s": 0.02,
+          "idle_motion_at_t0": false,
+          "hook_exception": null,
+          "visual_events_first_1_5s": 3,
+          "first_text_s": 1.3499999999999999
+        },
+        "composition": {
+          "layout": "split",
+          "main_subject": "openj",
+          "main_signature": "geo:0c871d757f",
+          "main_height_ratio": 0.344,
+          "occupied_cells": 9,
+          "empty_cells": 0,
+          "elements": 3,
+          "texts": 1,
+          "layout_slots": [
+            [
+              0.74,
+              0.38,
+              0.34
+            ],
+            [
+              0.26,
+              0.38,
+              0.32
+            ]
+          ]
+        },
+        "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/assets/s3.png",
+        "used_kind": "doodle"
+      },
+      "camera": {
+        "drift": "none",
+        "punch": [
+          {
+            "at": "w:snaps",
+            "zoom": 1.06
+          }
+        ]
+      },
+      "transition": {
+        "type": "cut"
+      }
+    },
+    {
+      "id": "s4",
+      "beat_ids": [
+        "b4"
+      ],
+      "visual": {
+        "kind": "doodle",
+        "svg_path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/svg/s4.svg",
+        "lint": [],
+        "actors": 8,
+        "frame0": {
+          "elements_at_t0": 2,
+          "text_at_t0": false,
+          "subject_bbox_share_t0": 0.3047,
+          "subject": "mri",
+          "subject_height_ratio": 0.359,
+          "subject_bbox": [
+            195,
+            370,
+            885,
+            1060
+          ],
+          "texts_t0": [],
+          "safe_margin_violations_t0": [],
+          "first_visual_event_s": 0.17,
+          "idle_motion_at_t0": false,
+          "hook_exception": null,
+          "visual_events_first_1_5s": 1,
+          "first_text_s": 0.17
+        },
+        "composition": {
+          "layout": "hero",
+          "main_subject": "mri",
+          "main_signature": "geo:e1107d2a4f",
+          "main_height_ratio": 0.359,
+          "occupied_cells": 9,
+          "empty_cells": 0,
+          "elements": 5,
+          "texts": 2,
+          "layout_slots": [
+            [
+              0.5,
+              0.37,
+              0.36
+            ],
+            [
+              0.86,
+              0.48,
+              0.15
+            ],
+            [
+              0.2,
+              0.24,
+              0.05
+            ]
+          ]
+        },
+        "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/assets/s4.png",
+        "used_kind": "doodle"
+      },
+      "camera": {
+        "drift": "in"
+      },
+      "transition": {
+        "type": "paper"
+      }
+    },
+    {
+      "id": "s5",
+      "beat_ids": [
+        "b5"
+      ],
+      "visual": {
+        "kind": "doodle",
+        "svg_path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/svg/s5.svg",
+        "lint": [],
+        "actors": 9,
+        "frame0": {
+          "elements_at_t0": 1,
+          "text_at_t0": false,
+          "subject_bbox_share_t0": 0.2431,
+          "subject": "rect1",
+          "subject_height_ratio": 0.292,
+          "subject_bbox": [
+            90,
+            420,
+            990,
+            980
+          ],
+          "texts_t0": [],
+          "safe_margin_violations_t0": [],
+          "first_visual_event_s": 0.145,
+          "idle_motion_at_t0": false,
+          "hook_exception": null,
+          "visual_events_first_1_5s": 4,
+          "first_text_s": 0.145
+        },
+        "composition": {
+          "layout": "panel",
+          "main_subject": "rect1",
+          "main_signature": "geo:c1409eb5e7",
+          "main_height_ratio": 0.292,
+          "occupied_cells": 7,
+          "empty_cells": 2,
+          "elements": 2,
+          "texts": 1,
+          "layout_slots": [
+            [
+              0.5,
+              0.36,
+              0.29
+            ]
+          ]
+        },
+        "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/assets/s5.png",
+        "used_kind": "doodle"
+      },
+      "camera": {
+        "drift": "none"
+      },
+      "transition": {
+        "type": "whip-up"
+      }
+    },
+    {
+      "id": "s6",
+      "beat_ids": [
+        "b6"
+      ],
+      "visual": {
+        "kind": "doodle",
+        "svg_path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/svg/s6.svg",
+        "lint": [],
+        "actors": 6,
+        "frame0": {
+          "elements_at_t0": 2,
+          "text_at_t0": false,
+          "subject_bbox_share_t0": 0.066,
+          "subject": "f1",
+          "subject_height_ratio": 0.172,
+          "subject_bbox": [
+            120,
+            727,
+            326,
+            1058
+          ],
+          "texts_t0": [],
+          "safe_margin_violations_t0": [],
+          "first_visual_event_s": 0.17,
+          "idle_motion_at_t0": false,
+          "hook_exception": null,
+          "visual_events_first_1_5s": 1,
+          "first_text_s": 0.17
+        },
+        "composition": {
+          "layout": "text_led",
+          "main_subject": "f1",
+          "main_signature": "geo:527750b04b",
+          "main_height_ratio": 0.164,
+          "occupied_cells": 6,
+          "empty_cells": 3,
+          "elements": 6,
+          "texts": 3,
+          "layout_slots": [
+            [
+              0.22,
+              0.46,
+              0.16
+            ],
+            [
+              0.74,
+              0.46,
+              0.16
+            ],
+            [
+              0.51,
+              0.47,
+              0.07
+            ]
+          ]
+        },
+        "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/assets/s6.png",
+        "used_kind": "doodle"
+      },
+      "camera": {
+        "drift": "out",
+        "punch": [
+          {
+            "at": "w:215",
+            "zoom": 1.05
+          }
+        ]
+      },
+      "transition": {
+        "type": "pop"
+      }
+    },
+    {
+      "id": "s7",
+      "beat_ids": [
+        "b7"
+      ],
+      "visual": {
+        "kind": "doodle",
+        "svg_path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/svg/s7.svg",
+        "lint": [],
+        "actors": 4,
+        "frame0": {
+          "elements_at_t0": 1,
+          "text_at_t0": false,
+          "subject_bbox_share_t0": 0.1478,
+          "subject": "fist",
+          "subject_height_ratio": 0.365,
+          "subject_bbox": [
+            272,
+            350,
+            710,
+            1050
+          ],
+          "texts_t0": [],
+          "safe_margin_violations_t0": [],
+          "first_visual_event_s": 0.82,
+          "idle_motion_at_t0": false,
+          "hook_exception": null,
+          "visual_events_first_1_5s": 2,
+          "first_text_s": 1.436
+        },
+        "composition": {
+          "layout": "hero",
+          "main_subject": "fist",
+          "main_signature": "geo:575cceb107",
+          "main_height_ratio": 0.365,
+          "occupied_cells": 8,
+          "empty_cells": 1,
+          "elements": 4,
+          "texts": 1,
+          "layout_slots": [
+            [
+              0.45,
+              0.36,
+              0.36
+            ],
+            [
+              0.8,
+              0.29,
+              0.12
+            ],
+            [
+              0.7,
+              0.2,
+              0.06
+            ]
+          ]
+        },
+        "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/assets/s7.png",
+        "used_kind": "doodle"
+      },
+      "camera": {
+        "drift": "none"
+      },
+      "transition": {
+        "type": "paper"
+      }
+    }
+  ]
+}

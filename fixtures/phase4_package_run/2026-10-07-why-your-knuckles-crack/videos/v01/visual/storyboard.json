@@ -1,0 +1,143 @@
+{
+ "video_id": "v01",
+ "style": {
+  "palette": [
+   "#ffd23f",
+   "#e8452c",
+   "#3b82c4",
+   "#2f9e44",
+   "#f783ac"
+  ],
+  "paper": "plain",
+  "mood": "curious, playful"
+ },
+ "scenes": [
+  {
+   "id": "s1",
+   "beat_ids": [
+    "b1"
+   ],
+   "visual": {
+    "kind": "doodle",
+    "svg_path": "svg/s1.svg"
+   },
+   "camera": {
+    "drift": "none"
+   }
+  },
+  {
+   "id": "s2",
+   "beat_ids": [
+    "b2"
+   ],
+   "visual": {
+    "kind": "doodle",
+    "svg_path": "svg/s2.svg"
+   },
+   "camera": {
+    "drift": "in",
+    "punch": [
+     {
+      "at": "w:bones",
+      "zoom": 1.06
+     }
+    ]
+   },
+   "transition": {
+    "type": "whip"
+   }
+  },
+  {
+   "id": "s3",
+   "beat_ids": [
+    "b3"
+   ],
+   "visual": {
+    "kind": "doodle",
+    "svg_path": "svg/s3.svg"
+   },
+   "camera": {
+    "drift": "none",
+    "punch": [
+     {
+      "at": "w:snaps",
+      "zoom": 1.06
+     }
+    ]
+   },
+   "transition": {
+    "type": "cut"
+   }
+  },
+  {
+   "id": "s4",
+   "beat_ids": [
+    "b4"
+   ],
+   "visual": {
+    "kind": "doodle",
+    "svg_path": "svg/s4.svg"
+   },
+   "camera": {
+    "drift": "in"
+   },
+   "transition": {
+    "type": "paper"
+   }
+  },
+  {
+   "id": "s5",
+   "beat_ids": [
+    "b5"
+   ],
+   "visual": {
+    "kind": "doodle",
+    "svg_path": "svg/s5.svg"
+   },
+   "camera": {
+    "drift": "none"
+   },
+   "transition": {
+    "type": "whip-up"
+   }
+  },
+  {
+   "id": "s6",
+   "beat_ids": [
+    "b6"
+   ],
+   "visual": {
+    "kind": "doodle",
+    "svg_path": "svg/s6.svg"
+   },
+   "camera": {
+    "drift": "out",
+    "punch": [
+     {
+      "at": "w:215",
+      "zoom": 1.05
+     }
+    ]
+   },
+   "transition": {
+    "type": "pop"
+   }
+  },
+  {
+   "id": "s7",
+   "beat_ids": [
+    "b7"
+   ],
+   "visual": {
+    "kind": "doodle",
+    "svg_path": "svg/s7.svg"
+   },
+   "camera": {
+    "drift": "none"
+   },
+   "transition": {
+    "type": "paper"
+   }
+  }
+ ]
+}

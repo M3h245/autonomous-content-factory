@@ -1,0 +1,108 @@
+{
+  "contract": "cf/1.1",
+  "stage": "HOOK",
+  "skill": "hook-engineering",
+  "run_id": null,
+  "video_id": "v01",
+  "attempt": 1,
+  "status": "passed",
+  "started_at": "2026-10-07T06:30:16+00:00",
+  "finished_at": "2026-10-07T06:30:53+00:00",
+  "inputs": [
+    {
+      "role": "hook_candidates",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/hook/hooks.json",
+      "sha256": "9b5135b4d4fcfbe41805bf18dd70fdf1b84b1af9ed3093681bd7f984355b7b41"
+    }
+  ],
+  "outputs": [
+    {
+      "role": "selected_hook",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/hook/selected_hook.json",
+      "media_type": "application/json",
+      "sha256": "39bfb4117730a986af9c7273339b6986d0682e58fdb5a2f84f483c7dbd22fe9e"
+    },
+    {
+      "role": "opening_brief",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/hook/opening_brief.json",
+      "media_type": "application/json",
+      "sha256": "90afd18f6ae6df590c94895899fa8225d3f5ab1ad5e75a8a10530e4854ea53c5"
+    },
+    {
+      "role": "hooks_scored",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/hook/hooks.scored.json",
+      "media_type": "application/json",
+      "sha256": "86c5774c5ef76fe3718c92b0ae30e37250548b0e63caab82c997df0820c9086f"
+    }
+  ],
+  "gate": {
+    "checks": [
+      {
+        "id": "HOOK.SCHEMA",
+        "passed": true,
+        "severity": "blocking",
+        "value": null,
+        "threshold": null,
+        "message": "contract hook_candidates"
+      },
+      {
+        "id": "HOOK.DIVERSITY",
+        "passed": true,
+        "severity": "major",
+        "value": 5,
+        "threshold": 4,
+        "message": "5 distinct mechanisms; near-duplicate lines []; duplicate frame-0 concepts 0"
+      },
+      {
+        "id": "HOOK.FRAME0_RENDERED",
+        "passed": true,
+        "severity": "blocking",
+        "value": null,
+        "threshold": null,
+        "message": "all frame-0 SVGs render"
+      },
+      {
+        "id": "HOOK.SELECTED",
+        "passed": true,
+        "severity": "blocking",
+        "value": null,
+        "threshold": null,
+        "message": "selected h3 ({'hook_strength': 4, 'first_frame_clarity': 5, 'visual_verbal_sync': 5})"
+      }
+    ],
+    "passed": true
+  },
+  "errors": [],
+  "metrics": {
+    "candidates": 5,
+    "selected": "h3",
+    "scores": {
+      "h1": {
+        "hook_strength": 4,
+        "first_frame_clarity": 4,
+        "visual_verbal_sync": 5
+      },
+      "h2": {
+        "hook_strength": 3,
+        "first_frame_clarity": 5,
+        "visual_verbal_sync": 5
+      },
+      "h3": {
+        "hook_strength": 4,
+        "first_frame_clarity": 5,
+        "visual_verbal_sync": 5
+      },
+      "h4": {
+        "hook_strength": 4,
+        "first_frame_clarity": 4,
+        "visual_verbal_sync": 5
+      },
+      "h5": {
+        "hook_strength": 4,
+        "first_frame_clarity": 5,
+        "visual_verbal_sync": 5
+      }
+    }
+  },
+  "provenance": []
+}

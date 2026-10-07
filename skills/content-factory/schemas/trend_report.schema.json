@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cf.trend_report",
+  "type": "object",
+  "required": [
+    "signals"
+  ],
+  "properties": {
+    "signals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "term",
+          "score",
+          "phase"
+        ],
+        "properties": {
+          "term": {
+            "type": "string",
+            "minLength": 1
+          },
+          "score": {
+            "type": "number"
+          },
+          "phase": {
+            "type": "string",
+            "enum": [
+              "emerging",
+              "rising",
+              "peaking",
+              "evergreen",
+              "declining",
+              "unknown"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{"ideas": [
+ {"id": "i1", "title": "Brain freeze isn't your brain freezing",
+  "angle": "Explain the mechanism: cold hits the palate, the pain is referred to the forehead, and a small study saw an artery widen as the pain began and narrow as it faded.",
+  "format": "explainer", "pillar": "human body",
+  "value_add": "Turns a universal sensation into a clear chain: palate, nerve, artery, forehead, with the time limits from the diagnostic criteria.",
+  "fact_ids": ["f1", "f2", "f4", "f6", "f8"], "required_capabilities": ["tts.kokoro", "visual.doodle"],
+  "scores": {"audience_value": 4, "curiosity": 5, "originality": 4, "evidence_strength": 4, "visual_potential": 5, "brand_safety": 5}},
+ {"id": "i2", "title": "Gulp vs sip: the brain freeze experiment",
+  "angle": "Compare the two experiments: ice water gulped triggers brain freeze in half of people, an ice cube only in one in eight; fast ice cream doubles it in a school trial.",
+  "format": "comparison", "pillar": "human body",
+  "value_add": "Gives a practical takeaway backed by two controlled experiments, with real numbers people can remember.",
+  "fact_ids": ["f3", "f4", "f5"], "required_capabilities": ["tts.kokoro", "visual.doodle"],
+  "scores": {"audience_value": 5, "curiosity": 4, "originality": 4, "evidence_strength": 5, "visual_potential": 4, "brand_safety": 5}},
+ {"id": "i3", "title": "Why does cold in your mouth hurt your forehead?",
+  "angle": "Pose the referred-pain puzzle, answer it, and connect it to migraine-prone people who get brain freeze more often.",
+  "format": "question", "pillar": "human body",
+  "value_add": "Uses the body-map surprise (mouth vs forehead) as the hook and answers it with the diagnostic description.",
+  "fact_ids": ["f1", "f7", "f8"], "required_capabilities": ["tts.kokoro", "visual.doodle"],
+  "scores": {"audience_value": 4, "curiosity": 5, "originality": 3, "evidence_strength": 4, "visual_potential": 4, "brand_safety": 5}}
+]}

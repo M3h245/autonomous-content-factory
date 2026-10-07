@@ -1,0 +1,28 @@
+{
+  "failed": {
+    "cbdfd51ce71919207a0d": {
+      "hook_id": "h1",
+      "attempt": 1,
+      "reasons": [
+        "FRAME0.SUBJECT_SMALL",
+        "HOOK.TOO_LONG"
+      ]
+    },
+    "9a31eebf3226080cbc10": {
+      "hook_id": "h2",
+      "attempt": 1,
+      "reasons": [
+        "HOOK.TOO_LONG",
+        "hook_strength"
+      ]
+    },
+    "9f54557790455d394517": {
+      "hook_id": "h4",
+      "attempt": 1,
+      "reasons": [
+        "FRAME0.SAFE_MARGIN",
+        "HOOK.TOO_LONG"
+      ]
+    }
+  }
+}

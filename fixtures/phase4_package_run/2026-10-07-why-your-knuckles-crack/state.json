@@ -1,0 +1,581 @@
+{
+  "run_id": "2026-10-07-why-your-knuckles-crack",
+  "brief": {
+    "run_id": "2026-10-07-why-your-knuckles-crack",
+    "topic": "Why your knuckles crack",
+    "count": 1,
+    "languages": [
+      "en"
+    ],
+    "platforms": [
+      "youtube_shorts",
+      "tiktok",
+      "instagram_reels"
+    ],
+    "duration_s": {
+      "min": 20,
+      "max": 45
+    },
+    "min_s": 20,
+    "max_s": 45,
+    "voices": {
+      "en": "am_michael"
+    },
+    "music": "procedural",
+    "caption_style": "auto",
+    "visual_style": "doodle",
+    "review_backend": "auto",
+    "hook_engine": "v2",
+    "cta_engine": "v1",
+    "audience": "general",
+    "tone": "curious, clear, friendly",
+    "constraints": [],
+    "created_at": "2026-10-07T06:29:12+00:00"
+  },
+  "status": "in_progress",
+  "created_at": "2026-10-07T06:29:12+00:00",
+  "global": {
+    "RESEARCH": {
+      "status": "passed",
+      "attempt": 2,
+      "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/research/result.json"
+    },
+    "IDEATION": {
+      "status": "passed",
+      "attempt": 1,
+      "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/ideation/result.json"
+    },
+    "SELECTION": {
+      "status": "passed",
+      "attempt": 1,
+      "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/selection/result.json"
+    }
+  },
+  "videos": {
+    "v01": {
+      "language": "en",
+      "source": null,
+      "idea_id": "i1",
+      "status": "packaged",
+      "regenerations": 3,
+      "stages": {
+        "HOOK": {
+          "status": "passed",
+          "attempt": 1,
+          "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/hook/result.json"
+        },
+        "SCRIPT": {
+          "status": "passed",
+          "attempt": 2,
+          "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/script/result.json"
+        },
+        "LOCALIZE": {
+          "status": "skipped",
+          "attempt": 0
+        },
+        "AUDIO": {
+          "status": "passed",
+          "attempt": 1,
+          "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/audio/result.json"
+        },
+        "VISUAL_PLAN": {
+          "status": "passed",
+          "attempt": 3,
+          "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/result.json"
+        },
+        "VIDEO": {
+          "status": "passed",
+          "attempt": 3,
+          "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/video/result.json"
+        },
+        "SUBTITLES": {
+          "status": "passed",
+          "attempt": 1,
+          "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/subtitles/result.json"
+        },
+        "QA": {
+          "status": "passed",
+          "attempt": 1,
+          "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/qa/result.json"
+        },
+        "PACKAGE": {
+          "status": "passed",
+          "attempt": 1,
+          "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/package/v01/result.json"
+        }
+      }
+    }
+  },
+  "events": [
+    {
+      "ts": "2026-10-07T06:29:16+00:00",
+      "t": 1791354556.6631522,
+      "issued": "do_stage",
+      "stage": "RESEARCH",
+      "video_id": null
+    },
+    {
+      "ts": "2026-10-07T06:29:16+00:00",
+      "stage": "RESEARCH",
+      "video_id": null,
+      "skill": "content-research",
+      "status": "failed",
+      "attempt": 1,
+      "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/research/result.json",
+      "wall_s": 0.27,
+      "gate_s": 0.0,
+      "failed": [
+        "RES.MEDIUM_RISK_SOURCED"
+      ],
+      "warnings": []
+    },
+    {
+      "ts": "2026-10-07T06:29:16+00:00",
+      "stage": "REGENERATION",
+      "video_id": null,
+      "decision": {
+        "action": "rerun",
+        "stage": "RESEARCH",
+        "video_id": null,
+        "fix_action": "corroborate",
+        "params": {
+          "facts": [
+            "f5"
+          ]
+        },
+        "because": [
+          "RES.MEDIUM_RISK_SOURCED"
+        ],
+        "skill": "content-research",
+        "skill_md": "/home/claude/cf2/content-research/SKILL.md"
+      }
+    },
+    {
+      "ts": "2026-10-07T06:29:30+00:00",
+      "t": 1791354570.6372967,
+      "issued": "do_stage",
+      "stage": "RESEARCH",
+      "video_id": null
+    },
+    {
+      "ts": "2026-10-07T06:29:30+00:00",
+      "stage": "RESEARCH",
+      "video_id": null,
+      "skill": "content-research",
+      "status": "passed",
+      "attempt": 2,
+      "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/research/result.json",
+      "wall_s": 0.34,
+      "gate_s": 0.0,
+      "failed": [],
+      "warnings": []
+    },
+    {
+      "ts": "2026-10-07T06:29:31+00:00",
+      "t": 1791354571.0859852,
+      "issued": "do_stage",
+      "stage": "IDEATION",
+      "video_id": null
+    },
+    {
+      "ts": "2026-10-07T06:29:31+00:00",
+      "stage": "IDEATION",
+      "video_id": null,
+      "skill": "content-strategy",
+      "status": "passed",
+      "attempt": 1,
+      "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/ideation/result.json",
+      "wall_s": 0.29,
+      "gate_s": 0.0,
+      "failed": [],
+      "warnings": []
+    },
+    {
+      "ts": "2026-10-07T06:29:31+00:00",
+      "t": 1791354571.4859972,
+      "issued": "do_stage",
+      "stage": "SELECTION",
+      "video_id": null
+    },
+    {
+      "ts": "2026-10-07T06:29:31+00:00",
+      "stage": "SELECTION",
+      "video_id": null,
+      "skill": "content-strategy",
+      "status": "passed",
+      "attempt": 1,
+      "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/selection/result.json",
+      "wall_s": 0.34,
+      "gate_s": 0.0,
+      "failed": [],
+      "warnings": []
+    },
+    {
+      "ts": "2026-10-07T06:30:16+00:00",
+      "t": 1791354616.6273413,
+      "issued": "do_stage",
+      "stage": "HOOK",
+      "video_id": "v01"
+    },
+    {
+      "ts": "2026-10-07T06:31:15+00:00",
+      "stage": "HOOK",
+      "video_id": "v01",
+      "skill": "hook-engineering",
+      "status": "passed",
+      "attempt": 1,
+      "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/hook/result.json",
+      "wall_s": 58.38,
+      "gate_s": 37.0,
+      "failed": [],
+      "warnings": []
+    },
+    {
+      "ts": "2026-10-07T06:31:15+00:00",
+      "t": 1791354675.2388105,
+      "issued": "do_stage",
+      "stage": "SCRIPT",
+      "video_id": "v01"
+    },
+    {
+      "ts": "2026-10-07T06:32:09+00:00",
+      "stage": "SCRIPT",
+      "video_id": "v01",
+      "skill": "short-form-script",
+      "status": "failed",
+      "attempt": 1,
+      "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/script/result.json",
+      "wall_s": 53.89,
+      "gate_s": 0.0,
+      "failed": [
+        "SCRIPT.SELECTED"
+      ],
+      "warnings": []
+    },
+    {
+      "ts": "2026-10-07T06:32:09+00:00",
+      "stage": "REGENERATION",
+      "video_id": "v01",
+      "decision": {
+        "action": "rerun",
+        "stage": "SCRIPT",
+        "video_id": "v01",
+        "fix_action": "regenerate",
+        "params": {
+          "failed": [
+            {
+              "variant": "A",
+              "reasons": [
+                "payoff_coherence 3"
+              ]
+            },
+            {
+              "variant": "B",
+              "reasons": [
+                "message_clarity 3",
+                "pacing_retention 3",
+                "payoff_coherence 3"
+              ]
+            }
+          ]
+        },
+        "because": [
+          "SCRIPT.SELECTED"
+        ],
+        "skill": "short-form-script",
+        "skill_md": "/home/claude/cf2/short-form-script/SKILL.md"
+      }
+    },
+    {
+      "ts": "2026-10-07T06:32:09+00:00",
+      "t": 1791354729.2304277,
+      "issued": "do_stage",
+      "stage": "SCRIPT",
+      "video_id": "v01"
+    },
+    {
+      "ts": "2026-10-07T06:32:16+00:00",
+      "stage": "SCRIPT",
+      "video_id": "v01",
+      "skill": "short-form-script",
+      "status": "passed",
+      "attempt": 2,
+      "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/script/result.json",
+      "wall_s": 7.05,
+      "gate_s": 0.0,
+      "failed": [],
+      "warnings": []
+    },
+    {
+      "ts": "2026-10-07T06:32:41+00:00",
+      "stage": "AUDIO",
+      "video_id": "v01",
+      "skill": "voice-production",
+      "status": "passed",
+      "attempt": 1,
+      "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/audio/result.json",
+      "wall_s": 25.23,
+      "gate_s": 25.0,
+      "failed": [],
+      "warnings": [],
+      "tts_cache": {
+        "hits": 1,
+        "misses": 11,
+        "rejected_entries": 0,
+        "sentences": 12
+      }
+    },
+    {
+      "ts": "2026-10-07T06:33:17+00:00",
+      "t": 1791354797.5313342,
+      "issued": "do_stage",
+      "stage": "VISUAL_PLAN",
+      "video_id": "v01"
+    },
+    {
+      "ts": "2026-10-07T06:33:47+00:00",
+      "t": 1791354827.5477965,
+      "issued": "do_stage",
+      "stage": "VISUAL_PLAN",
+      "video_id": "v01"
+    },
+    {
+      "ts": "2026-10-07T06:34:07+00:00",
+      "stage": "VISUAL_PLAN",
+      "video_id": "v01",
+      "skill": "visual-storyboarding",
+      "status": "passed",
+      "attempt": 1,
+      "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/result.json",
+      "wall_s": 49.86,
+      "gate_s": 10.0,
+      "failed": [],
+      "warnings": []
+    },
+    {
+      "ts": "2026-10-07T06:35:19+00:00",
+      "stage": "VIDEO",
+      "video_id": "v01",
+      "skill": "video-production",
+      "status": "failed",
+      "attempt": 1,
+      "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/video/result.json",
+      "wall_s": 71.87,
+      "gate_s": 71.0,
+      "failed": [
+        "VID.MOTION_GAP",
+        "VID.PACING_CADENCE"
+      ],
+      "warnings": []
+    },
+    {
+      "ts": "2026-10-07T06:35:19+00:00",
+      "stage": "REGENERATION",
+      "video_id": "v01",
+      "decision": {
+        "action": "rerun",
+        "stage": "VISUAL_PLAN",
+        "video_id": "v01",
+        "fix_action": "add_entrances",
+        "params": {
+          "at_s": 12.75,
+          "max_gap": 3.5
+        },
+        "because": [
+          "VID.MOTION_GAP",
+          "VID.PACING_CADENCE"
+        ],
+        "skill": "visual-storyboarding",
+        "skill_md": "/home/claude/cf2/visual-storyboarding/SKILL.md"
+      }
+    },
+    {
+      "ts": "2026-10-07T06:35:30+00:00",
+      "t": 1791354930.8230295,
+      "issued": "do_stage",
+      "stage": "VISUAL_PLAN",
+      "video_id": "v01"
+    },
+    {
+      "ts": "2026-10-07T06:35:40+00:00",
+      "stage": "VISUAL_PLAN",
+      "video_id": "v01",
+      "skill": "visual-storyboarding",
+      "status": "passed",
+      "attempt": 2,
+      "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/result.json",
+      "wall_s": 10.15,
+      "gate_s": 9.0,
+      "failed": [],
+      "warnings": []
+    },
+    {
+      "ts": "2026-10-07T06:37:00+00:00",
+      "stage": "VIDEO",
+      "video_id": "v01",
+      "skill": "video-production",
+      "status": "failed",
+      "attempt": 2,
+      "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/video/result.json",
+      "wall_s": 72.77,
+      "gate_s": 72.0,
+      "failed": [
+        "VID.MOTION_GAP",
+        "VID.PACING_CADENCE"
+      ],
+      "warnings": []
+    },
+    {
+      "ts": "2026-10-07T06:37:00+00:00",
+      "stage": "REGENERATION",
+      "video_id": "v01",
+      "decision": {
+        "action": "rerun",
+        "stage": "VISUAL_PLAN",
+        "video_id": "v01",
+        "fix_action": "add_entrances",
+        "params": {
+          "at_s": 12.75,
+          "max_gap": 3.5
+        },
+        "because": [
+          "VID.MOTION_GAP",
+          "VID.PACING_CADENCE"
+        ],
+        "skill": "visual-storyboarding",
+        "skill_md": "/home/claude/cf2/visual-storyboarding/SKILL.md"
+      }
+    },
+    {
+      "ts": "2026-10-07T06:37:25+00:00",
+      "t": 1791355045.252768,
+      "issued": "do_stage",
+      "stage": "VISUAL_PLAN",
+      "video_id": "v01"
+    },
+    {
+      "ts": "2026-10-07T06:37:35+00:00",
+      "stage": "VISUAL_PLAN",
+      "video_id": "v01",
+      "skill": "visual-storyboarding",
+      "status": "passed",
+      "attempt": 3,
+      "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/visual/result.json",
+      "wall_s": 10.42,
+      "gate_s": 10.0,
+      "failed": [],
+      "warnings": []
+    },
+    {
+      "ts": "2026-10-07T06:38:55+00:00",
+      "stage": "VIDEO",
+      "video_id": "v01",
+      "skill": "video-production",
+      "status": "passed",
+      "attempt": 3,
+      "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/video/result.json",
+      "wall_s": 79.44,
+      "gate_s": 79.0,
+      "failed": [],
+      "warnings": []
+    },
+    {
+      "ts": "2026-10-07T06:40:06+00:00",
+      "stage": "SUBTITLES",
+      "video_id": "v01",
+      "skill": "subtitle-production",
+      "status": "passed",
+      "attempt": 1,
+      "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/subtitles/result.json",
+      "wall_s": 58.49,
+      "gate_s": 58.0,
+      "failed": [],
+      "warnings": []
+    },
+    {
+      "ts": "2026-10-07T06:40:49+00:00",
+      "stage": "QA",
+      "video_id": "v01",
+      "skill": "video-quality-assurance",
+      "status": "pending_review",
+      "attempt": 1,
+      "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/qa/result.json",
+      "wall_s": 36.13,
+      "gate_s": 36.0,
+      "failed": [],
+      "warnings": []
+    },
+    {
+      "ts": "2026-10-07T06:40:58+00:00",
+      "stage": "QA",
+      "video_id": "v01",
+      "boundary": "independent_review",
+      "reviewer_pid": 4384,
+      "judge": "heuristic",
+      "packet_manifest_sha256": "f319f56c1e85f19d9fadea6c3cdbf6ee735f9d6c3c3f2ae3d4407be9ee44bbdb",
+      "files_read": 12,
+      "authoring_modules_loaded": []
+    },
+    {
+      "ts": "2026-10-07T06:40:58+00:00",
+      "stage": "QA",
+      "video_id": "v01",
+      "skill": "video-quality-assurance",
+      "status": "passed",
+      "attempt": 1,
+      "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/qa/result.json",
+      "wall_s": 8.99,
+      "gate_s": 0.0,
+      "failed": [],
+      "warnings": []
+    },
+    {
+      "ts": "2026-10-07T06:41:05+00:00",
+      "t": 1791355265.8412855,
+      "issued": "do_stage",
+      "stage": "PACKAGE",
+      "video_id": "v01"
+    },
+    {
+      "ts": "2026-10-07T06:41:17+00:00",
+      "t": 1791355277.1271698,
+      "issued": "do_stage",
+      "stage": "PACKAGE",
+      "video_id": "v01"
+    },
+    {
+      "ts": "2026-10-07T06:41:33+00:00",
+      "t": 1791355293.71168,
+      "issued": "do_stage",
+      "stage": "PACKAGE",
+      "video_id": "v01"
+    },
+    {
+      "ts": "2026-10-07T06:41:51+00:00",
+      "stage": "PACKAGE",
+      "video_id": "v01",
+      "skill": "content-factory",
+      "status": "passed",
+      "attempt": 1,
+      "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/package/v01/result.json",
+      "wall_s": 45.86,
+      "gate_s": 7.0,
+      "failed": [],
+      "warnings": []
+    },
+    {
+      "ts": "2026-10-07T06:41:58+00:00",
+      "stage": "PACKAGE",
+      "video_id": "v01",
+      "skill": "content-factory",
+      "status": "passed",
+      "attempt": 1,
+      "result": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/package/v01/result.json",
+      "wall_s": null,
+      "gate_s": 6.0,
+      "failed": [],
+      "warnings": []
+    }
+  ],
+  "global_regenerations": 1
+}

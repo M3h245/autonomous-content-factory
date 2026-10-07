@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cf.stage_result",
+  "type": "object",
+  "required": [
+    "contract",
+    "stage",
+    "skill",
+    "status",
+    "attempt",
+    "gate",
+    "outputs",
+    "errors"
+  ],
+  "properties": {
+    "stage": {
+      "type": "string",
+      "enum": [
+        "RESEARCH",
+        "IDEATION",
+        "SELECTION",
+        "HOOK",
+        "SCRIPT",
+        "LOCALIZE",
+        "VISUAL_PLAN",
+        "AUDIO",
+        "VIDEO",
+        "SUBTITLES",
+        "QA",
+        "REGENERATION",
+        "PACKAGE",
+        "ANALYTICS"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "passed",
+        "passed_with_warnings",
+        "failed",
+        "error",
+        "pending_review"
+      ]
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "severity",
+          "message",
+          "retryable"
+        ],
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": [
+              "blocking",
+              "major",
+              "minor"
+            ]
+          },
+          "fix_route": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "required": [
+              "stage",
+              "action"
+            ],
+            "properties": {
+              "stage": {
+                "type": "string",
+                "enum": [
+                  "RESEARCH",
+                  "IDEATION",
+                  "SELECTION",
+                  "HOOK",
+                  "SCRIPT",
+                  "LOCALIZE",
+                  "VISUAL_PLAN",
+                  "AUDIO",
+                  "VIDEO",
+                  "SUBTITLES",
+                  "QA",
+                  "REGENERATION",
+                  "PACKAGE",
+                  "ANALYTICS"
+                ]
+              },
+              "action": {
+                "type": "string",
+                "minLength": 1
+              },
+              "params": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

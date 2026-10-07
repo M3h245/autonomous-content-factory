@@ -1,0 +1,99 @@
+{
+ "version": 1,
+ "comment": "Phase 1 gate policy. A video FAILS on any objective blocking/major failure, any dimension below min_any_dimension, or any dimension below its threshold. Phase 2: hook candidates and script variants are scored by the same reviewer (review-hooks / review-script) against hook_thresholds / script_thresholds. Phase 3.5: CTA dims (cta_thresholds) apply only when a CTA is present, in video and script reviews; CTA placement gates are objective (CTA.*). Phase 4: package candidates (title + thumbnail + opening promise + copy) are gated deterministically by package_engine.py against `packaging` and scored by review-package against package_thresholds; an unsupported or contradicted claim is blocking.",
+ "min_any_dimension": 3,
+ "thresholds": {
+  "overall_publishability": 4,
+  "hook_strength": 4,
+  "first_frame_clarity": 4,
+  "visual_verbal_sync": 4,
+  "ending_quality": 3
+ },
+ "objective": {
+  "blocking": "fail",
+  "major": "fail",
+  "minor": "warn"
+ },
+ "require_cta": false,
+ "hook_thresholds": {
+  "hook_strength": 4,
+  "first_frame_clarity": 4,
+  "visual_verbal_sync": 4
+ },
+ "script_thresholds": {
+  "message_clarity": 4,
+  "pacing_retention": 4,
+  "payoff_coherence": 4,
+  "hook_strength": 4
+ },
+ "frame0": {
+  "subject_height_min": 0.35,
+  "text_min_px": 60,
+  "first_event_max_s": 0.5,
+  "hook_max_s": 3.2,
+  "explanation_by_s": 8.0
+ },
+ "cta_thresholds": {
+  "cta_quality": 4,
+  "cta_naturalness": 4,
+  "cta_relevance": 4,
+  "cta_retention_risk": 4
+ },
+ "packaging": {
+  "min_candidates": 3,
+  "min_viable": 3,
+  "title_max_chars": 55,
+  "title_max_words": 10,
+  "title_caps_words_max": 1,
+  "opening_promise_max_chars": 120,
+  "description_max_chars": 400,
+  "hashtags": [
+   2,
+   6
+  ],
+  "thumb_size": [
+   1080,
+   1920
+  ],
+  "thumb_words_max": 4,
+  "thumb_text_min_px": 96,
+  "thumb_headline_min_px": 140,
+  "thumb_check_width": 168,
+  "thumb_contrast_min": 4.5,
+  "core_safe": [
+   0,
+   420,
+   1080,
+   1500
+  ],
+  "core_safe_note": "central 1080x1080 square: survives Reels 1:1 grid / 4:5 tab and TikTok 3:4 covers",
+  "yt_band": [
+   0,
+   600,
+   1080,
+   1320
+  ],
+  "yt_band_note": "≈3:2 centre band reported for Shorts custom thumbnails (2026-07); measured, advisory",
+  "subject_min_core_height": 0.4,
+  "subject_inside_core_min": 0.85,
+  "second_subject_max_ratio": 0.6,
+  "dead_cells_max": 3,
+  "cell_ink_min": 0.08,
+  "clutter_max": 6,
+  "title_jaccard_max": 0.5,
+  "thumb_text_jaccard_max": 0.5,
+  "promise_jaccard_max": 0.6,
+  "thumb_dhash_min": 12
+ },
+ "package_thresholds": {
+  "title_strength": 4,
+  "curiosity": 3,
+  "accuracy": 4,
+  "thumbnail_readability": 4,
+  "complementarity": 4,
+  "hook_coherence": 4,
+  "promise_payoff": 4,
+  "clickbait_risk": 4,
+  "cta_coherence": 4
+ }
+}

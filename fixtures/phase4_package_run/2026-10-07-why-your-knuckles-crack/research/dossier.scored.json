@@ -1,0 +1,112 @@
+{
+  "topic": "Why your knuckles crack",
+  "sources": [
+    {
+      "id": "s1",
+      "url": "https://doi.org/10.1371/journal.pone.0119470",
+      "title": "Real-time visualization of joint cavitation",
+      "publisher": "PLoS ONE (Kawchuk et al., 2015)",
+      "accessed": "2026-10-07",
+      "kind": "primary",
+      "tier": 1,
+      "domain": "doi.org"
+    },
+    {
+      "id": "s2",
+      "url": "https://doi.org/10.1038/s41598-018-22664-4",
+      "title": "A mathematical model for the sounds produced by knuckle cracking",
+      "publisher": "Scientific Reports (Chandran Suja & Barakat, 2018)",
+      "accessed": "2026-10-07",
+      "kind": "primary",
+      "tier": 1,
+      "domain": "doi.org"
+    },
+    {
+      "id": "s3",
+      "url": "https://doi.org/10.3122/jabfm.2011.02.100156",
+      "title": "Knuckle cracking and hand osteoarthritis",
+      "publisher": "Journal of the American Board of Family Medicine (deWeber et al., 2011)",
+      "accessed": "2026-10-07",
+      "kind": "primary",
+      "tier": 1,
+      "domain": "doi.org"
+    },
+    {
+      "id": "s4",
+      "url": "https://improbable.com/2010/02/15/ig-nobel-acceptance-speech-knuckle-cracking/",
+      "title": "Ig Nobel acceptance speech: knuckle-cracking",
+      "publisher": "Improbable Research (Ig Nobel Prize organisers)",
+      "accessed": "2026-10-07",
+      "kind": "secondary",
+      "tier": 3,
+      "domain": "improbable.com"
+    }
+  ],
+  "facts": [
+    {
+      "id": "f1",
+      "claim": "The crack happens when the joint surfaces pull apart and a gas cavity suddenly forms in the joint fluid.",
+      "source_ids": [
+        "s1"
+      ],
+      "risk": "low",
+      "confidence": 0.9
+    },
+    {
+      "id": "f2",
+      "claim": "Researchers filmed finger joints being pulled inside an MRI scanner in real time to watch the crack happen.",
+      "source_ids": [
+        "s1"
+      ],
+      "risk": "low",
+      "confidence": 0.95
+    },
+    {
+      "id": "f3",
+      "claim": "The older explanation said the sound came from a bubble collapsing.",
+      "source_ids": [
+        "s1",
+        "s2"
+      ],
+      "risk": "low",
+      "confidence": 0.9
+    },
+    {
+      "id": "f4",
+      "claim": "A 2018 mathematical model found that a partial collapse of the bubble can reproduce the sound, so the exact source is still debated.",
+      "source_ids": [
+        "s2"
+      ],
+      "risk": "medium",
+      "confidence": 0.85
+    },
+    {
+      "id": "f5",
+      "claim": "A 2011 study of 215 people found no link between habitual knuckle cracking and hand osteoarthritis.",
+      "source_ids": [
+        "s3"
+      ],
+      "risk": "medium",
+      "confidence": 0.85
+    },
+    {
+      "id": "f6",
+      "claim": "A doctor cracked the knuckles of only his left hand for 60 years, saw no arthritis difference between hands, and won the 2009 Ig Nobel Prize in Medicine.",
+      "source_ids": [
+        "s4"
+      ],
+      "risk": "low",
+      "confidence": 0.85
+    },
+    {
+      "id": "f7",
+      "claim": "The gas cavity stays in the joint after the crack.",
+      "source_ids": [
+        "s1",
+        "s2"
+      ],
+      "risk": "low",
+      "confidence": 0.85
+    }
+  ]
+}

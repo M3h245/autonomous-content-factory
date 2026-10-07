@@ -1,0 +1,65 @@
+# ---- secrets / credentials (never commit) ----
+.env
+.env.*
+*.env
+!*.env.example
+secrets/
+*.secret
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+.netrc
+credentials*.json
+client_secret*.json
+token*.json
+*oauth*.json
+
+# ---- Python environments, caches, tooling ----
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.python-version
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.cache/
+*.egg-info/
+build/
+dist/
+
+# ---- models and runtime caches (downloaded by setup_env.py into ~/.cache/content-factory) ----
+*.onnx
+voices*.bin
+kokoro/
+tts-cache/
+
+# ---- generated runs, fixtures rendered by tests, temp output ----
+runs/
+runs_*/
+/out/
+/outputs/
+/scratch/
+cf_fx_*/
+cf_smoke_*/
+caps.json
+capabilities.local.json
+*.tmp
+*.log
+*.bak
+*.swp
+.DS_Store
+Thumbs.db
+
+# ---- large artifacts: only the curated ones under checkpoints/ and fixtures/ are tracked ----
+*.mp4
+*.wav
+*.zip
+!checkpoints/**/*.zip
+!fixtures/**/*.mp4
+!fixtures/**/*.wav

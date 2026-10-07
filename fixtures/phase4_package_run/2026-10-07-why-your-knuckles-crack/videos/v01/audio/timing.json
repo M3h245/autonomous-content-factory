@@ -1,0 +1,599 @@
+{
+  "video_id": "v01",
+  "language": "en",
+  "audio_path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/audio/voice.wav",
+  "sample_rate": 24000,
+  "duration_s": 32.521,
+  "backend": "kokoro-onnx",
+  "runtime": {
+    "onnxruntime": "1.29.0",
+    "kokoro-onnx": "0.6.1",
+    "numpy": "2.5.3"
+  },
+  "voice": "am_michael",
+  "speed": 1.0,
+  "timing_method": [
+    "model-phoneme-durations"
+  ],
+  "words": [
+    {
+      "w": "What",
+      "start": 0.162,
+      "end": 0.287,
+      "sentence": 0
+    },
+    {
+      "w": "actually",
+      "start": 0.437,
+      "end": 0.762,
+      "sentence": 0
+    },
+    {
+      "w": "pops",
+      "start": 0.837,
+      "end": 1.212,
+      "sentence": 0
+    },
+    {
+      "w": "when",
+      "start": 1.237,
+      "end": 1.312,
+      "sentence": 0
+    },
+    {
+      "w": "you",
+      "start": 1.362,
+      "end": 1.437,
+      "sentence": 0
+    },
+    {
+      "w": "crack",
+      "start": 1.487,
+      "end": 1.762,
+      "sentence": 0
+    },
+    {
+      "w": "your",
+      "start": 1.812,
+      "end": 1.887,
+      "sentence": 0
+    },
+    {
+      "w": "knuckles?",
+      "start": 1.937,
+      "end": 2.459,
+      "sentence": 0
+    },
+    {
+      "w": "Not",
+      "start": 2.812,
+      "end": 3.012,
+      "sentence": 1
+    },
+    {
+      "w": "your",
+      "start": 3.062,
+      "end": 3.187,
+      "sentence": 1
+    },
+    {
+      "w": "bones.",
+      "start": 3.262,
+      "end": 3.869,
+      "sentence": 1
+    },
+    {
+      "w": "Your",
+      "start": 4.103,
+      "end": 4.228,
+      "sentence": 2
+    },
+    {
+      "w": "joints",
+      "start": 4.278,
+      "end": 4.628,
+      "sentence": 2
+    },
+    {
+      "w": "sit",
+      "start": 4.703,
+      "end": 4.878,
+      "sentence": 2
+    },
+    {
+      "w": "in",
+      "start": 4.903,
+      "end": 5.003,
+      "sentence": 2
+    },
+    {
+      "w": "a",
+      "start": 5.003,
+      "end": 5.003,
+      "sentence": 2
+    },
+    {
+      "w": "capsule",
+      "start": 5.053,
+      "end": 5.553,
+      "sentence": 2
+    },
+    {
+      "w": "of",
+      "start": 5.578,
+      "end": 5.653,
+      "sentence": 2
+    },
+    {
+      "w": "fluid.",
+      "start": 5.753,
+      "end": 6.2,
+      "sentence": 2
+    },
+    {
+      "w": "Pull",
+      "start": 6.493,
+      "end": 6.693,
+      "sentence": 3
+    },
+    {
+      "w": "the",
+      "start": 6.743,
+      "end": 6.793,
+      "sentence": 3
+    },
+    {
+      "w": "joint",
+      "start": 6.843,
+      "end": 7.143,
+      "sentence": 3
+    },
+    {
+      "w": "apart,",
+      "start": 7.193,
+      "end": 7.643,
+      "sentence": 3
+    },
+    {
+      "w": "the",
+      "start": 7.723,
+      "end": 7.773,
+      "sentence": 3
+    },
+    {
+      "w": "pressure",
+      "start": 7.823,
+      "end": 8.123,
+      "sentence": 3
+    },
+    {
+      "w": "drops,",
+      "start": 8.173,
+      "end": 8.848,
+      "sentence": 3
+    },
+    {
+      "w": "and",
+      "start": 8.973,
+      "end": 9.123,
+      "sentence": 3
+    },
+    {
+      "w": "a",
+      "start": 9.123,
+      "end": 9.123,
+      "sentence": 3
+    },
+    {
+      "w": "gas",
+      "start": 9.198,
+      "end": 9.523,
+      "sentence": 3
+    },
+    {
+      "w": "cavity",
+      "start": 9.573,
+      "end": 9.973,
+      "sentence": 3
+    },
+    {
+      "w": "snaps",
+      "start": 10.048,
+      "end": 10.398,
+      "sentence": 3
+    },
+    {
+      "w": "open.",
+      "start": 10.498,
+      "end": 10.817,
+      "sentence": 3
+    },
+    {
+      "w": "In",
+      "start": 11.134,
+      "end": 11.234,
+      "sentence": 4
+    },
+    {
+      "w": "2015,",
+      "start": 11.284,
+      "end": 12.609,
+      "sentence": 4
+    },
+    {
+      "w": "scientists",
+      "start": 12.809,
+      "end": 13.384,
+      "sentence": 4
+    },
+    {
+      "w": "filmed",
+      "start": 13.459,
+      "end": 13.734,
+      "sentence": 4
+    },
+    {
+      "w": "it",
+      "start": 13.784,
+      "end": 13.884,
+      "sentence": 4
+    },
+    {
+      "w": "inside",
+      "start": 13.959,
+      "end": 14.509,
+      "sentence": 4
+    },
+    {
+      "w": "an",
+      "start": 14.509,
+      "end": 14.559,
+      "sentence": 4
+    },
+    {
+      "w": "MRI.",
+      "start": 14.684,
+      "end": 15.407,
+      "sentence": 4
+    },
+    {
+      "w": "The",
+      "start": 15.636,
+      "end": 15.686,
+      "sentence": 5
+    },
+    {
+      "w": "pop",
+      "start": 15.736,
+      "end": 16.036,
+      "sentence": 5
+    },
+    {
+      "w": "happened",
+      "start": 16.086,
+      "end": 16.586,
+      "sentence": 5
+    },
+    {
+      "w": "as",
+      "start": 16.686,
+      "end": 16.786,
+      "sentence": 5
+    },
+    {
+      "w": "the",
+      "start": 16.811,
+      "end": 16.861,
+      "sentence": 5
+    },
+    {
+      "w": "bubble",
+      "start": 16.911,
+      "end": 17.211,
+      "sentence": 5
+    },
+    {
+      "w": "formed.",
+      "start": 17.311,
+      "end": 17.811,
+      "sentence": 5
+    },
+    {
+      "w": "A",
+      "start": 18.13,
+      "end": 18.18,
+      "sentence": 6
+    },
+    {
+      "w": "2018",
+      "start": 18.255,
+      "end": 19.305,
+      "sentence": 6
+    },
+    {
+      "w": "model",
+      "start": 19.355,
+      "end": 19.755,
+      "sentence": 6
+    },
+    {
+      "w": "says",
+      "start": 19.83,
+      "end": 20.23,
+      "sentence": 6
+    },
+    {
+      "w": "a",
+      "start": 20.23,
+      "end": 20.23,
+      "sentence": 6
+    },
+    {
+      "w": "partial",
+      "start": 20.305,
+      "end": 20.73,
+      "sentence": 6
+    },
+    {
+      "w": "collapse",
+      "start": 20.78,
+      "end": 21.23,
+      "sentence": 6
+    },
+    {
+      "w": "could",
+      "start": 21.28,
+      "end": 21.43,
+      "sentence": 6
+    },
+    {
+      "w": "still",
+      "start": 21.48,
+      "end": 21.73,
+      "sentence": 6
+    },
+    {
+      "w": "make",
+      "start": 21.78,
+      "end": 21.955,
+      "sentence": 6
+    },
+    {
+      "w": "the",
+      "start": 22.005,
+      "end": 22.08,
+      "sentence": 6
+    },
+    {
+      "w": "sound.",
+      "start": 22.155,
+      "end": 22.655,
+      "sentence": 6
+    },
+    {
+      "w": "The",
+      "start": 22.89,
+      "end": 22.94,
+      "sentence": 7
+    },
+    {
+      "w": "debate",
+      "start": 22.99,
+      "end": 23.366,
+      "sentence": 7
+    },
+    {
+      "w": "isn't",
+      "start": 23.44,
+      "end": 23.64,
+      "sentence": 7
+    },
+    {
+      "w": "over.",
+      "start": 23.74,
+      "end": 24.124,
+      "sentence": 7
+    },
+    {
+      "w": "And",
+      "start": 24.61,
+      "end": 24.71,
+      "sentence": 8
+    },
+    {
+      "w": "arthritis?",
+      "start": 24.76,
+      "end": 25.605,
+      "sentence": 8
+    },
+    {
+      "w": "A",
+      "start": 25.842,
+      "end": 25.892,
+      "sentence": 9
+    },
+    {
+      "w": "study",
+      "start": 25.967,
+      "end": 26.292,
+      "sentence": 9
+    },
+    {
+      "w": "of",
+      "start": 26.342,
+      "end": 26.442,
+      "sentence": 9
+    },
+    {
+      "w": "215",
+      "start": 26.517,
+      "end": 27.592,
+      "sentence": 9
+    },
+    {
+      "w": "people",
+      "start": 27.642,
+      "end": 28.092,
+      "sentence": 9
+    },
+    {
+      "w": "found",
+      "start": 28.192,
+      "end": 28.442,
+      "sentence": 9
+    },
+    {
+      "w": "no",
+      "start": 28.517,
+      "end": 28.692,
+      "sentence": 9
+    },
+    {
+      "w": "link.",
+      "start": 28.767,
+      "end": 29.097,
+      "sentence": 9
+    },
+    {
+      "w": "So",
+      "start": 29.452,
+      "end": 29.577,
+      "sentence": 10
+    },
+    {
+      "w": "it's",
+      "start": 29.627,
+      "end": 29.777,
+      "sentence": 10
+    },
+    {
+      "w": "just",
+      "start": 29.827,
+      "end": 30.177,
+      "sentence": 10
+    },
+    {
+      "w": "a",
+      "start": 30.177,
+      "end": 30.177,
+      "sentence": 10
+    },
+    {
+      "w": "bubble.",
+      "start": 30.252,
+      "end": 30.654,
+      "sentence": 10
+    },
+    {
+      "w": "Do",
+      "start": 30.868,
+      "end": 30.968,
+      "sentence": 11
+    },
+    {
+      "w": "you",
+      "start": 30.993,
+      "end": 31.068,
+      "sentence": 11
+    },
+    {
+      "w": "crack",
+      "start": 31.118,
+      "end": 31.418,
+      "sentence": 11
+    },
+    {
+      "w": "yours?",
+      "start": 31.493,
+      "end": 32.021,
+      "sentence": 11
+    }
+  ],
+  "sentences": [
+    {
+      "i": 0,
+      "text": "What actually pops when you crack your knuckles?",
+      "beat_id": "b1",
+      "start": 0.08,
+      "end": 2.459
+    },
+    {
+      "i": 1,
+      "text": "Not your bones.",
+      "beat_id": "b2",
+      "start": 2.699,
+      "end": 3.869
+    },
+    {
+      "i": 2,
+      "text": "Your joints sit in a capsule of fluid.",
+      "beat_id": "b2",
+      "start": 4.029,
+      "end": 6.2
+    },
+    {
+      "i": 3,
+      "text": "Pull the joint apart, the pressure drops, and a gas cavity snaps open.",
+      "beat_id": "b3",
+      "start": 6.44,
+      "end": 10.817
+    },
+    {
+      "i": 4,
+      "text": "In 2015, scientists filmed it inside an MRI.",
+      "beat_id": "b4",
+      "start": 11.057,
+      "end": 15.407
+    },
+    {
+      "i": 5,
+      "text": "The pop happened as the bubble formed.",
+      "beat_id": "b4",
+      "start": 15.567,
+      "end": 17.811
+    },
+    {
+      "i": 6,
+      "text": "A 2018 model says a partial collapse could still make the sound.",
+      "beat_id": "b5",
+      "start": 18.051,
+      "end": 22.655
+    },
+    {
+      "i": 7,
+      "text": "The debate isn't over.",
+      "beat_id": "b5",
+      "start": 22.815,
+      "end": 24.124
+    },
+    {
+      "i": 8,
+      "text": "And arthritis?",
+      "beat_id": "b6",
+      "start": 24.524,
+      "end": 25.605,
+      "pause_before": 0.4
+    },
+    {
+      "i": 9,
+      "text": "A study of 215 people found no link.",
+      "beat_id": "b6",
+      "start": 25.765,
+      "end": 29.097
+    },
+    {
+      "i": 10,
+      "text": "So it's just a bubble.",
+      "beat_id": "b7",
+      "start": 29.337,
+      "end": 30.654
+    },
+    {
+      "i": 11,
+      "text": "Do you crack yours?",
+      "beat_id": "b7",
+      "start": 30.814,
+      "end": 32.021
+    }
+  ]
+}

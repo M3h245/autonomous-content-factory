@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cf.storyboard",
+  "type": "object",
+  "required": [
+    "video_id",
+    "style",
+    "scenes"
+  ],
+  "properties": {
+    "video_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "style": {
+      "type": "object",
+      "required": [
+        "palette"
+      ],
+      "properties": {
+        "palette": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "string"
+          }
+        },
+        "paper": {
+          "type": "string",
+          "enum": [
+            "plain",
+            "grid",
+            "dots",
+            "lined"
+          ]
+        }
+      }
+    },
+    "scenes": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "beat_ids",
+          "visual"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "beat_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "visual": {
+            "type": "object",
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "doodle",
+                  "svg",
+                  "procedural",
+                  "image",
+                  "video",
+                  "sd_forge",
+                  "image_api",
+                  "stock"
+                ]
+              }
+            }
+          },
+          "motion": {
+            "type": "object",
+            "required": [
+              "type"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "zoom_in",
+                  "zoom_out",
+                  "pan_left",
+                  "pan_right",
+                  "pan_up",
+                  "pan_down",
+                  "static"
+                ]
+              }
+            }
+          },
+          "transition": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "cut",
+                  "fade",
+                  "slideleft",
+                  "slideup",
+                  "wipeleft",
+                  "circleopen",
+                  "dissolve",
+                  "whip",
+                  "whip-up",
+                  "paper",
+                  "pop",
+                  "flash",
+                  "auto"
+                ]
+              },
+              "duration": {
+                "type": "number"
+              }
+            }
+          },
+          "camera": {
+            "type": "object",
+            "properties": {
+              "drift": {
+                "type": "string",
+                "enum": [
+                  "in",
+                  "out",
+                  "left",
+                  "right",
+                  "up",
+                  "down",
+                  "none"
+                ]
+              },
+              "punch": {
+                "type": "array"
+              },
+              "shake": {
+                "type": "array"
+              },
+              "amount": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

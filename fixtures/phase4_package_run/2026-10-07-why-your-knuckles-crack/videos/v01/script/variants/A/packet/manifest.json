@@ -1,0 +1,48 @@
+{
+  "packet_version": 1,
+  "kind": "script variant",
+  "boundary": "The reviewer reads only the files listed in this manifest (hash-verified). It receives no storyboard, scene source, hook candidates, beat structure, author notes, run state or prior review.",
+  "excluded_patterns": [
+    "storyboard",
+    "\\.svg$",
+    "hooks",
+    "^state\\.json$",
+    "^review(_template)?\\.json$",
+    "ideas",
+    "selection",
+    "run\\.json$",
+    "judgment\\.json$"
+  ],
+  "built_at": "2026-10-07T06:32:09+00:00",
+  "files": {
+    "evidence/claims.json": {
+      "sha256": "2344a543460622638704d4066471e7bc5cd9d3812fca80968e7c3d171afbb879",
+      "bytes": 1651
+    },
+    "measurements/hook_review.json": {
+      "sha256": "e731afc2016492a613fe56cb5d93b4494b4d436a61aa229bd79e7cfb6384d327",
+      "bytes": 115
+    },
+    "measurements/script_checks.json": {
+      "sha256": "af8157c262f53088dcc6fef990ea25fbc15db08288769b3c138a17a18ede1ace",
+      "bytes": 3181
+    },
+    "text/cta.json": {
+      "sha256": "82ec8cb8beab2b26f85f2e18dc4d18de8964a187bf2147415707ca1dba7bc941",
+      "bytes": 198
+    },
+    "text/hook.json": {
+      "sha256": "10f5648baba55a3ef9ff027ef68bcd1e6d761c681ded57b1c34cf77a47f68fc9",
+      "bytes": 103
+    },
+    "text/publish.json": {
+      "sha256": "f21020d97f20a56e3fe4577b39ce2cf9f0d213fde8e506c3720ea3b388132a98",
+      "bytes": 253
+    },
+    "text/transcript.json": {
+      "sha256": "05512bcddaad93a7dcef25a3bea0d0879663c1e72936a53179c4bb226cdb4694",
+      "bytes": 1657
+    }
+  },
+  "candidate_id": "A"
+}

@@ -1,0 +1,190 @@
+{
+ "video_id": "v01",
+ "language": "en",
+ "hook_id": "h3",
+ "variants": [
+  {
+   "variant_id": "A",
+   "structure": "myth-bust \u2192 mechanism \u2192 MRI evidence \u2192 debate \u2192 arthritis payoff \u2192 loop + comment question (7 beats)",
+   "beats": [
+    {
+     "id": "b1",
+     "role": "hook",
+     "text": "What actually pops when you crack your knuckles?",
+     "claim_ids": [
+      "f1"
+     ],
+     "visual_intent": "frame 0: big fist, pop burst, question mark, WHAT POPS?",
+     "on_screen": "WHAT POPS?",
+     "emphasis": [
+      "pops"
+     ]
+    },
+    {
+     "id": "b2",
+     "role": "setup",
+     "text": "Not your bones. Your joints sit in a capsule of fluid.",
+     "claim_ids": [
+      "f1"
+     ],
+     "visual_intent": "joint cross-section: capsule full of fluid"
+    },
+    {
+     "id": "b3",
+     "role": "value",
+     "text": "Pull the joint apart, the pressure drops, and a gas cavity snaps open.",
+     "claim_ids": [
+      "f1"
+     ],
+     "visual_intent": "bones pull apart, bubble snaps open with a burst"
+    },
+    {
+     "id": "b4",
+     "role": "value",
+     "text": "In 2015, scientists filmed it inside an MRI. The pop happened as the bubble formed.",
+     "claim_ids": [
+      "f2",
+      "f1"
+     ],
+     "visual_intent": "MRI ring around the joint, bubble appears"
+    },
+    {
+     "id": "b5",
+     "role": "twist",
+     "text": "A 2018 model says a partial collapse could still make the sound. The debate isn't over.",
+     "claim_ids": [
+      "f4",
+      "f3"
+     ],
+     "visual_intent": "scoreboard: 2015 formation vs 2018 partial collapse"
+    },
+    {
+     "id": "b6",
+     "role": "payoff",
+     "text": "And arthritis? A study of 215 people found no link.",
+     "claim_ids": [
+      "f5"
+     ],
+     "visual_intent": "two fists, big check mark, 215",
+     "pause_before": 0.4
+    },
+    {
+     "id": "b7",
+     "role": "loop",
+     "text": "So it's just a bubble. Do you crack yours?",
+     "claim_ids": [
+      "f1"
+     ],
+     "visual_intent": "back to the fist; on-screen DO YOU CRACK YOURS?"
+    }
+   ],
+   "publish": {
+    "title_options": [
+     "What actually pops when you crack your knuckles",
+     "Knuckle cracking: a bubble, not your bones"
+    ],
+    "description": "An MRI caught the moment a knuckle cracks: a gas cavity forms in the joint fluid. And no, the habit is not linked to arthritis.",
+    "hashtags": [
+     "#science",
+     "#humanbody",
+     "#knucklecracking",
+     "#shorts"
+    ]
+   },
+   "cta": {
+    "needed": true,
+    "decision_reason": "the loop line ends on a personal question; commenting is the natural next step and keeps the loop intact",
+    "type": "comment",
+    "placement": "integrated",
+    "modality": "both",
+    "beat_id": "b7",
+    "spoken": "Do you crack yours?",
+    "on_screen": "DO YOU CRACK YOURS?"
+   }
+  },
+  {
+   "variant_id": "B",
+   "structure": "fast cause chain \u2192 60-year experiment payoff \u2192 loop, no CTA (6 beats)",
+   "beats": [
+    {
+     "id": "b1",
+     "role": "hook",
+     "text": "What actually pops when you crack your knuckles?",
+     "claim_ids": [
+      "f1"
+     ],
+     "visual_intent": "frame 0: big fist, pop burst, question mark, WHAT POPS?",
+     "on_screen": "WHAT POPS?",
+     "emphasis": [
+      "pops"
+     ]
+    },
+    {
+     "id": "b2",
+     "role": "value",
+     "text": "Here's the chain. You pull the joint. The fluid inside loses pressure.",
+     "claim_ids": [
+      "f1"
+     ],
+     "visual_intent": "three-step chain"
+    },
+    {
+     "id": "b3",
+     "role": "value",
+     "text": "A gas cavity forms in a flash. That's the pop. MRI scans caught it happening.",
+     "claim_ids": [
+      "f1",
+      "f2"
+     ],
+     "visual_intent": "bubble burst inside the MRI ring"
+    },
+    {
+     "id": "b4",
+     "role": "value",
+     "text": "The bubble stays behind for a while.",
+     "claim_ids": [
+      "f7"
+     ],
+     "visual_intent": "bubble sitting in the joint"
+    },
+    {
+     "id": "b5",
+     "role": "payoff",
+     "text": "And one doctor cracked only his left hand for sixty years. No arthritis in either hand.",
+     "claim_ids": [
+      "f6",
+      "f5"
+     ],
+     "visual_intent": "two fists, left popping, both healthy",
+     "pause_before": 0.4
+    },
+    {
+     "id": "b6",
+     "role": "loop",
+     "text": "It's a bubble, not damage.",
+     "claim_ids": [
+      "f1"
+     ],
+     "visual_intent": "fist again, bubble"
+    }
+   ],
+   "publish": {
+    "title_options": [
+     "What actually pops when you crack your knuckles",
+     "Knuckle cracking: a bubble, not your bones"
+    ],
+    "description": "An MRI caught the moment a knuckle cracks: a gas cavity forms in the joint fluid. And no, the habit is not linked to arthritis.",
+    "hashtags": [
+     "#science",
+     "#humanbody",
+     "#knucklecracking",
+     "#shorts"
+    ]
+   },
+   "cta": {
+    "needed": false,
+    "decision_reason": "the 60-year experiment is the payoff; any ask after it would dilute the ending"
+   }
+  }
+ ]
+}

@@ -1,0 +1,88 @@
+{
+  "hook_id": "h3",
+  "spoken_text": "What actually pops when you crack your knuckles?",
+  "visual_concept": "A big fist with a pop burst and a question mark.",
+  "on_screen_text": "WHAT POPS?",
+  "curiosity_mechanism": "question",
+  "tension": "a sound everyone makes but nobody can explain",
+  "target_emotion": "curiosity",
+  "first_frame_concept": "fist with a burst and a question mark",
+  "first_frame_subject": "fist",
+  "first_frame_text": "WHAT POPS?",
+  "visual_action": "burst at 0.2 s, question mark at 0.4 s",
+  "payoff_connection": "a gas cavity forming (f1)",
+  "why_it_should_work": "universal experience",
+  "first_frame_svg": "svg/h3_frame0.svg",
+  "fact_ids": [
+    "f1"
+  ],
+  "estimated_duration_s": 2.64,
+  "review": {
+    "verdict": "PASS",
+    "scores": {
+      "hook_strength": 4,
+      "first_frame_clarity": 5,
+      "visual_verbal_sync": 5
+    },
+    "failures": [],
+    "evidence": {
+      "hook_strength": [
+        "✓ spoken ≤3.2 s: 2.38s",
+        "✓ tension device: found",
+        "✓ short on-screen text (1-6 words): 'WHAT POPS?'",
+        "✓ on-screen text reinforces the spoken hook: related",
+        "✓ frame 0: ≥2 elements or text: 2 elements, text=True",
+        "✓ visual event ≤0.5 s: 0.2",
+        "✓ promise backed by dossier facts: ['f1']"
+      ],
+      "first_frame_clarity": [
+        "✓ subject ≥35% of frame height: 36%",
+        "✓ ≥2 elements at t=0: 2",
+        "✓ text fully visible, ≥60 px, inside safe area: [('WHAT POPS?', 110.0)]",
+        "✓ nothing outside safe margins: 0"
+      ],
+      "visual_verbal_sync": [
+        "✓ on-screen text relates to the spoken line: 'WHAT POPS?' vs 'What actually pops when you crack your k'",
+        "✓ topic named immediately (spoken): topic 'Why your knuckles crack'",
+        "✓ frame text relates to topic or line: checked",
+        "✓ negation consistent (spoken ↔ screen): checked"
+      ]
+    }
+  },
+  "measurements": {
+    "elements_at_t0": 2,
+    "text_at_t0": true,
+    "subject_bbox_share_t0": 0.1774,
+    "subject": "fist",
+    "subject_height_ratio": 0.365,
+    "subject_bbox": [
+      272,
+      350,
+      710,
+      1050
+    ],
+    "texts_t0": [
+      {
+        "actor": "text4",
+        "text": "WHAT POPS?",
+        "on_screen": "WHAT POPS?",
+        "lost_words": [],
+        "size_px": 110.0,
+        "bbox": [
+          184,
+          177,
+          905,
+          262
+        ],
+        "inside_safe": true,
+        "negation_hidden": false
+      }
+    ],
+    "safe_margin_violations_t0": [],
+    "first_visual_event_s": 0.2,
+    "idle_motion_at_t0": false,
+    "hook_exception": null,
+    "visual_events_first_1_5s": 2,
+    "first_text_s": 0.0
+  }
+}

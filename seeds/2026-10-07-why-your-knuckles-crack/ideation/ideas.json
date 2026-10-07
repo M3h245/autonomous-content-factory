@@ -1,0 +1,80 @@
+{
+ "ideas": [
+  {
+   "id": "i1",
+   "title": "Your knuckle crack is a bubble, not your bones",
+   "angle": "Bust the 'bones grinding' myth: an MRI showed a gas cavity forming; scientists still argue about collapse; and no, it does not cause arthritis.",
+   "format": "myth-bust",
+   "pillar": "human body",
+   "value_add": "Shows the 2015 MRI evidence and the arthritis studies in one short chain.",
+   "fact_ids": [
+    "f1",
+    "f2",
+    "f3",
+    "f4",
+    "f5",
+    "f6"
+   ],
+   "required_capabilities": [
+    "tts.kokoro",
+    "visual.doodle"
+   ],
+   "scores": {
+    "audience_value": 4,
+    "curiosity": 5,
+    "originality": 4,
+    "evidence_strength": 5,
+    "visual_potential": 5,
+    "brand_safety": 5
+   }
+  },
+  {
+   "id": "i2",
+   "title": "The man who cracked one hand for 60 years",
+   "angle": "Story of a 60-year one-handed experiment.",
+   "format": "story",
+   "pillar": "human body",
+   "value_add": "A memorable self-experiment answers the arthritis question.",
+   "fact_ids": [
+    "f6",
+    "f5"
+   ],
+   "required_capabilities": [
+    "tts.kokoro",
+    "visual.doodle"
+   ],
+   "scores": {
+    "audience_value": 4,
+    "curiosity": 5,
+    "originality": 4,
+    "evidence_strength": 3,
+    "visual_potential": 5,
+    "brand_safety": 5
+   }
+  },
+  {
+   "id": "i3",
+   "title": "Why you can't crack the same knuckle twice",
+   "angle": "Explain the bubble that stays behind.",
+   "format": "explainer",
+   "pillar": "human body",
+   "value_add": "Explains the cavity that remains after a crack.",
+   "fact_ids": [
+    "f1",
+    "f7"
+   ],
+   "required_capabilities": [
+    "tts.kokoro",
+    "visual.doodle"
+   ],
+   "scores": {
+    "audience_value": 4,
+    "curiosity": 4,
+    "originality": 4,
+    "evidence_strength": 5,
+    "visual_potential": 5,
+    "brand_safety": 5
+   }
+  }
+ ]
+}

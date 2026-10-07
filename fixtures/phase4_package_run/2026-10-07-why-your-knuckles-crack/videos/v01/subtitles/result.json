@@ -1,0 +1,140 @@
+{
+  "contract": "cf/1.1",
+  "stage": "SUBTITLES",
+  "skill": "subtitle-production",
+  "run_id": null,
+  "video_id": "v01",
+  "attempt": 1,
+  "status": "passed",
+  "started_at": "2026-10-07T06:39:08+00:00",
+  "finished_at": "2026-10-07T06:40:06+00:00",
+  "inputs": [
+    {
+      "role": "voice_timing",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/audio/timing.json",
+      "sha256": "5decb4d424bc23b35a675d93ff7cff45264da15b0a69ca73bbb1d853272da07b"
+    },
+    {
+      "role": "video_nosubs",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/video/video_nosubs.mp4",
+      "sha256": "b5075c1bf1233657c010dc3b033a4b9cf1af606355ee64351fd93e48a6fc371c"
+    }
+  ],
+  "outputs": [
+    {
+      "role": "captions_ass",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/subtitles/captions.ass",
+      "media_type": "text/x-ass",
+      "sha256": "be4c02138efaeccdf16a7503084ed4e213aded07c972743f15209897b0ffe74b"
+    },
+    {
+      "role": "captions_srt",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/subtitles/captions.srt",
+      "media_type": "application/x-subrip",
+      "sha256": "ca2aef519c8150ceac49d4fb48f9b9978e0203905bb35b60caa46f518be809e7"
+    },
+    {
+      "role": "captions_vtt",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/subtitles/captions.vtt",
+      "media_type": "text/vtt",
+      "sha256": "05f287e6f9db48d9b594923ad8e3653ea2823de2ff41fd48d325d11997307f7f"
+    },
+    {
+      "role": "final_video",
+      "path": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/subtitles/final.mp4",
+      "media_type": "video/mp4",
+      "sha256": "8ea61a514ca3604a59fe2b152f0b9c13446bb966f3e8bff08afc2fb1a49b2db9"
+    }
+  ],
+  "gate": {
+    "checks": [
+      {
+        "id": "SUB.DECODE_OK",
+        "passed": true,
+        "severity": "blocking",
+        "value": 0,
+        "threshold": 0,
+        "message": "every packet of final.mp4 decodes"
+      },
+      {
+        "id": "SUB.COVERAGE",
+        "passed": true,
+        "severity": "blocking",
+        "value": null,
+        "threshold": null,
+        "message": "82/82 words captioned in order"
+      },
+      {
+        "id": "SUB.NO_OVERLAP",
+        "passed": true,
+        "severity": "blocking",
+        "value": null,
+        "threshold": null,
+        "message": "overlapping chunks at []"
+      },
+      {
+        "id": "SUB.MIN_DISPLAY",
+        "passed": true,
+        "severity": "major",
+        "value": 0,
+        "threshold": 0,
+        "message": "chunks shorter than 0.25 s: []"
+      },
+      {
+        "id": "SUB.SYNC",
+        "passed": true,
+        "severity": "blocking",
+        "value": null,
+        "threshold": null,
+        "message": "each caption appears exactly when its first word is spoken"
+      },
+      {
+        "id": "SUB.FITS_SAFE_AREA",
+        "passed": true,
+        "severity": "blocking",
+        "value": null,
+        "threshold": null,
+        "message": "chunks wider than the 900px safe width: []"
+      },
+      {
+        "id": "SUB.GLYPH_COVERAGE",
+        "passed": true,
+        "severity": "blocking",
+        "value": [],
+        "threshold": [],
+        "message": "font Permanent Marker lacks glyphs []"
+      },
+      {
+        "id": "SUB.BURNED_IN",
+        "passed": true,
+        "severity": "blocking",
+        "value": [
+          1928,
+          1157,
+          1778
+        ],
+        "threshold": ">=40 per probe",
+        "message": "changed caption-band pixels per probe [1928, 1157, 1778]"
+      }
+    ],
+    "passed": true
+  },
+  "errors": [],
+  "metrics": {
+    "chunks": 36,
+    "font": "Permanent Marker",
+    "rtl": false,
+    "style": "doodle",
+    "style_requested": "auto",
+    "overlays": 0
+  },
+  "provenance": [
+    {
+      "role": "font",
+      "path": "/home/claude/cf2/subtitle-production/assets/fonts/PermanentMarker-Regular.ttf",
+      "source": "Google Fonts (github.com/google/fonts)",
+      "license": "Apache-2.0",
+      "realistic": false
+    }
+  ]
+}

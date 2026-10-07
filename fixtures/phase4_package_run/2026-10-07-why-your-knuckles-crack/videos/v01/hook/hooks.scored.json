@@ -1,0 +1,516 @@
+{
+  "topic": "Why your knuckles crack",
+  "selected": "h3",
+  "candidates": [
+    {
+      "hook_id": "h1",
+      "spoken_text": "That knuckle crack? A bubble. Not bones.",
+      "on_screen_text": "NOT BONES",
+      "curiosity_mechanism": "misconception_reversal",
+      "fingerprint": "cbdfd51ce71919207a0d",
+      "estimated_duration_s": 2.89,
+      "measured_duration_s": 3.22,
+      "status": "rendered",
+      "frame0": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/hook/candidates/h1/frame0.png",
+      "measurements": {
+        "elements_at_t0": 2,
+        "text_at_t0": true,
+        "subject_bbox_share_t0": 0.172,
+        "subject": "joint",
+        "subject_height_ratio": 0.349,
+        "subject_bbox": [
+          310,
+          380,
+          770,
+          1050
+        ],
+        "texts_t0": [
+          {
+            "actor": "text3",
+            "text": "NOT BONES",
+            "on_screen": "NOT BONES",
+            "lost_words": [],
+            "size_px": 104.0,
+            "bbox": [
+              241,
+              179,
+              848,
+              258
+            ],
+            "inside_safe": true,
+            "negation_hidden": false
+          }
+        ],
+        "safe_margin_violations_t0": [],
+        "first_visual_event_s": 0.2,
+        "idle_motion_at_t0": false,
+        "hook_exception": null,
+        "visual_events_first_1_5s": 2,
+        "first_text_s": 0.0
+      },
+      "render_warnings": [],
+      "review": {
+        "verdict": "FAIL",
+        "scores": {
+          "hook_strength": 4,
+          "first_frame_clarity": 4,
+          "visual_verbal_sync": 5
+        },
+        "failures": [
+          {
+            "id": "FRAME0.SUBJECT_SMALL",
+            "severity": "major",
+            "evidence": "main subject 35% of frame height (needs ≥35% or a documented exception)"
+          },
+          {
+            "id": "HOOK.TOO_LONG",
+            "severity": "major",
+            "evidence": "3.22s spoken (calibrated estimate)"
+          }
+        ],
+        "evidence": {
+          "hook_strength": [
+            "✗ spoken ≤3.2 s: 3.22s",
+            "✓ tension device: found",
+            "✓ short on-screen text (1-6 words): 'NOT BONES'",
+            "✓ on-screen text reinforces the spoken hook: related",
+            "✓ frame 0: ≥2 elements or text: 2 elements, text=True",
+            "✓ visual event ≤0.5 s: 0.2",
+            "✓ promise backed by dossier facts: ['f1', 'f3']"
+          ],
+          "first_frame_clarity": [
+            "✗ subject ≥35% of frame height: 35%",
+            "✓ ≥2 elements at t=0: 2",
+            "✓ text fully visible, ≥60 px, inside safe area: [('NOT BONES', 104.0)]",
+            "✓ nothing outside safe margins: 0"
+          ],
+          "visual_verbal_sync": [
+            "✓ on-screen text relates to the spoken line: 'NOT BONES' vs 'That knuckle crack? A bubble. Not bones.'",
+            "✓ topic named immediately (spoken): topic 'Why your knuckles crack'",
+            "✓ frame text relates to topic or line: checked",
+            "✓ negation consistent (spoken ↔ screen): checked"
+          ]
+        }
+      },
+      "total": 13
+    },
+    {
+      "hook_id": "h2",
+      "spoken_text": "Scientists filmed a knuckle crack inside an MRI.",
+      "on_screen_text": "MRI FOOTAGE",
+      "curiosity_mechanism": "surprising_claim",
+      "fingerprint": "9a31eebf3226080cbc10",
+      "estimated_duration_s": 2.71,
+      "measured_duration_s": 3.5,
+      "status": "rendered",
+      "frame0": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/hook/candidates/h2/frame0.png",
+      "measurements": {
+        "elements_at_t0": 3,
+        "text_at_t0": true,
+        "subject_bbox_share_t0": 0.3321,
+        "subject": "mri",
+        "subject_height_ratio": 0.354,
+        "subject_bbox": [
+          200,
+          375,
+          880,
+          1055
+        ],
+        "texts_t0": [
+          {
+            "actor": "text4",
+            "text": "MRI FOOTAGE",
+            "on_screen": "MRI FOOTAGE",
+            "lost_words": [],
+            "size_px": 100.0,
+            "bbox": [
+              176,
+              180,
+              907,
+              258
+            ],
+            "inside_safe": true,
+            "negation_hidden": false
+          }
+        ],
+        "safe_margin_violations_t0": [],
+        "first_visual_event_s": 0.15,
+        "idle_motion_at_t0": false,
+        "hook_exception": null,
+        "visual_events_first_1_5s": 2,
+        "first_text_s": 0.0
+      },
+      "render_warnings": [],
+      "review": {
+        "verdict": "FAIL",
+        "scores": {
+          "hook_strength": 3,
+          "first_frame_clarity": 5,
+          "visual_verbal_sync": 5
+        },
+        "failures": [
+          {
+            "id": "HOOK.TOO_LONG",
+            "severity": "major",
+            "evidence": "3.50s spoken (calibrated estimate)"
+          },
+          {
+            "id": "hook_strength",
+            "score": 3,
+            "threshold": 4,
+            "evidence": "Not met: spoken ≤3.2 s (3.50s); tension device (none)"
+          }
+        ],
+        "evidence": {
+          "hook_strength": [
+            "✗ spoken ≤3.2 s: 3.50s",
+            "✗ tension device: none",
+            "✓ short on-screen text (1-6 words): 'MRI FOOTAGE'",
+            "✓ on-screen text reinforces the spoken hook: related",
+            "✓ frame 0: ≥2 elements or text: 3 elements, text=True",
+            "✓ visual event ≤0.5 s: 0.15",
+            "✓ promise backed by dossier facts: ['f2', 'f1']"
+          ],
+          "first_frame_clarity": [
+            "✓ subject ≥35% of frame height: 35%",
+            "✓ ≥2 elements at t=0: 3",
+            "✓ text fully visible, ≥60 px, inside safe area: [('MRI FOOTAGE', 100.0)]",
+            "✓ nothing outside safe margins: 0"
+          ],
+          "visual_verbal_sync": [
+            "✓ on-screen text relates to the spoken line: 'MRI FOOTAGE' vs 'Scientists filmed a knuckle crack inside'",
+            "✓ topic named immediately (spoken): topic 'Why your knuckles crack'",
+            "✓ frame text relates to topic or line: checked",
+            "✓ negation consistent (spoken ↔ screen): checked"
+          ]
+        }
+      },
+      "total": 13
+    },
+    {
+      "hook_id": "h3",
+      "spoken_text": "What actually pops when you crack your knuckles?",
+      "on_screen_text": "WHAT POPS?",
+      "curiosity_mechanism": "question",
+      "fingerprint": "1de7e077219c4b15ee5c",
+      "estimated_duration_s": 2.64,
+      "measured_duration_s": 2.38,
+      "status": "rendered",
+      "frame0": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/hook/candidates/h3/frame0.png",
+      "measurements": {
+        "elements_at_t0": 2,
+        "text_at_t0": true,
+        "subject_bbox_share_t0": 0.1774,
+        "subject": "fist",
+        "subject_height_ratio": 0.365,
+        "subject_bbox": [
+          272,
+          350,
+          710,
+          1050
+        ],
+        "texts_t0": [
+          {
+            "actor": "text4",
+            "text": "WHAT POPS?",
+            "on_screen": "WHAT POPS?",
+            "lost_words": [],
+            "size_px": 110.0,
+            "bbox": [
+              184,
+              177,
+              905,
+              262
+            ],
+            "inside_safe": true,
+            "negation_hidden": false
+          }
+        ],
+        "safe_margin_violations_t0": [],
+        "first_visual_event_s": 0.2,
+        "idle_motion_at_t0": false,
+        "hook_exception": null,
+        "visual_events_first_1_5s": 2,
+        "first_text_s": 0.0
+      },
+      "render_warnings": [],
+      "review": {
+        "verdict": "PASS",
+        "scores": {
+          "hook_strength": 4,
+          "first_frame_clarity": 5,
+          "visual_verbal_sync": 5
+        },
+        "failures": [],
+        "evidence": {
+          "hook_strength": [
+            "✓ spoken ≤3.2 s: 2.38s",
+            "✓ tension device: found",
+            "✓ short on-screen text (1-6 words): 'WHAT POPS?'",
+            "✓ on-screen text reinforces the spoken hook: related",
+            "✓ frame 0: ≥2 elements or text: 2 elements, text=True",
+            "✓ visual event ≤0.5 s: 0.2",
+            "✓ promise backed by dossier facts: ['f1']"
+          ],
+          "first_frame_clarity": [
+            "✓ subject ≥35% of frame height: 36%",
+            "✓ ≥2 elements at t=0: 2",
+            "✓ text fully visible, ≥60 px, inside safe area: [('WHAT POPS?', 110.0)]",
+            "✓ nothing outside safe margins: 0"
+          ],
+          "visual_verbal_sync": [
+            "✓ on-screen text relates to the spoken line: 'WHAT POPS?' vs 'What actually pops when you crack your k'",
+            "✓ topic named immediately (spoken): topic 'Why your knuckles crack'",
+            "✓ frame text relates to topic or line: checked",
+            "✓ negation consistent (spoken ↔ screen): checked"
+          ]
+        }
+      },
+      "total": 14
+    },
+    {
+      "hook_id": "h4",
+      "spoken_text": "One hand cracked for sixty years. One never did.",
+      "on_screen_text": "60 YEARS",
+      "curiosity_mechanism": "visual_mystery",
+      "fingerprint": "9f54557790455d394517",
+      "estimated_duration_s": 3.07,
+      "measured_duration_s": 3.37,
+      "status": "rendered",
+      "frame0": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/hook/candidates/h4/frame0.png",
+      "measurements": {
+        "elements_at_t0": 3,
+        "text_at_t0": true,
+        "subject_bbox_share_t0": 0.3099,
+        "subject": "left",
+        "subject_height_ratio": 0.357,
+        "subject_bbox": [
+          38,
+          364,
+          467,
+          1050
+        ],
+        "texts_t0": [
+          {
+            "actor": "text5",
+            "text": "60 YEARS",
+            "on_screen": "60 YEARS",
+            "lost_words": [],
+            "size_px": 120.0,
+            "bbox": [
+              263,
+              171,
+              829,
+              267
+            ],
+            "inside_safe": true,
+            "negation_hidden": false
+          }
+        ],
+        "safe_margin_violations_t0": [
+          {
+            "actor": "left",
+            "bbox": [
+              38,
+              364,
+              467,
+              1050
+            ]
+          }
+        ],
+        "first_visual_event_s": 0.15,
+        "idle_motion_at_t0": false,
+        "hook_exception": null,
+        "visual_events_first_1_5s": 2,
+        "first_text_s": 0.0
+      },
+      "render_warnings": [],
+      "review": {
+        "verdict": "FAIL",
+        "scores": {
+          "hook_strength": 4,
+          "first_frame_clarity": 4,
+          "visual_verbal_sync": 5
+        },
+        "failures": [
+          {
+            "id": "FRAME0.SAFE_MARGIN",
+            "severity": "major",
+            "evidence": "left bbox [38, 364, 467, 1050]"
+          },
+          {
+            "id": "HOOK.TOO_LONG",
+            "severity": "major",
+            "evidence": "3.37s spoken (calibrated estimate)"
+          }
+        ],
+        "evidence": {
+          "hook_strength": [
+            "✗ spoken ≤3.2 s: 3.37s",
+            "✓ tension device: found",
+            "✓ short on-screen text (1-6 words): '60 YEARS'",
+            "✓ on-screen text reinforces the spoken hook: related",
+            "✓ frame 0: ≥2 elements or text: 3 elements, text=True",
+            "✓ visual event ≤0.5 s: 0.15",
+            "✓ promise backed by dossier facts: ['f6', 'f5']"
+          ],
+          "first_frame_clarity": [
+            "✓ subject ≥35% of frame height: 36%",
+            "✓ ≥2 elements at t=0: 3",
+            "✓ text fully visible, ≥60 px, inside safe area: [('60 YEARS', 120.0)]",
+            "✗ nothing outside safe margins: 1"
+          ],
+          "visual_verbal_sync": [
+            "✓ on-screen text relates to the spoken line: '60 YEARS' vs 'One hand cracked for sixty years. One ne'",
+            "✓ topic named immediately (spoken): topic 'Why your knuckles crack'",
+            "✓ frame text relates to topic or line: checked",
+            "✓ negation consistent (spoken ↔ screen): checked"
+          ]
+        }
+      },
+      "total": 13
+    },
+    {
+      "hook_id": "h5",
+      "spoken_text": "Cracking knuckles causes arthritis? Not really.",
+      "on_screen_text": "ARTHRITIS?",
+      "curiosity_mechanism": "direct_challenge",
+      "fingerprint": "ea6aa9ccbc61c3ab9eab",
+      "estimated_duration_s": 2.86,
+      "measured_duration_s": 3.14,
+      "status": "rendered",
+      "frame0": "/home/claude/runs_p35/2026-10-07-why-your-knuckles-crack/videos/v01/hook/candidates/h5/frame0.png",
+      "measurements": {
+        "elements_at_t0": 2,
+        "text_at_t0": true,
+        "subject_bbox_share_t0": 0.1756,
+        "subject": "fist",
+        "subject_height_ratio": 0.365,
+        "subject_bbox": [
+          162,
+          350,
+          600,
+          1050
+        ],
+        "texts_t0": [
+          {
+            "actor": "text3",
+            "text": "ARTHRITIS?",
+            "on_screen": "ARTHRITIS?",
+            "lost_words": [],
+            "size_px": 110.0,
+            "bbox": [
+              204,
+              177,
+              880,
+              262
+            ],
+            "inside_safe": true,
+            "negation_hidden": false
+          }
+        ],
+        "safe_margin_violations_t0": [],
+        "first_visual_event_s": 0.25,
+        "idle_motion_at_t0": false,
+        "hook_exception": null,
+        "visual_events_first_1_5s": 1,
+        "first_text_s": 0.0
+      },
+      "render_warnings": [],
+      "review": {
+        "verdict": "PASS",
+        "scores": {
+          "hook_strength": 4,
+          "first_frame_clarity": 5,
+          "visual_verbal_sync": 5
+        },
+        "failures": [],
+        "evidence": {
+          "hook_strength": [
+            "✓ spoken ≤3.2 s: 3.14s",
+            "✓ tension device: found",
+            "✓ short on-screen text (1-6 words): 'ARTHRITIS?'",
+            "✓ on-screen text reinforces the spoken hook: related",
+            "✓ frame 0: ≥2 elements or text: 2 elements, text=True",
+            "✓ visual event ≤0.5 s: 0.25",
+            "✓ promise backed by dossier facts: ['f5', 'f6']"
+          ],
+          "first_frame_clarity": [
+            "✓ subject ≥35% of frame height: 36%",
+            "✓ ≥2 elements at t=0: 2",
+            "✓ text fully visible, ≥60 px, inside safe area: [('ARTHRITIS?', 110.0)]",
+            "✓ nothing outside safe margins: 0"
+          ],
+          "visual_verbal_sync": [
+            "✓ on-screen text relates to the spoken line: 'ARTHRITIS?' vs 'Cracking knuckles causes arthritis? Not '",
+            "✓ topic named immediately (spoken): topic 'Why your knuckles crack'",
+            "✓ frame text relates to topic or line: checked",
+            "✓ negation consistent (spoken ↔ screen): checked"
+          ]
+        }
+      },
+      "total": 14
+    }
+  ],
+  "diversity": {
+    "mechanisms": [
+      "direct_challenge",
+      "misconception_reversal",
+      "question",
+      "surprising_claim",
+      "visual_mystery"
+    ],
+    "pairwise_similarity": [
+      [
+        "h1",
+        "h2",
+        0.22
+      ],
+      [
+        "h1",
+        "h3",
+        0.1
+      ],
+      [
+        "h1",
+        "h4",
+        0.0
+      ],
+      [
+        "h1",
+        "h5",
+        0.1
+      ],
+      [
+        "h2",
+        "h3",
+        0.09
+      ],
+      [
+        "h2",
+        "h4",
+        0.0
+      ],
+      [
+        "h2",
+        "h5",
+        0.0
+      ],
+      [
+        "h3",
+        "h4",
+        0.0
+      ],
+      [
+        "h3",
+        "h5",
+        0.09
+      ],
+      [
+        "h4",
+        "h5",
+        0.0
+      ]
+    ]
+  }
+}
