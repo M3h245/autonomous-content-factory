@@ -1,0 +1,2 @@
+# Store text files with LF in the repository; Windows working copies may keep CRLF.
+* text=auto

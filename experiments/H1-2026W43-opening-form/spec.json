@@ -1,0 +1,409 @@
+{
+ "experiment_id": "H1-2026W43-opening-form",
+ "status": "prepared - not started (production needs owner approval)",
+ "created_at": "2026-10-16",
+ "variable": "form of the spoken first line (also the on-screen hook text): declarative statement vs direct question",
+ "arms": {
+  "statement": "First line is a declarative claim (misconception reversal or surprising claim), 5-9 words, no question mark, no 'you won't believe'.",
+  "question": "First line is a direct Why/How question about the topic, 5-11 words, ending with '?'."
+ },
+ "hypothesis": "A declarative first line keeps more viewers past the opening than a direct question (audit 2026-10-16: question openers 20-41% kept watching vs 29-52% for statements, n=2 vs 6 - suggestive only).",
+ "primary_metric": "stayed_to_watch (YouTube Studio 'viewed vs swiped away'), measured at the same video age for every video",
+ "primary_metric_fallback": "engaged_view_rate = engagedViews / views (YouTube Analytics API). Chosen once for the whole experiment: Studio if it is available for all 12 videos, otherwise the API proxy for all 12 - never mixed.",
+ "secondary_metrics": [
+  "engaged_views",
+  "views",
+  "retention at ~12% of the video (about 3 s)"
+ ],
+ "guardrail_metric": "average_view_percentage",
+ "measurement_window": {
+  "age_h": 168,
+  "rule": "each video measured at publish + 7 days (own date filter); a video measured earlier or later is reported separately, not pooled"
+ },
+ "decision_rule": {
+  "pairs": 6,
+  "per_arm": 6,
+  "statement_better": "statement ahead in >= 5 of 6 pairs AND median paired difference >= +5 pp on the primary metric AND guardrail median difference >= -5 pp",
+  "question_better": "the same rule with the arms swapped",
+  "otherwise": "inconclusive - no change to the factory default",
+  "uncertainty": "6 pairs is a small sample: 6/6 wins is a one-sided sign test p ~ 0.016, 5/6 p ~ 0.11. A result is directional evidence for the next default, not statistical certainty; topic effects can still dominate."
+ },
+ "held_constant": [
+  "frame 0: the same planned visual for the topic whatever the arm (subject >= 35% of height, inside the safe margin)",
+  "length 20-25 s; same voice, caption style, music and doodle engine",
+  "post-hook structure: the factory's normal structure - NO planned second surprise in 3-9 s (that is the beat3to9 experiment's variable)",
+  "loop ending, no spoken CTA",
+  "one pair published per day, 18:00 and 23:00 Europe/Rome, the arm in the 18:00 slot alternating between pairs",
+  "title and thumbnail: normal package selection; title form (question/statement) recorded as a covariate"
+ ],
+ "production_rules": [
+  "factory.py init --count 1 per topic with --constraint 'H1 arm=<arm>: first spoken line = <opening_line>'",
+  "the HOOK stage selects a candidate whose spoken_text is the planned opening line (minor wording fixes allowed only if the RESEARCH gate needs them; record any change)",
+  "every claim must pass the RESEARCH gate; if a planned statement is not supported, reword it and record the revision before production",
+  "no new topics mid-experiment; a failed topic is replaced only by a pre-registered spare in the same category"
+ ],
+ "separation_from_beat3to9": [
+  "EXP-2026W42-beat3to9-c, its batch, slots, runs and input spec are not touched and not reused",
+  "H1 videos are not produced with experiment.py and never placed in that batch",
+  "H1 publishing starts only after the beat3to9 videos have been published, or on days/slots that experiment does not use"
+ ],
+ "pilot_observations": {
+  "note": "Finished before H1 was designed (arms not assigned in advance, topics not matched): tracked, EXCLUDED from the decision rule.",
+  "videos": [
+   {
+    "output": "outputs/2026-10-16/01_toast",
+    "arm": "question",
+    "opening_line": "Why does toast land butter-side down?"
+   },
+   {
+    "output": "outputs/2026-10-16/02_ice",
+    "arm": "statement",
+    "opening_line": "Your drink isn't crushing that ice."
+   },
+   {
+    "output": "outputs/2026-10-17/01_voice",
+    "arm": "statement",
+    "opening_line": "Your phone isn't ruining your voice."
+   },
+   {
+    "output": "outputs/2026-10-17/02_cat_eyes",
+    "arm": "statement",
+    "opening_line": "That glow isn't light from the cat."
+   }
+  ]
+ },
+ "baseline_reference": "analytics/2026-10-16 (10 Shorts, 3-7 days old; engaged-view rate mean 33.8%)",
+ "novelty": "all 12 topics checked with cfdb topic-check against the 18 runs in content memory: 0 repeats",
+ "pairs": [
+  {
+   "pair_id": "H1-P1",
+   "category": "human body",
+   "assignment": {
+    "method": "sha256(pair_id|seed) % 2",
+    "seed": "H1|2026-10-16",
+    "bit": 0
+   },
+   "topics": [
+    {
+     "topic_key": "fingers-wrinkle",
+     "topic": "Why do your fingers wrinkle in the bath?",
+     "arm": "statement",
+     "opening_line": "Wrinkly fingers aren't waterlogged skin.",
+     "opening_if_statement": "Wrinkly fingers aren't waterlogged skin.",
+     "opening_if_question": "Why do your fingers wrinkle in the bath?",
+     "frame0_visual": "two big doodle fingertips, one smooth, one wrinkled",
+     "publish_slot": "18:00",
+     "status": "planned",
+     "run_id": null,
+     "youtube_id": null,
+     "published_at": null,
+     "outcome": {
+      "measured_at_age_h": null,
+      "stayed_to_watch": null,
+      "engaged_view_rate": null,
+      "average_view_percentage": null,
+      "views": null,
+      "source": null
+     }
+    },
+    {
+     "topic_key": "foot-asleep",
+     "topic": "Why does your foot fall asleep?",
+     "arm": "question",
+     "opening_line": "Why does your foot fall asleep?",
+     "opening_if_statement": "A sleeping foot is a squashed nerve.",
+     "opening_if_question": "Why does your foot fall asleep?",
+     "frame0_visual": "a big doodle foot with pins-and-needles sparks",
+     "publish_slot": "23:00",
+     "status": "planned",
+     "run_id": null,
+     "youtube_id": null,
+     "published_at": null,
+     "outcome": {
+      "measured_at_age_h": null,
+      "stayed_to_watch": null,
+      "engaged_view_rate": null,
+      "average_view_percentage": null,
+      "views": null,
+      "source": null
+     }
+    }
+   ]
+  },
+  {
+   "pair_id": "H1-P2",
+   "category": "everyday light",
+   "assignment": {
+    "method": "sha256(pair_id|seed) % 2",
+    "seed": "H1|2026-10-16",
+    "bit": 1
+   },
+   "topics": [
+    {
+     "topic_key": "spoon-upside-down",
+     "topic": "Why does the inside of a spoon show you upside down?",
+     "arm": "question",
+     "opening_line": "Why does a spoon show you upside down?",
+     "opening_if_statement": "The inside of a spoon flips you upside down.",
+     "opening_if_question": "Why does a spoon show you upside down?",
+     "frame0_visual": "a big doodle spoon with an upside-down face in its bowl",
+     "publish_slot": "18:00",
+     "status": "planned",
+     "run_id": null,
+     "youtube_id": null,
+     "published_at": null,
+     "outcome": {
+      "measured_at_age_h": null,
+      "stayed_to_watch": null,
+      "engaged_view_rate": null,
+      "average_view_percentage": null,
+      "views": null,
+      "source": null
+     }
+    },
+    {
+     "topic_key": "wet-clothes-darker",
+     "topic": "Why do wet clothes look darker?",
+     "arm": "statement",
+     "opening_line": "Water doesn't dye your shirt darker.",
+     "opening_if_statement": "Water doesn't dye your shirt darker.",
+     "opening_if_question": "Why do wet clothes look darker?",
+     "frame0_visual": "a big doodle T-shirt with one dark wet patch",
+     "publish_slot": "23:00",
+     "status": "planned",
+     "run_id": null,
+     "youtube_id": null,
+     "published_at": null,
+     "outcome": {
+      "measured_at_age_h": null,
+      "stayed_to_watch": null,
+      "engaged_view_rate": null,
+      "average_view_percentage": null,
+      "views": null,
+      "source": null
+     }
+    }
+   ]
+  },
+  {
+   "pair_id": "H1-P3",
+   "category": "kitchen science",
+   "assignment": {
+    "method": "sha256(pair_id|seed) % 2",
+    "seed": "H1|2026-10-16",
+    "bit": 1
+   },
+   "topics": [
+    {
+     "topic_key": "popcorn-pop",
+     "topic": "Why does popcorn pop?",
+     "arm": "question",
+     "opening_line": "Why does popcorn pop?",
+     "opening_if_statement": "Every popcorn kernel is a tiny pressure cooker.",
+     "opening_if_question": "Why does popcorn pop?",
+     "frame0_visual": "a big doodle kernel mid-burst",
+     "publish_slot": "23:00",
+     "status": "planned",
+     "run_id": null,
+     "youtube_id": null,
+     "published_at": null,
+     "outcome": {
+      "measured_at_age_h": null,
+      "stayed_to_watch": null,
+      "engaged_view_rate": null,
+      "average_view_percentage": null,
+      "views": null,
+      "source": null
+     }
+    },
+    {
+     "topic_key": "onion-tears",
+     "topic": "Why do onions make you cry?",
+     "arm": "statement",
+     "opening_line": "An onion only stings after you cut it.",
+     "opening_if_statement": "An onion only stings after you cut it.",
+     "opening_if_question": "Why do onions make you cry?",
+     "frame0_visual": "a big doodle onion with a knife and a teary eye",
+     "publish_slot": "18:00",
+     "status": "planned",
+     "run_id": null,
+     "youtube_id": null,
+     "published_at": null,
+     "outcome": {
+      "measured_at_age_h": null,
+      "stayed_to_watch": null,
+      "engaged_view_rate": null,
+      "average_view_percentage": null,
+      "views": null,
+      "source": null
+     }
+    }
+   ]
+  },
+  {
+   "pair_id": "H1-P4",
+   "category": "animals",
+   "assignment": {
+    "method": "sha256(pair_id|seed) % 2",
+    "seed": "H1|2026-10-16",
+    "bit": 1
+   },
+   "topics": [
+    {
+     "topic_key": "gecko-walls",
+     "topic": "How do geckos stick to walls?",
+     "arm": "question",
+     "opening_line": "How do geckos stick to walls?",
+     "opening_if_statement": "Geckos stick to walls without any glue.",
+     "opening_if_question": "How do geckos stick to walls?",
+     "frame0_visual": "a big doodle gecko upside down on a ceiling",
+     "publish_slot": "18:00",
+     "status": "planned",
+     "run_id": null,
+     "youtube_id": null,
+     "published_at": null,
+     "outcome": {
+      "measured_at_age_h": null,
+      "stayed_to_watch": null,
+      "engaged_view_rate": null,
+      "average_view_percentage": null,
+      "views": null,
+      "source": null
+     }
+    },
+    {
+     "topic_key": "flamingo-pink",
+     "topic": "Why are flamingos pink?",
+     "arm": "statement",
+     "opening_line": "Flamingos aren't born pink.",
+     "opening_if_statement": "Flamingos aren't born pink.",
+     "opening_if_question": "Why are flamingos pink?",
+     "frame0_visual": "a big doodle grey flamingo chick next to a pink adult",
+     "publish_slot": "23:00",
+     "status": "planned",
+     "run_id": null,
+     "youtube_id": null,
+     "published_at": null,
+     "outcome": {
+      "measured_at_age_h": null,
+      "stayed_to_watch": null,
+      "engaged_view_rate": null,
+      "average_view_percentage": null,
+      "views": null,
+      "source": null
+     }
+    }
+   ]
+  },
+  {
+   "pair_id": "H1-P5",
+   "category": "sound",
+   "assignment": {
+    "method": "sha256(pair_id|seed) % 2",
+    "seed": "H1|2026-10-16",
+    "bit": 0
+   },
+   "topics": [
+    {
+     "topic_key": "seashell-sea",
+     "topic": "Why do you hear the sea in a seashell?",
+     "arm": "statement",
+     "opening_line": "That's not the sea inside the shell.",
+     "opening_if_statement": "That's not the sea inside the shell.",
+     "opening_if_question": "Why do you hear the sea in a seashell?",
+     "frame0_visual": "a big doodle seashell held to an ear with wave lines",
+     "publish_slot": "18:00",
+     "status": "planned",
+     "run_id": null,
+     "youtube_id": null,
+     "published_at": null,
+     "outcome": {
+      "measured_at_age_h": null,
+      "stayed_to_watch": null,
+      "engaged_view_rate": null,
+      "average_view_percentage": null,
+      "views": null,
+      "source": null
+     }
+    },
+    {
+     "topic_key": "empty-room-echo",
+     "topic": "Why does an empty room echo?",
+     "arm": "question",
+     "opening_line": "Why does an empty room echo?",
+     "opening_if_statement": "Your sofa is soaking up sound.",
+     "opening_if_question": "Why does an empty room echo?",
+     "frame0_visual": "a big doodle empty room with bouncing sound arcs",
+     "publish_slot": "23:00",
+     "status": "planned",
+     "run_id": null,
+     "youtube_id": null,
+     "published_at": null,
+     "outcome": {
+      "measured_at_age_h": null,
+      "stayed_to_watch": null,
+      "engaged_view_rate": null,
+      "average_view_percentage": null,
+      "views": null,
+      "source": null
+     }
+    }
+   ]
+  },
+  {
+   "pair_id": "H1-P6",
+   "category": "mind and perception",
+   "assignment": {
+    "method": "sha256(pair_id|seed) % 2",
+    "seed": "H1|2026-10-16",
+    "bit": 0
+   },
+   "topics": [
+    {
+     "topic_key": "tickle-yourself",
+     "topic": "Why can't you tickle yourself?",
+     "arm": "statement",
+     "opening_line": "You can't tickle yourself, and that's your brain.",
+     "opening_if_statement": "You can't tickle yourself, and that's your brain.",
+     "opening_if_question": "Why can't you tickle yourself?",
+     "frame0_visual": "a big doodle hand reaching for its own ribs",
+     "publish_slot": "23:00",
+     "status": "planned",
+     "run_id": null,
+     "youtube_id": null,
+     "published_at": null,
+     "outcome": {
+      "measured_at_age_h": null,
+      "stayed_to_watch": null,
+      "engaged_view_rate": null,
+      "average_view_percentage": null,
+      "views": null,
+      "source": null
+     }
+    },
+    {
+     "topic_key": "word-satiation",
+     "topic": "Why does a word lose its meaning when you repeat it?",
+     "arm": "question",
+     "opening_line": "Why does a word lose its meaning when you repeat it?",
+     "opening_if_statement": "Say any word enough and it stops meaning anything.",
+     "opening_if_question": "Why does a word lose its meaning when you repeat it?",
+     "frame0_visual": "a big doodle speech bubble repeating one word, fading",
+     "publish_slot": "18:00",
+     "status": "planned",
+     "run_id": null,
+     "youtube_id": null,
+     "published_at": null,
+     "outcome": {
+      "measured_at_age_h": null,
+      "stayed_to_watch": null,
+      "engaged_view_rate": null,
+      "average_view_percentage": null,
+      "views": null,
+      "source": null
+     }
+    }
+   ]
+  }
+ ]
+}

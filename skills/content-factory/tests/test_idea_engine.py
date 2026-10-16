@@ -12,6 +12,7 @@ import hashlib
 import json
 import os
 import shutil
+import socket
 import subprocess
 import sys
 import tempfile
@@ -19,7 +20,9 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-REPO = ROOT.parent
+# the project root: the first folder above the skills tree that holds memory/dump.json, so the tests work from
+# skills/ (root = skills/..) and from the installed .claude/skills/ (root = .claude/..); falls back to ROOT.parent
+REPO = next((d for d in ROOT.parents if (d / "memory" / "dump.json").is_file()), ROOT.parent)
 for p in (ROOT / "content-factory" / "scripts", ROOT / "content-database" / "scripts"):
     sys.path.insert(0, str(p))
 import cfdb  # noqa: E402
@@ -29,7 +32,7 @@ PY = sys.executable
 ENGINE = ROOT / "content-factory" / "scripts" / "idea_engine.py"
 FACT = ROOT / "content-factory" / "scripts" / "factory.py"
 CFDB = ROOT / "content-database" / "scripts" / "cfdb.py"
-DUMP = REPO / "memory" / "dump.json"
+DUMP = Path(__file__).resolve().parent / "fixtures" / "memory_dump_v3.0.0.json"   # frozen test snapshot (= checkpoints/v3.0.0/memory-dump.json), never the live memory
 KNUCKLES = REPO / "fixtures" / "phase4_package_run" / "2026-10-07-why-your-knuckles-crack"
 CF_ENV = ("CF_DB", "CF_RUNS_DIR", "CF_OUTPUT_DIR", "CF_BATCHES_DIR", "ANTHROPIC_API_KEY", "OPENAI_API_KEY")
 
@@ -115,7 +118,7 @@ FRESH = [
 
 
 def make_candidates() -> dict:
-    dump = json.loads(DUMP.read_text())["tables"]
+    dump = json.loads(DUMP.read_text(encoding="utf-8"))["tables"]
     tube = next(i for i in dump["ideas"] if i["title"].startswith("Shrink the giant Moon"))
     c = []
     for i, topic, angle, hook, visual, cat, src in FRESH:
@@ -154,7 +157,9 @@ def clean_env(**extra) -> dict:
 
 
 def engine(*args, cwd: Path, env: dict | None = None) -> tuple[int, dict | str, str]:
-    p = subprocess.run([PY, str(ENGINE), *map(str, args)], capture_output=True, text=True, cwd=cwd, env=env or clean_env())
+    # the engine prints UTF-8 JSON; force it on Windows pipes (default: the ANSI code page) and decode it as UTF-8
+    p = subprocess.run([PY, str(ENGINE), *map(str, args)], capture_output=True, text=True, encoding="utf-8", cwd=cwd,
+                       env={**(env or clean_env()), "PYTHONIOENCODING": "utf-8"})
     try:
         out = json.loads(p.stdout)
     except ValueError:
@@ -273,8 +278,8 @@ class IdeasFile(unittest.TestCase):
 
     def test_schema_and_example_agree_with_the_engine(self):
         from cf_common import validate
-        schema = json.loads((ROOT / "content-factory" / "schemas" / "idea_candidates.schema.json").read_text())
-        example = json.loads((REPO / "input" / "ideas.example.json").read_text())
+        schema = json.loads((ROOT / "content-factory" / "schemas" / "idea_candidates.schema.json").read_text(encoding="utf-8"))
+        example = json.loads((REPO / "input" / "ideas.example.json").read_text(encoding="utf-8"))
         self.assertEqual(validate(example, schema), [])
         _, cands, _ = IE.parse_ideas(json.dumps(example).encode())
         self.assertTrue(all(c["valid"] for c in cands))
@@ -300,24 +305,25 @@ class Selection(unittest.TestCase):
         cls.ideas = cls.tmp / "ideas.json"
         cls.ideas.write_text(json.dumps(make_candidates(), indent=1))
         cls.history_before = hashlib.sha256(cls.db.read_bytes()).hexdigest()
+        # --count 5: this class checks a full five-topic selection (the default is 2; see test_video_count)
         cls.rc, cls.out, cls.err = engine("select", "--ideas-file", cls.ideas, "--batches-dir", cls.tmp / "batches", "--db", cls.db,
-                                          cwd=cls.tmp, env=clean_env())     # no API keys in the environment
+                                          "--count", 5, cwd=cls.tmp, env=clean_env())     # no API keys in the environment
         cls.batch = Path(cls.out["batch"]) if isinstance(cls.out, dict) and "batch" in cls.out else None
         cls.rc2, cls.out2, _ = engine("select", "--ideas-file", cls.ideas, "--batches-dir", cls.tmp / "batches", "--db", cls.db,
-                                      "--allow-reused-input", cwd=cls.tmp)
+                                      "--count", 5, "--allow-reused-input", cwd=cls.tmp)
         cls.rc3, cls.out3, _ = engine("select", "--ideas-file", cls.ideas, "--batches-dir", cls.tmp / "batches", "--db", cls.db,
-                                      cwd=cls.tmp)
+                                      "--count", 5, cwd=cls.tmp)
 
     @classmethod
     def tearDownClass(cls):
         shutil.rmtree(cls.tmp, ignore_errors=True)
 
     def j(self, name, batch=None):
-        return json.loads(((batch or self.batch) / name).read_text())
+        return json.loads(((batch or self.batch) / name).read_text(encoding="utf-8"))
 
     def test_selects_without_any_api_key(self):
         self.assertEqual(self.rc, 0, f"{self.out}\n{self.err[-2000:]}")
-        src = ENGINE.read_text()
+        src = ENGINE.read_text(encoding="utf-8")
         for mod in ("anthropic", "openai", "requests", "urllib.request"):
             self.assertNotIn(f"import {mod}", src)
 
@@ -409,7 +415,7 @@ class Selection(unittest.TestCase):
         self.assertEqual(m["batch_id"], self.batch.name)
         self.assertEqual(m["ideas_file"]["sha256"], hashlib.sha256(self.ideas.read_bytes()).hexdigest())
         self.assertEqual(m["memory"]["db"], str(self.db.resolve()))
-        self.assertEqual(m["factory_version"], (ROOT / "content-factory" / "VERSION").read_text().strip())
+        self.assertEqual(m["factory_version"], (ROOT / "content-factory" / "VERSION").read_text(encoding="utf-8").strip())
         self.assertEqual(m["production"]["init"], {"count": 1, "languages": "en", "min_s": 20.0, "max_s": 45.0})
         self.assertEqual(m["manifest_sha256"], IE.sha256_bytes(IE.canonical(IE.manifest_core(m)).encode()))
         sel = {w["id"] for w in self.j("selected.json")["winners"]}
@@ -469,15 +475,15 @@ class TooFew(unittest.TestCase):
             pick = ["sky", "sky-2", "purr", "purr-2", "mirror", "mem-onions", "mem-tickle", "empty", "bait"]
             (tmp / "ideas.json").write_text(json.dumps({"version": "1.0", "candidates": [all_c[i] for i in pick]}))
             rc, out, _ = engine("run", "--ideas-file", tmp / "ideas.json", "--batches-dir", tmp / "b", "--db", fresh_db(tmp),
-                                "--driver-cmd", "false", cwd=tmp)
+                                "--count", 5, "--driver-cmd", "false", cwd=tmp)
             self.assertEqual((rc, out["error"], out["usable"], out["need"]), (2, "TOO_FEW_CANDIDATES", 3, 5))
             b = Path(out["batch"])
             self.assertFalse((b / "manifest.json").exists())
             self.assertFalse((b / "runs").exists())
-            rep = json.loads((b / "report.json").read_text())
+            rep = json.loads((b / "report.json").read_text(encoding="utf-8"))
             self.assertEqual(rep["stage"], "selection_failed")
             self.assertEqual(len(rep["rejected"]), 6)
-            self.assertIn("only 3 usable", (b / "report.md").read_text())
+            self.assertIn("only 3 usable", (b / "report.md").read_text(encoding="utf-8"))
             rc, out, _ = engine("produce", "--batch", b, cwd=tmp)
             self.assertEqual((rc, out["error"]), (2, "NO_MANIFEST"))
         finally:
@@ -502,30 +508,30 @@ class Production(unittest.TestCase):
         (cls.tmp / "memory").mkdir()                         # a project folder: memory/dump.json is exported after production
         env = clean_env(CF_RUNS_DIR=str(cls.other_runs))
         cls.prep = engine("run", "--ideas-file", cls.ideas, "--batches-dir", cls.tmp / "batches", "--db", cls.db,
-                          "--produce", "none", cwd=cls.tmp, env=env)
+                          "--count", 5, "--produce", "none", cwd=cls.tmp, env=env)
         cls.batch = Path(cls.prep[1]["batch"])
-        cls.slots0 = json.loads((cls.batch / "slots.json").read_text())["slots"]
-        cls.states0 = [json.loads((Path(x["run_dir"]) / "state.json").read_text()) for x in cls.slots0 if x["run_dir"]]
+        cls.slots0 = json.loads((cls.batch / "slots.json").read_text(encoding="utf-8"))["slots"]
+        cls.states0 = [json.loads((Path(x["run_dir"]) / "state.json").read_text(encoding="utf-8")) for x in cls.slots0 if x["run_dir"]]
         cls.first = engine("produce", "--batch", cls.batch, "--output-dir", cls.out_dir,
                            "--driver-cmd", stub_cmd(cls.tmp, "ok", "3"), cwd=cls.tmp, env=env)
-        cls.rep1 = json.loads((cls.batch / "report.json").read_text())
+        cls.rep1 = json.loads((cls.batch / "report.json").read_text(encoding="utf-8"))
         cls.sums1 = {s["slot"]: tree_sums(Path(s["output"])) for s in cls.rep1["runs"] if s.get("output")}
-        cls.calls1 = (cls.batch / "driver_calls.txt").read_text().split("\n")
+        cls.calls1 = (cls.batch / "driver_calls.txt").read_text(encoding="utf-8").split("\n")
         cls.second = engine("produce", "--batch", cls.batch, "--output-dir", cls.out_dir,
                             "--driver-cmd", stub_cmd(cls.tmp, "ok", ""), cwd=cls.tmp, env=env)
-        cls.rep2 = json.loads((cls.batch / "report.json").read_text())
+        cls.rep2 = json.loads((cls.batch / "report.json").read_text(encoding="utf-8"))
         cls.sums2 = {s["slot"]: tree_sums(Path(s["output"])) for s in cls.rep2["runs"] if s.get("output")}
-        cls.calls2 = (cls.batch / "driver_calls.txt").read_text().split("\n")
+        cls.calls2 = (cls.batch / "driver_calls.txt").read_text(encoding="utf-8").split("\n")
         # stale: slot 1's package result is edited after V3.0.1 recorded it; slot 2's delivered copy differs from its run
         r1 = Path(cls.slots0[0]["run_dir"])
         res = r1 / "package" / "v01" / "result.json"
-        res.write_text(res.read_text() + " ")
+        res.write_text(res.read_text(encoding="utf-8") + " ", encoding="utf-8")
         out2 = Path(next(s["output"] for s in cls.rep2["runs"] if s["slot"] == 2))
         (out2 / "package" / "run_summary.md").write_text("edited on the HDD\n")
         (out2 / "package" / "checksums.sha256").write_text("0" * 64 + "  run_summary.md\n")
         cls.third = engine("produce", "--batch", cls.batch, "--output-dir", cls.out_dir,
                            "--driver-cmd", stub_cmd(cls.tmp, "noop", ""), cwd=cls.tmp, env=env)
-        cls.rep3 = json.loads((cls.batch / "report.json").read_text())
+        cls.rep3 = json.loads((cls.batch / "report.json").read_text(encoding="utf-8"))
         cls.out2_after = tree_sums(out2)
 
     @classmethod
@@ -539,12 +545,12 @@ class Production(unittest.TestCase):
         rc, out, err = self.prep
         self.assertEqual(rc, 0, f"{out}\n{err[-2000:]}")
         self.assertEqual(out["stage"], "prepared")
-        m = json.loads((self.batch / "manifest.json").read_text())
+        m = json.loads((self.batch / "manifest.json").read_text(encoding="utf-8"))
         self.assertEqual(len(self.slots0), 5)
         for s, w in zip(self.slots0, m["selected"]):
             run = Path(s["run_dir"])
             self.assertEqual(run.parent, self.batch / "runs")
-            brief = json.loads((run / "run.json").read_text())
+            brief = json.loads((run / "run.json").read_text(encoding="utf-8"))
             self.assertEqual(brief["topic"], w["topic"])
             self.assertEqual((brief["count"], brief["languages"], brief["hook_engine"]), (1, ["en"], "v2"))
             self.assertEqual(brief["memory"]["db"], str(self.db.resolve()))      # the one shared memory
@@ -574,12 +580,12 @@ class Production(unittest.TestCase):
         self.assertEqual(s3["status"], "not_packaged")
         self.assertEqual(s3["reasons"][0], "driver exit 1")
         self.assertTrue(s3["log"].endswith(".1.log"))
-        self.assertIn("simulated production failure", Path(s3["log"]).read_text())
+        self.assertIn("simulated production failure", Path(s3["log"]).read_text(encoding="utf-8"))
         self.assertNotIn("output", s3)
         for n in (1, 2, 4, 5):
             s = self.slot(self.rep1, n)
             self.assertEqual((s["status"], s["output_note"]), ("packaged", "copied and verified"))
-        self.assertIn("| 3 |", (self.batch / "report.md").read_text())
+        self.assertIn("| 3 |", (self.batch / "report.md").read_text(encoding="utf-8"))
         # rerun: only the failed slot is driven again; the delivered ones are byte-identical
         rc, out, _ = self.second
         self.assertEqual((rc, out["stage"], out["succeeded"]), (0, "delivered", [1, 2, 3, 4, 5]))
@@ -593,15 +599,15 @@ class Production(unittest.TestCase):
         con = cfdb.connect(str(self.db))
         topics = {r[0] for r in con.execute("SELECT topic FROM runs")}
         con.close()
-        m = json.loads((self.batch / "manifest.json").read_text())
+        m = json.loads((self.batch / "manifest.json").read_text(encoding="utf-8"))
         self.assertTrue({w["topic"] for w in m["selected"]} <= topics)
-        dump = json.loads((self.tmp / "memory" / "dump.json").read_text())       # as run_factory.* export it
+        dump = json.loads((self.tmp / "memory" / "dump.json").read_text(encoding="utf-8"))       # as run_factory.* export it
         self.assertTrue({w["topic"] for w in m["selected"]} <= {r["topic"] for r in dump["tables"]["runs"]})
         self.assertEqual(self.rep2["memory_export"], str((self.tmp / "memory" / "dump.json").resolve()))
         rc, out, _ = engine("select", "--ideas-file", self.ideas, "--batches-dir", self.tmp / "batches2", "--db", self.db,
                             cwd=self.tmp)
         self.assertEqual(rc, 0, out)
-        rej = {r["id"]: r for r in json.loads((Path(out["batch"]) / "report.json").read_text())["rejected"]}
+        rej = {r["id"]: r for r in json.loads((Path(out["batch"]) / "report.json").read_text(encoding="utf-8"))["rejected"]}
         for w in m["selected"]:
             self.assertEqual(rej[w["id"]]["stage"], "memory", w["id"])            # never selected twice
 
@@ -617,36 +623,36 @@ class Production(unittest.TestCase):
         s2 = self.slot(self.rep3, 2)
         self.assertEqual(s2["status"], "delivery_failed")
         self.assertIn("not overwritten", s2["reasons"][0])
-        self.assertIn("edited on the HDD\n", (Path(s2["output"]) / "package" / "run_summary.md").read_text())
+        self.assertIn("edited on the HDD\n", (Path(s2["output"]) / "package" / "run_summary.md").read_text(encoding="utf-8"))
         self.assertEqual(self.out2_after, tree_sums(Path(s2["output"])))
 
     def test_16e_foreign_or_missing_runs_are_refused(self):
         b = self.batch
-        slots = json.loads((b / "slots.json").read_text())
+        slots = json.loads((b / "slots.json").read_text(encoding="utf-8"))
         saved = json.dumps(slots)
         try:
             slots["slots"][3]["run_dir"] = str(self.other_runs / "keep")              # outside this batch
             slots["slots"][4]["run_dir"] = str(b / "runs" / "no-such-run")              # missing
             (b / "slots.json").write_text(json.dumps(slots))
-            before = (b / "driver_calls.txt").read_text()
+            before = (b / "driver_calls.txt").read_text(encoding="utf-8")
             rc, out, _ = engine("produce", "--batch", b, "--driver-cmd", stub_cmd(self.tmp, "noop", ""), cwd=self.tmp)
-            rep = json.loads((b / "report.json").read_text())
+            rep = json.loads((b / "report.json").read_text(encoding="utf-8"))
             self.assertEqual(rc, 2)
             self.assertEqual(self.slot(rep, 4)["status"], "refused")
             self.assertIn("not a run of this batch", self.slot(rep, 4)["reasons"][0])
             self.assertEqual(self.slot(rep, 5)["status"], "refused")
             self.assertIn("missing", self.slot(rep, 5)["reasons"][0])
-            calls = (b / "driver_calls.txt").read_text()[len(before):].split()
+            calls = (b / "driver_calls.txt").read_text(encoding="utf-8")[len(before):].split()
             self.assertNotIn("4", calls[::2])
             self.assertNotIn("5", calls[::2])
             self.assertEqual(sorted(p.name for p in self.other_runs.iterdir()), ["keep"])
-            self.assertEqual((self.other_runs / "keep" / "state.json").read_text(), "{}")
+            self.assertEqual((self.other_runs / "keep" / "state.json").read_text(encoding="utf-8"), "{}")
         finally:
             (b / "slots.json").write_text(saved)
 
     def test_16f_one_producer_per_batch(self):
         lock = self.batch / ".lock"
-        lock.write_text(json.dumps({"pid": os.getpid(), "host": os.uname().nodename, "since": "now", "cmd": "test"}))
+        lock.write_text(json.dumps({"pid": os.getpid(), "host": socket.gethostname(), "since": "now", "cmd": "test"}))
         try:
             rc, out, err = engine("produce", "--batch", self.batch, "--produce", "none", cwd=self.tmp)
             self.assertNotEqual(rc, 0)

@@ -114,7 +114,7 @@ def cmd_build(a) -> int:
         raise SystemExit(f"BOUNDARY: authoring files ended up in the packet: {leaks}")
     manifest = {"packet_version": 1, "built_at": _dt.datetime.now(_dt.timezone.utc).replace(microsecond=0).isoformat(),
                 "boundary": BOUNDARY, "excluded_patterns": FORBIDDEN,
-                "files": {str(p.relative_to(out)): {"sha256": sha256_file(p), "bytes": p.stat().st_size} for p in files},
+                "files": {p.relative_to(out).as_posix(): {"sha256": sha256_file(p), "bytes": p.stat().st_size} for p in files},
                 "source_hashes": {k: sha256_file(v) for k, v in inputs.items() if v and Path(v).is_file()}}
     write_json(out / "manifest.json", manifest)
     print(json.dumps({"packet": str(out), "files": len(files), "final_sha256": manifest["files"]["media/final.mp4"]["sha256"][:16]}))
@@ -157,6 +157,6 @@ def write_packet(out: Path, files: dict, note: str) -> dict:
     files_ = sorted(p for p in out.rglob("*") if p.is_file())
     manifest = {"packet_version": 1, "kind": note, "boundary": BOUNDARY, "excluded_patterns": FORBIDDEN,
                 "built_at": _dt.datetime.now(_dt.timezone.utc).replace(microsecond=0).isoformat(),
-                "files": {str(p.relative_to(out)): {"sha256": sha256_file(p), "bytes": p.stat().st_size} for p in files_}}
+                "files": {p.relative_to(out).as_posix(): {"sha256": sha256_file(p), "bytes": p.stat().st_size} for p in files_}}
     write_json(out / "manifest.json", manifest)
     return manifest

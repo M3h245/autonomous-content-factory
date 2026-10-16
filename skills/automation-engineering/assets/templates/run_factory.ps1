@@ -1,11 +1,15 @@
 # Content Factory — unattended run on Windows (Task Scheduler friendly). Never publishes.
 param(
   [Parameter(Mandatory = $true)][string]$Topic,
-  [int]$Count = 5,
+  [string]$Count = "2",            # videos per run; default 2; a positive whole number, 1-50
   [string]$Languages = "en",
   [string]$Project = "D:\shorts-ai\factory"
 )
 $ErrorActionPreference = "Stop"
+if ($Count -notmatch '^[0-9]{1,3}$' -or [int]$Count -lt 1 -or [int]$Count -gt 50) {
+  [Console]::Error.WriteLine("run_factory: invalid -Count '$Count': must be a positive whole number from 1 to 50, e.g. -Count 4 (default 2)")
+  exit 2 }
+$Count = [int]$Count
 Set-Location $Project
 if (Test-Path "$Project\.env") {  # load KEY=VALUE lines into this process only
   Get-Content "$Project\.env" | Where-Object { $_ -match '^\s*[^#].*=' } | ForEach-Object {

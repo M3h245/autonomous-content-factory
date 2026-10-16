@@ -144,8 +144,12 @@ def package_video(run: Path, vid: str, attempt: int) -> dict:
                        "description": body, "hashtags": s_["hashtags"]}
             src_lines = [f"- {s['title']} ({s.get('publisher') or 'source'}): {s['url']}" for s in prov.get("sources", [])]
             tags = " ".join(pub["hashtags"])
+            # v3.0.2: the same list, without "#" and comma-separated, for YouTube's tags field (owner request 2026-10-16)
+            tags_plain = ", ".join(h.strip().lstrip("#") for h in pub["hashtags"] if h.strip().lstrip("#"))
             ccta = (sel["selected"].get("caption_cta") or "") if sel else ""
-            desc = "\n\n".join(x for x in [pub["description"], ccta, disc["description_line"],
+            # v3.0.2: no "Narration: AI text-to-speech (...). Visuals: ..." line in the description (owner request
+            # 2026-10-16); disclosure is the platform AI labels in metadata.json, still enforced by PKG.DISCLOSURE
+            desc = "\n\n".join(x for x in [pub["description"], ccta,
                                            "Sources:\n" + "\n".join(src_lines) if src_lines else "", tags] if x)
             caption = "\n\n".join(x for x in [pub["description"], ccta, tags] if x)
             meta = {"video_id": vid, "language": script["language"], "title": pub["title_options"][0],
@@ -154,7 +158,7 @@ def package_video(run: Path, vid: str, attempt: int) -> dict:
                                 "altered_or_synthetic": disc["youtube"]["altered_or_synthetic"]},
                     "tiktok": {"caption": caption, "ai_generated_label": disc["tiktok"]["ai_generated_label"]},
                     "instagram": {"caption": caption, "ai_info": disc["instagram"]["ai_info"]},
-                    "hashtags": pub["hashtags"], "sources": prov.get("sources", []),
+                    "hashtags": pub["hashtags"], "hashtags_copy_ready": tags_plain, "sources": prov.get("sources", []),
                     "human_must_set": ["YouTube audience setting (made for kids: yes/no)", "confirm AI-label toggles",
                                        "publish time / schedule"]}
             cta = script.get("cta") or {}
@@ -171,7 +175,7 @@ def package_video(run: Path, vid: str, attempt: int) -> dict:
                     meta.setdefault("cta", {})["caption"] = ccta
             write_json(out / "metadata.json", meta)
             if sel:
-                # authored copy only — the AI-disclosure line names the tools on purpose and is governed by PKG.DISCLOSURE
+                # authored copy only (disclosure is the platform labels, governed by PKG.DISCLOSURE)
                 public = " ".join([meta["title"], pub["description"], ccta, " ".join(pub["hashtags"])] + meta["title_alternatives"])
                 leaks = sorted({m_.group() for m_ in DENY_RE.finditer(public)} |
                                {m_.group() for m_ in re.finditer(INTERNAL_TEXT, public, re.I)})
@@ -207,8 +211,8 @@ def package_video(run: Path, vid: str, attempt: int) -> dict:
                      fix=fix("PACKAGE", "retry"))
             labels = [meta["youtube"].get("altered_or_synthetic"), meta["tiktok"].get("ai_generated_label"),
                       meta["instagram"].get("ai_info")]
-            sr.check("PKG.DISCLOSURE", all(x is not None for x in labels) and disc["description_line"] in desc, "blocking",
-                     f"platform AI labels {labels}; disclosure line in the YouTube description: {disc['description_line'] in desc}",
+            sr.check("PKG.DISCLOSURE", all(x is not None for x in labels), "blocking",
+                     f"platform AI labels {labels} (set by hand at upload; no tool line in the description since v3.0.2)",
                      fix=fix("PACKAGE", "retry"))
             hist_p = run.parent / "cta_history.json"
             if not sr.failed and (cta.get("needed") or hist_p.exists()):   # remember only CTAs of videos that really ship
@@ -242,7 +246,7 @@ def write_publishing_package(run: Path, vid: str, out: Path, meta: dict, sel: di
            for r in sel["rejected"]]
     pkg = {"video_id": vid, "public": {"title": meta["title"], "thumbnail": "thumbnail.jpg", "thumbnail_text": s_["thumbnail"]["text"],
                                        "youtube_description": meta["youtube"]["description"], "caption": meta["tiktok"]["caption"],
-                                       "hashtags": meta["hashtags"], "cta": {"in_video": meta.get("cta"), "caption": s_.get("caption_cta", "")},
+                                       "hashtags": meta["hashtags"], "hashtags_copy_ready": meta["hashtags_copy_ready"], "cta": {"in_video": meta.get("cta"), "caption": s_.get("caption_cta", "")},
                                        "ai_labels": {"youtube_altered_or_synthetic": meta["youtube"]["altered_or_synthetic"],
                                                      "tiktok_ai_generated": meta["tiktok"]["ai_generated_label"],
                                                      "instagram_ai_info": meta["instagram"]["ai_info"]}},
@@ -258,6 +262,7 @@ def write_publishing_package(run: Path, vid: str, out: Path, meta: dict, sel: di
          "## Public copy", "", f"**Title:** {meta['title']}", "", f"**Thumbnail:** `thumbnail.jpg` (text: “{s_['thumbnail']['text']}”) — "
          "crop preview in `thumbnail_crops.jpg` (9:16 · 4:5 · 3:4 · 1:1 · ≈3:2)", "", "**YouTube description:**", "", "```",
          meta["youtube"]["description"], "```", "", "**TikTok / Instagram caption:**", "", "```", meta["tiktok"]["caption"], "```", "",
+         "**Hashtags (copy-ready):**", "", "```", meta["hashtags_copy_ready"], "```", "",
          f"**CTA:** in video — {(meta.get('cta') or {}).get('spoken') or 'none'}; caption — {s_.get('caption_cta') or 'none'}", "",
          f"**AI labels:** YouTube altered/synthetic = {meta['youtube']['altered_or_synthetic']}, TikTok AI-generated = "
          f"{meta['tiktok']['ai_generated_label']}, Instagram AI info = {meta['instagram']['ai_info']}", "",

@@ -7,8 +7,8 @@ carry only playback metadata and no embedded AI-label metadata; platform disclos
 
 **Production system: V3.0.1 + Idea Engine 1.0.** The Idea Engine takes about 50 ideas from a file (written by hand
 or pasted from ChatGPT/Claude; no LLM API, no API key). It filters them against the factory's memory, scores and
-ranks them with stated reasons, and picks 5 different topics. It then has V3.0.1 produce one isolated run per topic
-and copies each verified package to your output folder:
+ranks them with stated reasons, and picks 2 different topics (`--count N` for another number). It then has V3.0.1
+produce one isolated run per topic and copies each verified package to your output folder:
 
 ```
 python3 .claude/skills/content-factory/scripts/idea_engine.py run --ideas-file input/ideas.json --output-dir /path/to/hdd

@@ -47,8 +47,24 @@ def now_iso() -> str:
     return _dt.datetime.now(_dt.timezone.utc).replace(microsecond=0).isoformat()
 
 
+def _encodable(text: str, stream) -> bool:
+    """True when `stream` can print `text` as is. A Windows pipe uses cp1252, which has no "≥", "→" or "°"."""
+    try:
+        text.encode(getattr(stream, "encoding", None) or "utf-8")
+        return True
+    except (UnicodeEncodeError, LookupError):
+        return False
+
+
 def log(*msg) -> None:
-    print("[cf]", *msg, file=sys.stderr, flush=True)
+    line = " ".join(str(m) for m in ("[cf]",) + msg)
+    if not _encodable(line, sys.stderr):        # keep the message, escape only what the console cannot show
+        enc = getattr(sys.stderr, "encoding", None) or "ascii"
+        try:
+            line = line.encode(enc, "backslashreplace").decode(enc)
+        except LookupError:
+            line = line.encode("ascii", "backslashreplace").decode("ascii")
+    print(line, file=sys.stderr, flush=True)
 
 
 def read_json(path) -> dict:
@@ -413,7 +429,10 @@ def emit(result: dict) -> None:
                "failed_checks": [{"id": e["code"], "severity": e["severity"], "message": e["message"][:200],
                                   "fix_route": e.get("fix_route")} for e in result["errors"]],
                "metrics": result.get("metrics", {})}
-    print(json.dumps(summary, ensure_ascii=False, indent=1))
+    text = json.dumps(summary, ensure_ascii=False, indent=1)
+    if not _encodable(text, sys.stdout):        # same JSON, \u-escaped, so a cp1252 pipe cannot crash the stage
+        text = json.dumps(summary, ensure_ascii=True, indent=1)
+    print(text)
 
 
 if __name__ == "__main__":

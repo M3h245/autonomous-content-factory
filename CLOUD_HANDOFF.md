@@ -8,7 +8,7 @@ Read this file first, then `PROJECT_STATE.md`. Written 2026-10-07; updated at th
 | Phases complete | **0, 1, 2, 3, 3.5, 4, 5** |
 | Authoritative release | **`v3.0.0`** (git tag `v3.0.0`, `checkpoints/v3.0.0/`) |
 | Post-freeze patch | **v3.0.1** (owner decision, untagged): final-media metadata only — see CHANGELOG; `skills/content-factory/VERSION` |
-| Batch layer | **Idea Engine 1.0** (owner decision, untagged): `scripts/idea_engine.py` — ideas file → memory filter → scoring → 5 diverse topics → 5 V3.0.1 runs → packages; `references/idea-engine.md` |
+| Batch layer | **Idea Engine 1.0** (owner decision, untagged): `scripts/idea_engine.py` — ideas file → memory filter → scoring → N diverse topics (`--count N`, default 2) → N V3.0.1 runs → packages; `references/idea-engine.md` |
 | Production system | **V3.0.1 + Idea Engine 1.0** |
 | Phase 5 (productionization + validation) | **PASS WITH LIMITATIONS** — `skills/content-factory/PHASE_5_REPORT.md` |
 | Remaining development | **none — development is FROZEN** (no features, phases or optimisation) |
@@ -33,7 +33,7 @@ Rules for any later session:
 2. Optional: verify with the test commands below.
 3. `factory.py init --topic "…" --runs-dir runs`. Memory is on: `runs/factory.db`; import `memory/dump.json` first on a
    new machine. Then loop on `next`, then `package --zip`, then upload by hand.
-4. Or, five topics at once: write about 50 ideas into `input/ideas.json` (by hand, or paste them from ChatGPT/Claude with the
+4. Or, several topics at once (2 by default, `--count N` for another number): write about 50 ideas into `input/ideas.json` (by hand, or paste them from ChatGPT/Claude with the
    prompt in `skills/content-factory/references/idea-engine.md`; no API key). Then, from a project folder set up with
    `install_skills.py --project <folder>` (Claude Code finds skills only under `.claude/skills/`), run
    `python3 .claude/skills/content-factory/scripts/idea_engine.py run --ideas-file input/ideas.json --output-dir <HDD folder>`.

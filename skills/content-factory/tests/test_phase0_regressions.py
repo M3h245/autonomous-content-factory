@@ -31,7 +31,7 @@ class Regressions(unittest.TestCase):
         self.assertTrue(sb.doodle_cue_problems('<g data-at="w:2014"/>', words))     # not spoken, beyond 3 words
 
     def test_speed_up_route_is_never_a_no_op(self):
-        src = (ROOT / "voice-production" / "scripts" / "tts.py").read_text()
+        src = (ROOT / "voice-production" / "scripts" / "tts.py").read_text(encoding="utf-8")
         self.assertIn("a.speed + 0.03", src, "speed_up must always step by >=3%")
         for duration, max_s, speed in ((45.0, 45.0, 1.0), (45.004, 45.0, 1.0), (46.0, 45.0, 1.0)):
             need = max(speed * duration / max_s * 1.02, speed + 0.03)
@@ -42,7 +42,7 @@ class Regressions(unittest.TestCase):
         out = subprocess.run([sys.executable, str(F), "init", "--topic", "report test", "--count", "1", "--runs-dir",
                               tempfile.mkdtemp()], capture_output=True, text=True, check=True).stdout
         run = Path(json.loads(out)["run"])
-        st = json.loads((run / "state.json").read_text())
+        st = json.loads((run / "state.json").read_text(encoding="utf-8"))
         res = run / "research" / "result.json"
         res.parent.mkdir(parents=True, exist_ok=True)
         for status in ("failed", "passed"):
@@ -52,7 +52,7 @@ class Regressions(unittest.TestCase):
                                  "result": str(res), "wall_s": 1.0})
         (run / "state.json").write_text(json.dumps(st))
         subprocess.run([sys.executable, str(F), "report", "--run", str(run)], check=True, capture_output=True)
-        rep = json.loads((run / "report" / "report.json").read_text())
+        rep = json.loads((run / "report" / "report.json").read_text(encoding="utf-8"))
         row = next(g for g in rep["stages"] if g["stage"] == "RESEARCH")
         self.assertEqual((row["records"], row["failures"], row["retries"]), (2, 1, 1))
 

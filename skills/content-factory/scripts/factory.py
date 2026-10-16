@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """content-factory orchestrator — run state, stage routing, gate bookkeeping and regeneration.
 
-  factory.py init    --topic "..." --count 5 [--languages en,it] [--platforms youtube_shorts,tiktok,instagram_reels]
+  factory.py init    --topic "..." [--count N] [--languages en,it] [--platforms youtube_shorts,tiktok,instagram_reels]
                      [--min-s 20 --max-s 45] [--voices en=af_heart,it=if_sara] [--music procedural]
                      [--caption-style karaoke] [--db factory.db] [--runs-dir DIR]
   factory.py next    --run RUN               # the single next action: stage, video, skill to load, files to write, gate
@@ -47,6 +47,18 @@ MAX_REGEN_PER_VIDEO = 8
 DEFAULT_VOICES = {"en": "af_heart", "it": "if_sara", "es": "ef_dora", "fr": "ff_siwis", "pt": "pf_dora", "hi": "hf_alpha",
                   "ja": "jf_alpha", "zh": "zf_xiaoxiao"}   # must match tts.py LANG defaults (estimator uses the same voice)
 DETERMINISTIC = {"AUDIO", "VIDEO", "SUBTITLES"}   # same inputs + same parameters → same output (TTS cache, seeded render)
+DEFAULT_VIDEO_COUNT = 2   # videos made when no --count is given (owner decision 2026-10-14; was 5); idea_engine uses it too
+MAX_VIDEO_COUNT = 50      # the brief contract's maximum (cf_common SCHEMAS["brief"].count)
+
+
+def video_count(value) -> int:
+    """argparse type for --count: a positive whole number, 1 to MAX_VIDEO_COUNT. "0", "-1", "2.5", "abc", "" and
+    anything above the maximum are refused with a message that names the rule (argparse exits 2)."""
+    text = str(value).strip()
+    if not text.isascii() or not text.isdigit() or not 1 <= int(text) <= MAX_VIDEO_COUNT:
+        raise argparse.ArgumentTypeError(f"invalid count {value!r}: must be a positive whole number from 1 to "
+                                         f"{MAX_VIDEO_COUNT}, e.g. --count 4 (default {DEFAULT_VIDEO_COUNT})")
+    return int(text)
 
 
 def S(skill: str, script: str) -> str:
@@ -753,6 +765,8 @@ def cmd_report(run: Path, out: str | None = None) -> int:
               "totals": {"stage_wall_s": round(sum(g["wall_s"] for g in table), 1),
                          "retries": sum(g["retries"] for g in table), "regenerations": len(regen),
                          "human_resets": sum(1 for d in regen if d.get("action") == "human_reset"),
+                         "dry_runs": sum(1 for e in st["events"] if e.get("dry_run")),
+                         "dry_run_failures": sum(1 for e in st["events"] if e.get("dry_run") and e.get("dry_status") not in PASSED),
                          "escalations": sum(1 for d in regen if d.get("action") == "escalate"),
                          "first_issue_to_last_event_s": round((max(e.get("t", 0) for e in st["events"] if e.get("t")) or 0) -
                                                               min(t_issue), 1) if t_issue else None}}
@@ -765,7 +779,8 @@ def cmd_report(run: Path, out: str | None = None) -> int:
         md.append(f"| {g['stage']} | {g['video_id'] or '—'} | {g['final_status']} | {g['records']} | {g['failures']} | {g['wall_s']} | {g['gate_s']} | {fails} | {cache} |")
     md += ["", f"Total stage wall time: {report['totals']['stage_wall_s']} s · failed attempts: {report['totals']['retries']} · "
            f"regenerations: {report['totals']['regenerations']} · escalations: {report['totals']['escalations']} · "
-           f"human resets: {report['totals']['human_resets']}", ""]
+           f"human resets: {report['totals']['human_resets']} · dry runs: {report['totals']['dry_runs']} "
+           f"({report['totals']['dry_run_failures']} failed)", ""]
     for vid, p_ in pkg.items():
         md.append(f"Package {vid}: {p_['dir']} ({', '.join(p_['files'])})")
     (out_dir / "report.md").write_text("\n".join(md) + "\n", encoding="utf-8")
@@ -777,7 +792,8 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
     i = sub.add_parser("init")
-    i.add_argument("--topic", required=True); i.add_argument("--count", type=int, default=5)
+    i.add_argument("--topic", required=True); i.add_argument("--count", type=video_count, default=DEFAULT_VIDEO_COUNT,
+                                                     help=f"number of videos (default {DEFAULT_VIDEO_COUNT}; 1-{MAX_VIDEO_COUNT})")
     i.add_argument("--languages", default="en"); i.add_argument("--platforms", default="youtube_shorts,tiktok,instagram_reels")
     i.add_argument("--min-s", type=float, default=20); i.add_argument("--max-s", type=float, default=45)
     i.add_argument("--voices"); i.add_argument("--music", default="procedural")
@@ -805,6 +821,9 @@ def main() -> int:
     rp.add_argument("--run", required=True); rp.add_argument("--out", help="default RUN/report")
     p = sub.add_parser("package"); p.add_argument("--run", required=True); p.add_argument("--video", action="append")
     p.add_argument("--zip", action="store_true")
+    dr = sub.add_parser("dry-run", help="run the current stage's gate WITHOUT recording it (no attempt used); the outcome "
+                                         "is logged in the run's event log as a dry_run event")
+    dr.add_argument("--run", required=True)
     u = sub.add_parser("unlock", help="remove a lock left behind by a crashed factory process (audited)")
     u.add_argument("--run", required=True); u.add_argument("--note", required=True)
     a = ap.parse_args()
@@ -828,6 +847,44 @@ def main() -> int:
         return dispatch(a, run)
 
 
+def cmd_dry_run(run: Path) -> int:
+    """v3.0.2: try the current gate on the current artifacts without spending an attempt, and log what it found.
+    Before, dry runs happened outside the factory and left no trace, so the event log under-counted rework.
+    The event has no "status" key on purpose: record(), _since_issue() and report rows only read real records."""
+    st = load(run)
+    d = next_action(run, st)
+    if d.get("action") != "do_stage" or not d.get("gate"):
+        print(json.dumps({"dry_run": None, "reason": "no stage gate to try", "next": d.get("action")}))
+        return 2
+    stage, vid = d["stage"], d.get("video_id")
+    out = run / "dry_runs" / f"{time.strftime('%Y%m%d-%H%M%S')}_{stage}_{vid or 'run'}_{time.time_ns() % 10**6:06d}.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    gate = [str(x) for x in d["gate"]]
+    if "--result" in gate:
+        gate[gate.index("--result") + 1] = str(out)
+    else:
+        gate += ["--result", str(out)]
+    # the HOOK gate remembers failed candidates (hooks.history.json); a dry run must not make the real gate skip them
+    keep = {h: h.read_bytes() for h in (vp(run, vid)["dir"].rglob("hooks.history.json") if vid else [])}
+    t0 = time.time()
+    p = subprocess.run(gate, capture_output=True, text=True, encoding="utf-8", errors="replace")
+    for h in (vp(run, vid)["dir"].rglob("hooks.history.json") if vid else []):
+        if h not in keep:
+            h.unlink()
+    for h, b in keep.items():
+        h.write_bytes(b)
+    res = read_json(out) if out.exists() else {}
+    failed = [{"code": e.get("code"), "severity": e.get("severity")} for e in res.get("errors", [])]
+    ev = {"ts": now_iso(), "t": time.time(), "dry_run": True, "stage": stage, "video_id": vid,
+          "attempt_if_recorded": d.get("attempt"), "dry_status": res.get("status") or "error", "exit": p.returncode,
+          "failed": failed, "result": str(out), "gate_s": round(time.time() - t0, 1)}
+    st["events"].append(ev)
+    save(run, st)
+    print(json.dumps({"dry_run": stage, "video_id": vid, "status": ev["dry_status"], "failed": [f["code"] for f in failed],
+                      "result": str(out), "attempt_used": False}, indent=1))
+    return 0 if ev["dry_status"] in PASSED else 2
+
+
 def dispatch(a, run: Path) -> int:
     if a.cmd == "next":
         st = load(run)
@@ -843,6 +900,8 @@ def dispatch(a, run: Path) -> int:
         return 0 if d["action"] in ("proceed", "review") else 2
     if a.cmd == "media":
         return cmd_media(a)
+    if a.cmd == "dry-run":
+        return cmd_dry_run(run)
     if a.cmd == "reset":
         st = load(run)
         scope, order = (st["global"], GLOBAL_STAGES) if a.stage in GLOBAL_STAGES else (st["videos"][a.video]["stages"], VIDEO_STAGES)

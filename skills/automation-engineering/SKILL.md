@@ -27,7 +27,7 @@ Reliable, observable, credential-safe runs; the same skills in chat and headless
    `/content-factory …` in `claude -p` (`--bare` would skip skill discovery), `--permission-mode acceptEdits`,
    `--permission-prompts none`, `--allowedTools "Bash,Read,Write,Edit,WebSearch,WebFetch"`, `--output-format json`.
 5. Schedule: Windows `schtasks /Create /SC DAILY /ST 09:00 /TN ContentFactory /TR "powershell -NoProfile
-   -ExecutionPolicy Bypass -File D:\shorts-ai\factory\run_factory.ps1 -Topic \"…\" -Count 3"`; Linux cron; or
+   -ExecutionPolicy Bypass -File D:\shorts-ai\factory\run_factory.ps1 -Topic \"…\" -Count 2"`; Linux cron; or
    `assets/templates/content-factory.yml` for GitHub Actions (package zip uploaded as an artifact).
 6. Monitor: each run log has `total_cost_usd`, escalations and the package path; alert on non-zero exit codes.
    The templates import `memory/dump.json` when `factory.db` is missing and export it after every run (v3.0.0), so a

@@ -5,7 +5,7 @@
 3. `python D:\shorts-ai\factory\.claude\skills\content-factory\scripts\setup_env.py --out capabilities.json` — fix anything reported.
 4. Forge: add `--api` to COMMANDLINE_ARGS in webui-user.bat; doctor then reports `visual.sd_forge`.
 5. Copy templates `run_factory.ps1` and `env.example` (→ `.env`) into the project; test once by hand; then schedule with
-   `schtasks /Create /SC DAILY /ST 09:00 /TN ContentFactory /TR "powershell -NoProfile -ExecutionPolicy Bypass -File D:\shorts-ai\factory\run_factory.ps1 -Topic \"…\" -Count 3"`.
+   `schtasks /Create /SC DAILY /ST 09:00 /TN ContentFactory /TR "powershell -NoProfile -ExecutionPolicy Bypass -File D:\shorts-ai\factory\run_factory.ps1 -Topic \"…\" -Count 2"`.
 ## Linux/macOS: same steps with `run_factory.sh` and cron. ## GitHub Actions: `content-factory.yml`, secret ANTHROPIC_API_KEY.
 ## Operations
 Logs: `logs/run-*.json` (result text, `total_cost_usd`, session id). Alert on non-zero exit. Keep 30 days of logs.

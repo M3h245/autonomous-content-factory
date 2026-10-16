@@ -1,17 +1,18 @@
 # Idea Engine — batch topic selection above V3.0.1
 
-`scripts/idea_engine.py` turns a file of about 50 topic ideas into five finished publishing packages. It decides
+`scripts/idea_engine.py` turns a file of about 50 topic ideas into N finished publishing packages (`--count N`, default
+2). It decides
 **which** topics to make. V3.0.1 still decides **how** each video is made: research, hooks, script, voice, visuals,
 audio, captions, QA, review, packaging, media metadata, platform disclosure and memory ingest are all unchanged.
 
 ```
-input/ideas.json ─► validate ─► memory filter ─► offline research screen ─► score ─► rank ─► pick 5 (diverse)
-   (≈50, by hand        │            │ the factory's own DB                         │ explainable     │ fail if < 5
+input/ideas.json ─► validate ─► memory filter ─► offline research screen ─► score ─► rank ─► pick N (diverse)
+   (≈50, by hand        │            │ the factory's own DB                         │ explainable     │ fail if < N
     or from a chat)     │            │ and rules                                     │ weights         │
                         ▼            ▼                                               ▼                 ▼
                batches/<batch-id>/  candidates · filtered · research · ranking · selected · manifest.json
-                                    ─► 5 × `factory.py init` (one isolated V3.0.1 run per topic, in runs/)
-                                    ─► 5 × the existing unattended driver (`claude -p "/content-factory …"`)
+                                    ─► N × `factory.py init` (one isolated V3.0.1 run per topic, in runs/)
+                                    ─► N × the existing unattended driver (`claude -p "/content-factory …"`)
                                     ─► each verified package copied to the output folder (HDD) ─► report.json / report.md
 ```
 
@@ -141,20 +142,25 @@ python3 .claude/skills/content-factory/scripts/idea_engine.py validate --ideas-f
 python3 .claude/skills/content-factory/scripts/idea_engine.py run --ideas-file input/ideas.json --output-dir /mnt/hdd/shorts
 ```
 
+N is `--count N` on `select` and `run`: the number of topics, runs and videos in the batch (each run makes one
+video). Without `--count` it is **2** (5 before 2026-10-14). It must be a positive whole number from 1 to 50;
+`0`, `-1`, `2.5`, `abc` and the like are refused with exit 2 before anything is read or written.
+
 | command | does |
 |---|---|
 | `validate --ideas-file F` | checks the file and prints every problem; writes nothing |
-| `select --ideas-file F` | builds a batch up to `manifest.json`, prints the five winners, and stops (nothing is produced) |
-| `run --ideas-file F [--output-dir D]` | `select`, then production of the five runs, then delivery and the report |
+| `select --ideas-file F [--count N]` | builds a batch up to `manifest.json`, prints the N winners, and stops (nothing is produced) |
+| `run --ideas-file F [--count N] [--output-dir D]` | `select`, then production of the N runs, then delivery and the report |
 | `produce --batch batches/<id> [--output-dir D]` | (re)produces an existing batch: only slots that are not packaged yet are driven again |
 
 Options:
+- `--count N` (`select` and `run`; default 2; a positive whole number, 1–50)
 - `--db` (memory; default `$CF_DB`, else `$CF_RUNS_DIR/factory.db`, else `~/content-factory/runs/factory.db`, the same
   resolution as `factory.py init`)
 - `--batches-dir` (default `$CF_BATCHES_DIR` or `batches`)
 - `--output-dir` (default `$CF_OUTPUT_DIR`)
 - `--languages en`, `--min-s 20`, `--max-s 45` (passed to `factory.py init`)
-- `--produce claude|none` (`none` creates the five V3.0.1 runs and stops)
+- `--produce claude|none` (`none` creates the N V3.0.1 runs and stops)
 - `--driver-cmd "CMD … {run} …"` (your own production command per run; placeholders `{run} {batch} {topic} {slot}`)
 - `--run-timeout-min 180`
 - `--allow-empty-memory` (a deliberately fresh channel)
@@ -165,7 +171,7 @@ variables win.
 
 Exit codes:
 - **0**: done
-- **2**: invalid file, fewer than 5 usable candidates, a stale batch, or a run that did not deliver (see the report)
+- **2**: invalid file or `--count`, fewer than N usable candidates, a stale batch, or a run that did not deliver (see the report)
 - **3**: environment not ready (`NO_MEMORY`, or the driver is missing). The runs prepared so far are kept for `produce`.
 
 ## Outputs
@@ -177,10 +183,10 @@ batches/<YYYYMMDD-HHMMSS-sha8>/          one folder per batch; never reused
   filtered.json     memory verdict per valid candidate: topic repeats, novelty, nearest past items, hook repeats
   research.json     offline screen per candidate (see "Research")
   ranking.json      weights, then every scored candidate: rank, total, 9 components, the reasons for each
-  selected.json     the 5 winners (with the selection step and why) and every eligible candidate not chosen
+  selected.json     the N winners (with the selection step and why) and every eligible candidate not chosen
   manifest.json     what production will make: winners, ideas-file sha256, memory fingerprint, init settings, its own sha256
   slots.json        slot → V3.0.1 run folder (or the init refusal)
-  runs/<run-id>/    the five V3.0.1 runs (each its own folder, state, lock and package)
+  runs/<run-id>/    the N V3.0.1 runs (each its own folder, state, lock and package)
   logs/NN-<run>.<attempt>.log   driver output per attempt (never overwritten)
   report.json, report.md
 <output-dir>/<batch-id>/NN-<run-id>/package/…  plus <run-id>_package.zip     verified copy of each delivered package
@@ -231,7 +237,7 @@ What the offline screen grades is only what is in the file:
 - the tier of each `source_hint` URL under the RESEARCH gate's own tier list. Hints are never marked verified, and
   none are ever added.
 
-Facts are researched, sourced and gated by V3.0.1 for the five winners only.
+Facts are researched, sourced and gated by V3.0.1 for the N winners only.
 
 ## Scoring (deterministic and explainable)
 
@@ -259,7 +265,7 @@ Rejected after scoring:
 - totals below **0.40** (quality; a bare topic with nothing else scores ≈0.45)
 - near-duplicates inside the file, judged by the same topic rule as memory. The higher-scored phrasing is kept.
 
-## Choosing the five winners
+## Choosing the N winners
 
 Maximal marginal relevance, the same shape as V3.0.1's SELECTION:
 - `0.75 · total − 0.25 · similarity to the winners already picked`
@@ -270,7 +276,7 @@ Maximal marginal relevance, the same shape as V3.0.1's SELECTION:
 The winners therefore differ in subject, angle, hook and visual concept. There are no category quotas.
 
 Ties break on the position in the file. There is no randomness, so the same file and the same memory always give the
-same ranking and the same winners. If fewer than five usable, mutually different candidates remain, the batch stops
+same ranking and the same winners. If fewer than N usable, mutually different candidates remain, the batch stops
 with `TOO_FEW_CANDIDATES` (exit 2): no manifest, no runs, and no invented topics. Add more ideas and run again.
 
 ## How V3.0.1 is invoked
@@ -337,8 +343,8 @@ with `TOO_FEW_CANDIDATES` (exit 2): no manifest, no runs, and no invented topics
 
 - **Production still needs the Claude Code agent.** Authoring (research, hooks, scripts, scenes, packages) is
   model work inside V3.0.1, so `run` needs `claude` and a login on the machine. With `--produce none`, the engine
-  stops after preparing the five runs.
+  stops after preparing the N runs.
 - **The research screen is offline.** No candidate is fact-checked before selection; V3.0.1's RESEARCH gate does that
   per run. A winner can therefore still escalate at RESEARCH, and the report then shows the slot as `not_packaged`.
 - **Scoring is a transparent heuristic, not a prediction of views.** It ranks what the text of each candidate shows.
-- Production runs one video at a time, and a full batch takes as long as five V3.0.1 runs.
+- Production runs one video at a time, and a full batch takes as long as N V3.0.1 runs.

@@ -1,0 +1,1326 @@
+{
+  "exported_at": "2026-10-07T15:37:23+00:00",
+  "tables": {
+    "runs": [
+      {
+        "run_id": "2026-10-07-why-your-knuckles-crack",
+        "topic": "Why your knuckles crack",
+        "created_at": "2026-10-07T06:29:12+00:00",
+        "brief_json": "{\"run_id\": \"2026-10-07-why-your-knuckles-crack\", \"topic\": \"Why your knuckles crack\", \"count\": 1, \"languages\": [\"en\"], \"platforms\": [\"youtube_shorts\", \"tiktok\", \"instagram_reels\"], \"duration_s\": {\"min\": 20, \"max\": 45}, \"min_s\": 20, \"max_s\": 45, \"voices\": {\"en\": \"am_michael\"}, \"music\": \"procedural\", \"caption_style\": \"auto\", \"visual_style\": \"doodle\", \"review_backend\": \"auto\", \"hook_engine\": \"v2\", \"cta_engine\": \"v1\", \"audience\": \"general\", \"tone\": \"curious, clear, friendly\", \"constraints\": [], \"created_at\": \"2026-10-07T06:29:12+00:00\"}",
+        "status": "in_progress"
+      },
+      {
+        "run_id": "2026-10-07-why-ice-cream-gives-you-brain-fr",
+        "topic": "Why ice cream gives you brain freeze",
+        "created_at": "2026-10-07T12:42:04+00:00",
+        "brief_json": "{\"run_id\": \"2026-10-07-why-ice-cream-gives-you-brain-fr\", \"topic\": \"Why ice cream gives you brain freeze\", \"count\": 1, \"languages\": [\"en\"], \"platforms\": [\"youtube_shorts\", \"tiktok\", \"instagram_reels\"], \"duration_s\": {\"min\": 20.0, \"max\": 45.0}, \"min_s\": 20.0, \"max_s\": 45.0, \"voices\": {}, \"music\": \"procedural\", \"caption_style\": \"auto\", \"visual_style\": \"doodle\", \"review_backend\": \"auto\", \"hook_engine\": \"v2\", \"cta_engine\": \"v1\", \"package_engine\": \"v1\", \"audience\": \"curious general audience\", \"tone\": \"playful, precise\", \"constraints\": [], \"created_at\": \"2026-10-07T12:42:04+00:00\"}",
+        "status": "in_progress"
+      },
+      {
+        "run_id": "2026-10-04-why-you-cant-tickle-yourself",
+        "topic": "Why you can't tickle yourself",
+        "created_at": "2026-10-04",
+        "brief_json": "{\"topic\": \"Why you can't tickle yourself\", \"source\": \"fixtures/v1_regression/audio/timing.json (v1 regression video)\", \"note\": \"historical, recorded in Phase 5\"}",
+        "status": "packaged"
+      },
+      {
+        "run_id": "2026-10-05-why-fingers-wrinkle-in-water",
+        "topic": "Why fingers wrinkle in water",
+        "created_at": "2026-10-05",
+        "brief_json": "{\"topic\": \"Why fingers wrinkle in water\", \"source\": \"PHASE_2_REPORT.md (Phase 0-2 wrinkle runs)\", \"note\": \"historical, recorded in Phase 5\"}",
+        "status": "packaged"
+      },
+      {
+        "run_id": "2026-10-06-why-onions-make-you-cry",
+        "topic": "Why onions make you cry",
+        "created_at": "2026-10-06",
+        "brief_json": "{\"topic\": \"Why onions make you cry\", \"source\": \"PHASE_3_REPORT.md (Phase 3 onion run)\", \"note\": \"historical, recorded in Phase 5\"}",
+        "status": "packaged"
+      },
+      {
+        "run_id": "2026-10-07-why-leap-years-skip-some-century",
+        "topic": "Why leap years skip some century years",
+        "created_at": "2026-10-07T13:56:52+00:00",
+        "brief_json": "{\"run_id\": \"2026-10-07-why-leap-years-skip-some-century\", \"topic\": \"Why leap years skip some century years\", \"count\": 1, \"languages\": [\"en\"], \"platforms\": [\"youtube_shorts\", \"tiktok\", \"instagram_reels\"], \"duration_s\": {\"min\": 20.0, \"max\": 45.0}, \"min_s\": 20.0, \"max_s\": 45.0, \"voices\": {}, \"music\": \"procedural\", \"caption_style\": \"auto\", \"visual_style\": \"doodle\", \"review_backend\": \"auto\", \"hook_engine\": \"v2\", \"cta_engine\": \"v1\", \"package_engine\": \"v1\", \"audience\": \"general\", \"tone\": \"curious, clear, friendly\", \"constraints\": [], \"created_at\": \"2026-10-07T13:56:52+00:00\", \"memory\": {\"db\": \"runs/factory.db\", \"topic_check\": {\"checked\": 14, \"repeats\": [], \"override\": null}}}",
+        "status": "in_progress"
+      },
+      {
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "topic": "Why flamingos stand on one leg",
+        "created_at": "2026-10-07T13:11:31+00:00",
+        "brief_json": "{\"run_id\": \"2026-10-07-why-flamingos-stand-on-one-leg\", \"topic\": \"Why flamingos stand on one leg\", \"count\": 1, \"languages\": [\"en\"], \"platforms\": [\"youtube_shorts\", \"tiktok\", \"instagram_reels\"], \"duration_s\": {\"min\": 20.0, \"max\": 45.0}, \"min_s\": 20.0, \"max_s\": 45.0, \"voices\": {}, \"music\": \"procedural\", \"caption_style\": \"auto\", \"visual_style\": \"doodle\", \"review_backend\": \"auto\", \"hook_engine\": \"v2\", \"cta_engine\": \"v1\", \"package_engine\": \"v1\", \"audience\": \"general\", \"tone\": \"curious, clear, friendly\", \"constraints\": [], \"created_at\": \"2026-10-07T13:11:31+00:00\", \"memory\": {\"db\": \"runs/factory.db\", \"topic_check\": {\"checked\": 10, \"repeats\": [], \"override\": null}}}",
+        "status": "in_progress"
+      },
+      {
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "topic": "Why the Moon looks bigger near the horizon",
+        "created_at": "2026-10-07T13:36:02+00:00",
+        "brief_json": "{\"run_id\": \"2026-10-07-why-the-moon-looks-bigger-near-t\", \"topic\": \"Why the Moon looks bigger near the horizon\", \"count\": 1, \"languages\": [\"en\"], \"platforms\": [\"youtube_shorts\", \"tiktok\", \"instagram_reels\"], \"duration_s\": {\"min\": 20.0, \"max\": 45.0}, \"min_s\": 20.0, \"max_s\": 45.0, \"voices\": {}, \"music\": \"procedural\", \"caption_style\": \"auto\", \"visual_style\": \"doodle\", \"review_backend\": \"auto\", \"hook_engine\": \"v2\", \"cta_engine\": \"v1\", \"package_engine\": \"v1\", \"audience\": \"general\", \"tone\": \"curious, clear, friendly\", \"constraints\": [], \"created_at\": \"2026-10-07T13:36:02+00:00\", \"memory\": {\"db\": \"runs/factory.db\", \"topic_check\": {\"checked\": 12, \"repeats\": [], \"override\": null}}}",
+        "status": "in_progress"
+      }
+    ],
+    "ideas": [
+      {
+        "idea_id": "i1",
+        "run_id": "2026-10-07-why-your-knuckles-crack",
+        "title": "Your knuckle crack is a bubble, not your bones",
+        "angle": "Bust the 'bones grinding' myth: an MRI showed a gas cavity forming; scientists still argue about collapse; and no, it does not cause arthritis.",
+        "format": "myth-bust",
+        "pillar": "human body",
+        "selected": 1,
+        "score": 0.8875
+      },
+      {
+        "idea_id": "i2",
+        "run_id": "2026-10-07-why-your-knuckles-crack",
+        "title": "The man who cracked one hand for 60 years",
+        "angle": "Story of a 60-year one-handed experiment.",
+        "format": "story",
+        "pillar": "human body",
+        "selected": 0,
+        "score": null
+      },
+      {
+        "idea_id": "i3",
+        "run_id": "2026-10-07-why-your-knuckles-crack",
+        "title": "Why you can't crack the same knuckle twice",
+        "angle": "Explain the bubble that stays behind.",
+        "format": "explainer",
+        "pillar": "human body",
+        "selected": 0,
+        "score": null
+      },
+      {
+        "idea_id": "i1",
+        "run_id": "2026-10-07-why-ice-cream-gives-you-brain-fr",
+        "title": "Brain freeze isn't your brain freezing",
+        "angle": "Explain the mechanism: cold hits the palate, the pain is referred to the forehead, and a small study saw an artery widen as the pain began and narrow as it faded.",
+        "format": "explainer",
+        "pillar": "human body",
+        "selected": 0,
+        "score": null
+      },
+      {
+        "idea_id": "i2",
+        "run_id": "2026-10-07-why-ice-cream-gives-you-brain-fr",
+        "title": "Gulp vs sip: the brain freeze experiment",
+        "angle": "Compare the two experiments: ice water gulped triggers brain freeze in half of people, an ice cube only in one in eight; fast ice cream doubles it in a school trial.",
+        "format": "comparison",
+        "pillar": "human body",
+        "selected": 1,
+        "score": 0.875
+      },
+      {
+        "idea_id": "i3",
+        "run_id": "2026-10-07-why-ice-cream-gives-you-brain-fr",
+        "title": "Why does cold in your mouth hurt your forehead?",
+        "angle": "Pose the referred-pain puzzle, answer it, and connect it to migraine-prone people who get brain freeze more often.",
+        "format": "question",
+        "pillar": "human body",
+        "selected": 0,
+        "score": null
+      },
+      {
+        "idea_id": "i1",
+        "run_id": "2026-10-07-why-leap-years-skip-some-century",
+        "title": "Leap years aren't every four years",
+        "angle": "Myth-bust the rule everyone learned: the year is 365.2422 days, every-4 leap days overshoot, the drift reached 10 days, and since 1582 century years only leap if they divide by 400.",
+        "format": "myth-bust",
+        "pillar": "time and calendars",
+        "selected": 1,
+        "score": 0.8625
+      },
+      {
+        "idea_id": "i2",
+        "run_id": "2026-10-07-why-leap-years-skip-some-century",
+        "title": "The ten days that vanished in October 1582",
+        "angle": "Tell the calendar's correction as a story: the Julian surplus piled up, Thursday 4 October was followed by Friday 15 October, and Britain skipped 11 days in 1752.",
+        "format": "story",
+        "pillar": "time and calendars",
+        "selected": 0,
+        "score": null
+      },
+      {
+        "idea_id": "i3",
+        "run_id": "2026-10-07-why-leap-years-skip-some-century",
+        "title": "The three leap-year rules in one go",
+        "angle": "A fast listicle: divide by 4 to leap, skip century years, but leap again if the year divides by 400, and why the third rule exists.",
+        "format": "listicle",
+        "pillar": "time and calendars",
+        "selected": 0,
+        "score": null
+      },
+      {
+        "idea_id": "i4",
+        "run_id": "2026-10-07-why-leap-years-skip-some-century",
+        "title": "Was 2000 a leap year?",
+        "angle": "A quiz built on the year most people get wrong, answered with the divide-by-400 rule.",
+        "format": "question",
+        "pillar": "time and calendars",
+        "selected": 0,
+        "score": null
+      },
+      {
+        "idea_id": "i1",
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "title": "A dead flamingo can still stand on one leg",
+        "angle": "Myth-bust the 'hard balancing act': in the 2017 cadaver test the one-legged pose held with zero muscle, two legs did not, and live birds swayed less when they dozed.",
+        "format": "myth-bust",
+        "pillar": "animal science",
+        "selected": 1,
+        "score": 0.8875
+      },
+      {
+        "idea_id": "i2",
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "title": "Two reasons flamingos tuck a leg: warmth and effort",
+        "angle": "Explain both supported explanations: more birds rest on one leg in water and in the cold (heat saving), and the pose costs almost no muscle (effort saving).",
+        "format": "explainer",
+        "pillar": "animal science",
+        "selected": 0,
+        "score": null
+      },
+      {
+        "idea_id": "i3",
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "title": "That backwards knee is an ankle",
+        "angle": "Start from the anatomy most people get wrong (the visible joint is the ankle, the knee is hidden) and use it to show how the leg locks into a passive pillar.",
+        "format": "question",
+        "pillar": "animal science",
+        "selected": 0,
+        "score": null
+      },
+      {
+        "idea_id": "i4",
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "title": "One leg or two: which is harder for a flamingo?",
+        "angle": "Run the comparison the lab ran: held upright, the body locked on one leg but could not be held stable on two, the opposite of what people expect.",
+        "format": "comparison",
+        "pillar": "animal science",
+        "selected": 0,
+        "score": null
+      },
+      {
+        "idea_id": "i1",
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "title": "The giant horizon Moon is not bigger",
+        "angle": "Myth-bust what everyone has seen: same-settings photos show the same width, the low Moon is even about 1.5 percent farther away, and the size is added by the brain.",
+        "format": "myth-bust",
+        "pillar": "space and perception",
+        "selected": 1,
+        "score": 0.8875
+      },
+      {
+        "idea_id": "i2",
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "title": "Shrink the giant Moon with a paper tube",
+        "angle": "A tonight-you-can-try-it video: hold up a fingernail, then look through a paper tube, and watch the illusion collapse.",
+        "format": "how-to",
+        "pillar": "space and perception",
+        "selected": 0,
+        "score": null
+      },
+      {
+        "idea_id": "i3",
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "title": "Why your brain inflates the horizon Moon",
+        "angle": "Explain the leading idea: the brain treats the horizon Moon as farther away, so it scales it up; tested since Kaufman and Rock, still debated.",
+        "format": "explainer",
+        "pillar": "space and perception",
+        "selected": 0,
+        "score": null
+      },
+      {
+        "idea_id": "i4",
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "title": "Camera versus eyes: who is right about the Moon?",
+        "angle": "Put the camera and the eye side by side: the photo keeps the Moon the same width, the eye does not.",
+        "format": "comparison",
+        "pillar": "space and perception",
+        "selected": 0,
+        "score": null
+      }
+    ],
+    "videos": [
+      {
+        "video_id": "v01",
+        "run_id": "2026-10-07-why-your-knuckles-crack",
+        "idea_id": "i1",
+        "language": "en",
+        "title": "What actually pops when you crack your knuckles?",
+        "hook": "What actually pops when you crack your knuckles?",
+        "hook_archetype": "question",
+        "format": "myth-bust",
+        "pillar": "human body",
+        "duration_s": 32.521,
+        "voice": "am_michael",
+        "visual_kinds": "doodle",
+        "qa_status": "passed",
+        "final_sha256": "794442b4b0c2a1c8dc6f89a081c75f478b4d798e4835c1c9d492b9c4b965dff5",
+        "created_at": "2026-10-07T13:09:50+00:00"
+      },
+      {
+        "video_id": "v01",
+        "run_id": "2026-10-07-why-ice-cream-gives-you-brain-fr",
+        "idea_id": "i2",
+        "language": "en",
+        "title": "Eating fast doubles your odds of brain freeze",
+        "hook": "Sip or gulp? One doubles your odds of brain freeze.",
+        "hook_archetype": "forced_choice",
+        "format": "comparison",
+        "pillar": "human body",
+        "duration_s": 32.614,
+        "voice": "af_heart",
+        "visual_kinds": "doodle",
+        "qa_status": "passed",
+        "final_sha256": "dc5d10c2710e445a34d792667b7e2a49ba7703c4a4851ba852f4ddea2deed6c5",
+        "created_at": "2026-10-07T13:09:50+00:00"
+      },
+      {
+        "video_id": "v01",
+        "run_id": "2026-10-04-why-you-cant-tickle-yourself",
+        "idea_id": null,
+        "language": "en",
+        "title": "Why you can't tickle yourself",
+        "hook": "Try to tickle yourself. Go on. Nothing, right?",
+        "hook_archetype": null,
+        "format": null,
+        "pillar": null,
+        "duration_s": null,
+        "voice": null,
+        "visual_kinds": null,
+        "qa_status": "passed",
+        "final_sha256": null,
+        "created_at": "2026-10-04"
+      },
+      {
+        "video_id": "v01",
+        "run_id": "2026-10-05-why-fingers-wrinkle-in-water",
+        "idea_id": null,
+        "language": "en",
+        "title": "Why fingers wrinkle in water",
+        "hook": "Pruney fingers? Not water. Nerves.",
+        "hook_archetype": null,
+        "format": null,
+        "pillar": null,
+        "duration_s": null,
+        "voice": null,
+        "visual_kinds": null,
+        "qa_status": "passed",
+        "final_sha256": null,
+        "created_at": "2026-10-05"
+      },
+      {
+        "video_id": "v01",
+        "run_id": "2026-10-06-why-onions-make-you-cry",
+        "idea_id": null,
+        "language": "en",
+        "title": "Why onions make you cry",
+        "hook": null,
+        "hook_archetype": null,
+        "format": null,
+        "pillar": null,
+        "duration_s": null,
+        "voice": null,
+        "visual_kinds": null,
+        "qa_status": "passed",
+        "final_sha256": null,
+        "created_at": "2026-10-06"
+      },
+      {
+        "video_id": "v01",
+        "run_id": "2026-10-07-why-leap-years-skip-some-century",
+        "idea_id": "i1",
+        "language": "en",
+        "title": "Leap years aren't every four years",
+        "hook": "Leap years aren't every four years.",
+        "hook_archetype": "misconception_reversal",
+        "format": "myth-bust",
+        "pillar": "time and calendars",
+        "duration_s": 38.144,
+        "voice": "af_heart",
+        "visual_kinds": "doodle",
+        "qa_status": "passed",
+        "final_sha256": "447c54e60915ebf515d647d3dae984792c9dba91e99211d08f8b04c92e4813ec",
+        "created_at": "2026-10-07T14:47:05+00:00"
+      },
+      {
+        "video_id": "v01",
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "idea_id": "i1",
+        "language": "en",
+        "title": "Why flamingos rest on one leg",
+        "hook": "Why do flamingos rest on one leg?",
+        "hook_archetype": "question",
+        "format": "myth-bust",
+        "pillar": "animal science",
+        "duration_s": 23.866,
+        "voice": "af_heart",
+        "visual_kinds": "doodle",
+        "qa_status": "passed",
+        "final_sha256": null,
+        "created_at": "2026-10-07T15:01:28+00:00"
+      },
+      {
+        "video_id": "v01",
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "idea_id": "i1",
+        "language": "en",
+        "title": "Your camera says the Moon never grew",
+        "hook": "Your camera says the Moon never grew.",
+        "hook_archetype": "contradiction",
+        "format": "myth-bust",
+        "pillar": "space and perception",
+        "duration_s": 23.006,
+        "voice": "af_heart",
+        "visual_kinds": "doodle",
+        "qa_status": "passed",
+        "final_sha256": null,
+        "created_at": "2026-10-07T15:01:34+00:00"
+      }
+    ],
+    "assets": [
+      {
+        "sha256": "1e81db7fd1854dcfb0d7847b7b29bd4f624c54e3d4618d7fbb7e46dbb76a51ae",
+        "run_id": "2026-10-07-why-your-knuckles-crack",
+        "video_id": "v01",
+        "role": "voiceover",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"kokoro-onnx\", \"model\": \"Kokoro-82M v1.0 (onnx fp32, kokoro-onnx 0.6.1)\", \"voice\": \"am_michael\", \"speed\": 1.0, \"model_license\": \"Apache-2.0\"}"
+      },
+      {
+        "sha256": "28f82c8a7943cb8e9d599f8554da1d4fc75dbcf69b9885ad6c0611d20c6946c5",
+        "run_id": "2026-10-07-why-your-knuckles-crack",
+        "video_id": "v01",
+        "role": "font",
+        "license": "Apache-2.0",
+        "source": "Google Fonts (github.com/google/fonts)",
+        "generator_json": "null"
+      },
+      {
+        "sha256": "cd309536ad7a0c79494993a8dcc42cc77fe20ee596b3b6dae4b7d2c7ebb1950e",
+        "run_id": "2026-10-07-why-your-knuckles-crack",
+        "video_id": "v01",
+        "role": "music",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"audio_design.playful_bed (numpy synthesis)\", \"bpm\": 98.0, \"key\": \"A major\", \"progression\": [0, 5, 3, 4], \"seed\": 30038}"
+      },
+      {
+        "sha256": "62376663e65d5a64c985e205f933bdd3eacc8c1b75f10844d88b9500c196bcdf",
+        "run_id": "2026-10-07-why-your-knuckles-crack",
+        "video_id": "v01",
+        "role": "sfx",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"audio_design SFX synthesis (numpy)\", \"events\": 26}"
+      },
+      {
+        "sha256": "fab560acbabadad4b9e27f2ce9866b531c211cc14391b88f980a3050ba8e1119",
+        "run_id": "2026-10-07-why-your-knuckles-crack",
+        "video_id": "v01",
+        "role": "visual:s1",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "91da9f5f8dff22cda2fee53b69e834b545e3e3437083736fedef28d8c22440ce",
+        "run_id": "2026-10-07-why-your-knuckles-crack",
+        "video_id": "v01",
+        "role": "visual:s2",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "977f9008cc792e4a159368b89cb964744715a0037ce5390da62e51fb1c00df28",
+        "run_id": "2026-10-07-why-your-knuckles-crack",
+        "video_id": "v01",
+        "role": "visual:s3",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "86075c310070a41b709d8356316d8bb11492c3965f15a36bb816ea2cfa3aa990",
+        "run_id": "2026-10-07-why-your-knuckles-crack",
+        "video_id": "v01",
+        "role": "visual:s4",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "e33b4860f1a15f6eaa4c60b0a9bd911124b021f128ae95c17cdb20bab5f6599d",
+        "run_id": "2026-10-07-why-your-knuckles-crack",
+        "video_id": "v01",
+        "role": "visual:s5",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "fdb1925a0f3d10283b91bb8220700689015cf1a0ccedb30bb28ff9b98e6dfb36",
+        "run_id": "2026-10-07-why-your-knuckles-crack",
+        "video_id": "v01",
+        "role": "visual:s6",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "f96729ceb94a2f5d979b64512ea4f111b6403626184f00bb0c7de5a5d1eee393",
+        "run_id": "2026-10-07-why-your-knuckles-crack",
+        "video_id": "v01",
+        "role": "visual:s7",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "2c3a90ce9a9deb8b9121ce84bb48fb5eb9c6d516270fe3892a42f55cd1ece80c",
+        "run_id": "2026-10-07-why-ice-cream-gives-you-brain-fr",
+        "video_id": "v01",
+        "role": "voiceover",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"kokoro-onnx\", \"model\": \"Kokoro-82M v1.0 (onnx fp32, kokoro-onnx 0.6.1)\", \"voice\": \"af_heart\", \"speed\": 1.0, \"model_license\": \"Apache-2.0\"}"
+      },
+      {
+        "sha256": "28f82c8a7943cb8e9d599f8554da1d4fc75dbcf69b9885ad6c0611d20c6946c5",
+        "run_id": "2026-10-07-why-ice-cream-gives-you-brain-fr",
+        "video_id": "v01",
+        "role": "font",
+        "license": "Apache-2.0",
+        "source": "Google Fonts (github.com/google/fonts)",
+        "generator_json": "null"
+      },
+      {
+        "sha256": "1857504a0b8dcf94ebc461387fba5c32560dc8a96df314aa0619e307272ff99e",
+        "run_id": "2026-10-07-why-ice-cream-gives-you-brain-fr",
+        "video_id": "v01",
+        "role": "music",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"audio_design.playful_bed (numpy synthesis)\", \"bpm\": 98.0, \"key\": \"A major\", \"progression\": [0, 5, 3, 4], \"seed\": 30038}"
+      },
+      {
+        "sha256": "0ba29ae6ba1f3d13ccb0fe86d5bdb879f1034a732657168a822f8887f541706d",
+        "run_id": "2026-10-07-why-ice-cream-gives-you-brain-fr",
+        "video_id": "v01",
+        "role": "sfx",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"audio_design SFX synthesis (numpy)\", \"events\": 26}"
+      },
+      {
+        "sha256": "8412f8d4f6cba19db301fe55b7c531f0f0c7fbc6bd6b45f693c513cfff2a05bb",
+        "run_id": "2026-10-07-why-ice-cream-gives-you-brain-fr",
+        "video_id": "v01",
+        "role": "visual:s1",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "13d2849af9ad5beef41b9c6c8ca9fb832b11bb5df1d73d341bd287480e4df366",
+        "run_id": "2026-10-07-why-ice-cream-gives-you-brain-fr",
+        "video_id": "v01",
+        "role": "visual:s2",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "9a02ebc0e705fdfbc92a8347d937a7f0170a5d9dc053e087e1ebe75769712da7",
+        "run_id": "2026-10-07-why-ice-cream-gives-you-brain-fr",
+        "video_id": "v01",
+        "role": "visual:s3",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "125054256ea634a87027ce8b0d9e1babe896e3a5a4d681d54d5dac74fbbf2072",
+        "run_id": "2026-10-07-why-ice-cream-gives-you-brain-fr",
+        "video_id": "v01",
+        "role": "visual:s4",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "f90fdf588696466c04737bbd116dab4be0e9b7c87acfdb00ff699e42c9f17b66",
+        "run_id": "2026-10-07-why-ice-cream-gives-you-brain-fr",
+        "video_id": "v01",
+        "role": "visual:s5",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "19bff30aa89590a6345c8534d37716b32b81a7cc73d84428f46cf55c59b8e093",
+        "run_id": "2026-10-07-why-ice-cream-gives-you-brain-fr",
+        "video_id": "v01",
+        "role": "visual:s6",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "3a7d04068ca607ef336fa3bf347b839124c6a7ad7c0b922768549fb68af7ca69",
+        "run_id": "2026-10-07-why-ice-cream-gives-you-brain-fr",
+        "video_id": "v01",
+        "role": "visual:s7",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "f47d721480cc5068ec624be6aef1c3a0edcccbda4c80502c008f9f8e1780ad73",
+        "run_id": "2026-10-07-why-ice-cream-gives-you-brain-fr",
+        "video_id": "v01",
+        "role": "visual:s8",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "3b128127853da5103b2674a4f31e3f66b3a601bf406a19e1a2bca56f68e3f6ce",
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "video_id": "v01",
+        "role": "visual:s8",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "5072793b5d7a650762bef5b3c9b0398f9587db2bdbb4774f29f8fe30b74a4c21",
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "video_id": "v01",
+        "role": "visual:s8",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "8275b124446b7ef934f459665abe2e9d2efc4c9adaa2792f48f226c187a4a9c2",
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "video_id": "v01",
+        "role": "visual:s9",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "cac1c92070b5dfe4d7fdab6ead6a50e1f9d3054084b52ae161399794d9ccaa20",
+        "run_id": "2026-10-07-why-leap-years-skip-some-century",
+        "video_id": "v01",
+        "role": "voiceover",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"kokoro-onnx\", \"model\": \"Kokoro-82M v1.0 (onnx fp32, kokoro-onnx 0.6.1, seeded per sentence)\", \"voice\": \"af_heart\", \"speed\": 1.0, \"model_license\": \"Apache-2.0\"}"
+      },
+      {
+        "sha256": "28f82c8a7943cb8e9d599f8554da1d4fc75dbcf69b9885ad6c0611d20c6946c5",
+        "run_id": "2026-10-07-why-leap-years-skip-some-century",
+        "video_id": "v01",
+        "role": "font",
+        "license": "Apache-2.0",
+        "source": "Google Fonts (github.com/google/fonts)",
+        "generator_json": "null"
+      },
+      {
+        "sha256": "172eb085be16140f1b2d45c161b8a5b903564672e0b67d1e79a789aa8d5b29fc",
+        "run_id": "2026-10-07-why-leap-years-skip-some-century",
+        "video_id": "v01",
+        "role": "music",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"audio_design.playful_bed (numpy synthesis)\", \"bpm\": 98.0, \"key\": \"A major\", \"progression\": [0, 5, 3, 4], \"seed\": 30038}"
+      },
+      {
+        "sha256": "210ca9ac431a2bca46c81238004053deb8457bb7456e59b5174534e853b9ea9b",
+        "run_id": "2026-10-07-why-leap-years-skip-some-century",
+        "video_id": "v01",
+        "role": "sfx",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"audio_design SFX synthesis (numpy)\", \"events\": 30}"
+      },
+      {
+        "sha256": "791fd3b7272e3ec1545897fbf446781d11a7a172a48ed4396bbaa9317aaa9cbd",
+        "run_id": "2026-10-07-why-leap-years-skip-some-century",
+        "video_id": "v01",
+        "role": "visual:s1",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "0b5fa7f87e73360c94d2028d94ec8f62415307a7ac01707a1019098c3d875850",
+        "run_id": "2026-10-07-why-leap-years-skip-some-century",
+        "video_id": "v01",
+        "role": "visual:s2",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "92ec1e60fb2e1e6b7a9eaac5b8be8bb61d8920e90cc55c07d02f3a76172f130e",
+        "run_id": "2026-10-07-why-leap-years-skip-some-century",
+        "video_id": "v01",
+        "role": "visual:s3",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "a06514bbade1a6a40adf1e2ec322b3ad4f087b9453c7f71653fa0aa8aeee1ec1",
+        "run_id": "2026-10-07-why-leap-years-skip-some-century",
+        "video_id": "v01",
+        "role": "visual:s4",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "fcc5edda48726be3395dd79a5ca60d76ee5dc8176ea92c296ac54dec2b83aae7",
+        "run_id": "2026-10-07-why-leap-years-skip-some-century",
+        "video_id": "v01",
+        "role": "visual:s5",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "e280e865c787a1ec0ac9f767563a6b23c87430836df789c00247d176cf0f50db",
+        "run_id": "2026-10-07-why-leap-years-skip-some-century",
+        "video_id": "v01",
+        "role": "visual:s6",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "f7d5fa1e094407c476c51345998fa5dec844562655d4a237cac118ee42d1a381",
+        "run_id": "2026-10-07-why-leap-years-skip-some-century",
+        "video_id": "v01",
+        "role": "visual:s7",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "62a4fba5cf09bbdb60d765d42dd7432afd95f2e384655cc14a0570d0a01cc873",
+        "run_id": "2026-10-07-why-leap-years-skip-some-century",
+        "video_id": "v01",
+        "role": "visual:s8",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "9f6517b7e9fd2939fc896fd0d41f1c3f8162236439f4be6d872cb88ba701d20e",
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "video_id": "v01",
+        "role": "voiceover",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"kokoro-onnx\", \"model\": \"Kokoro-82M v1.0 (onnx fp32, kokoro-onnx 0.6.1, seeded per sentence)\", \"voice\": \"af_heart\", \"speed\": 1.0, \"model_license\": \"Apache-2.0\"}"
+      },
+      {
+        "sha256": "28f82c8a7943cb8e9d599f8554da1d4fc75dbcf69b9885ad6c0611d20c6946c5",
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "video_id": "v01",
+        "role": "font",
+        "license": "Apache-2.0",
+        "source": "Google Fonts (github.com/google/fonts)",
+        "generator_json": "null"
+      },
+      {
+        "sha256": "b0c3b5b7d402052c44b001df601cf850b9cb96e8dad6ac7da76cda1c96a7d803",
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "video_id": "v01",
+        "role": "music",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"audio_design.playful_bed (numpy synthesis)\", \"bpm\": 98.0, \"key\": \"A major\", \"progression\": [0, 5, 3, 4], \"seed\": 30038}"
+      },
+      {
+        "sha256": "6f445aba7dfe752f6fcab6e26f2ecc929296c08803724c342e90103b0c63fb59",
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "video_id": "v01",
+        "role": "sfx",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"audio_design SFX synthesis (numpy)\", \"events\": 18}"
+      },
+      {
+        "sha256": "40adf34a95369ac3910a243d73a943f2f44d8c00a0e7983e354c44c5ac4bdd36",
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "video_id": "v01",
+        "role": "visual:s1",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "94a8b605f813732a884e919fa85c103f495b53b5281b1e24d7c27a087922a9db",
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "video_id": "v01",
+        "role": "visual:s2",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "46fb1909db9cccddc25f32897137f5868ae17f54d5cd525958cc13b3f352572b",
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "video_id": "v01",
+        "role": "visual:s3",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "3ba38933bddda52868e7bd3e721bdaaee841a01fd26ac3bba401e83e79b1486a",
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "video_id": "v01",
+        "role": "visual:s4",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "58a835ba7156ceecea39304fbbca286616b9bcb04f2ceb72b014411a4e1150cc",
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "video_id": "v01",
+        "role": "visual:s5",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "19c2b8269246bf021a8b236d5b60d697a23c951586ddec80a0004d2f7e4bd225",
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "video_id": "v01",
+        "role": "visual:s6",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "f5a37897395a00138a2026b1d4b3f12d6b7d1d350560d0fb3f4d88d87e4c501a",
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "video_id": "v01",
+        "role": "visual:s7",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "8ba949ad7ae9845f5d1bdca9c539be270e36730707adde0f2631e3c1ac152808",
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "video_id": "v01",
+        "role": "voiceover",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"kokoro-onnx\", \"model\": \"Kokoro-82M v1.0 (onnx fp32, kokoro-onnx 0.6.1, seeded per sentence)\", \"voice\": \"af_heart\", \"speed\": 1.0, \"model_license\": \"Apache-2.0\"}"
+      },
+      {
+        "sha256": "28f82c8a7943cb8e9d599f8554da1d4fc75dbcf69b9885ad6c0611d20c6946c5",
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "video_id": "v01",
+        "role": "font",
+        "license": "Apache-2.0",
+        "source": "Google Fonts (github.com/google/fonts)",
+        "generator_json": "null"
+      },
+      {
+        "sha256": "26d00b93350f3c546652bbc47d9b4318ce2e14a6048d06ff4d98888d5cc41169",
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "video_id": "v01",
+        "role": "music",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"audio_design.playful_bed (numpy synthesis)\", \"bpm\": 98.0, \"key\": \"A major\", \"progression\": [0, 5, 3, 4], \"seed\": 30038}"
+      },
+      {
+        "sha256": "21976f0144dd27160d93c2c7c0c7ed85261030022d7d0eb1f1730aebc6905b86",
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "video_id": "v01",
+        "role": "sfx",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"audio_design SFX synthesis (numpy)\", \"events\": 19}"
+      },
+      {
+        "sha256": "dd8b89d5ae069e45b378fc101f1d2cd6c358270a931ce4df6a47b82c932c120a",
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "video_id": "v01",
+        "role": "visual:s1",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "f729007e347b39a0744759658e5e68425637b628c3f97f8d0397111be23406a4",
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "video_id": "v01",
+        "role": "visual:s2",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "dbddf99c612651bf6d96ebad7c22ad508f6c81a8d5171adeb7f1b956ee70a1a5",
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "video_id": "v01",
+        "role": "visual:s3",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "f998c606aa18457d092355771d492ba66078da3368513d93b9bfa1c62823002b",
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "video_id": "v01",
+        "role": "visual:s4",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "8aa98ec2a8ebc84d6b5de007583d8329ffd33051ae67ae59ffadbb6785fc5d6c",
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "video_id": "v01",
+        "role": "visual:s5",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "fec4714d84b70f5a43ec2c2daae4f652de4432da73cbb1e047e8ef06df88d672",
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "video_id": "v01",
+        "role": "visual:s6",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      },
+      {
+        "sha256": "ff7a86aca0afc37d8ebfe0b37cc8996d61fe549286c577bbd0fff4fa0b756057",
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "video_id": "v01",
+        "role": "visual:s7",
+        "license": "self-generated",
+        "source": "generated",
+        "generator_json": "{\"tool\": \"doodle engine (Claude-authored SVG)\", \"renderer\": \"skia-python\"}"
+      }
+    ],
+    "stage_results": [
+      {
+        "run_id": "2026-10-07-why-your-knuckles-crack",
+        "video_id": "v01",
+        "stage": "VISUAL_PLAN",
+        "attempt": 3,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T06:37:35+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-your-knuckles-crack",
+        "video_id": "v01",
+        "stage": "SUBTITLES",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T06:40:06+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-your-knuckles-crack",
+        "video_id": "v01",
+        "stage": "AUDIO",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T06:32:41+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-your-knuckles-crack",
+        "video_id": "v01",
+        "stage": "QA",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T06:40:58+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-your-knuckles-crack",
+        "video_id": "v01",
+        "stage": "VIDEO",
+        "attempt": 3,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T06:38:55+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-your-knuckles-crack",
+        "video_id": "v01",
+        "stage": "SCRIPT",
+        "attempt": 2,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T06:32:09+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-your-knuckles-crack",
+        "video_id": "v01",
+        "stage": "HOOK",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T06:30:53+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-ice-cream-gives-you-brain-fr",
+        "video_id": "v01",
+        "stage": "VISUAL_PLAN",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T12:44:29+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-ice-cream-gives-you-brain-fr",
+        "video_id": "v01",
+        "stage": "SUBTITLES",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T12:46:18+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-ice-cream-gives-you-brain-fr",
+        "video_id": "v01",
+        "stage": "AUDIO",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T12:44:19+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-ice-cream-gives-you-brain-fr",
+        "video_id": "v01",
+        "stage": "QA",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T12:48:07+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-ice-cream-gives-you-brain-fr",
+        "video_id": "v01",
+        "stage": "VIDEO",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T12:45:34+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-ice-cream-gives-you-brain-fr",
+        "video_id": "v01",
+        "stage": "SCRIPT",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T12:43:12+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-ice-cream-gives-you-brain-fr",
+        "video_id": "v01",
+        "stage": "HOOK",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T12:43:12+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "video_id": "v01",
+        "stage": "VISUAL_PLAN",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T13:23:26+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "video_id": "v01",
+        "stage": "AUDIO",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T13:19:31+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "video_id": "v01",
+        "stage": "VIDEO",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T13:28:17+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "video_id": "v01",
+        "stage": "SCRIPT",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T13:18:34+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "video_id": "v01",
+        "stage": "VISUAL_PLAN",
+        "attempt": 2,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T13:47:18+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "video_id": "v01",
+        "stage": "AUDIO",
+        "attempt": 2,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T13:43:34+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "video_id": "v01",
+        "stage": "VIDEO",
+        "attempt": 2,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T13:48:43+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "video_id": "v01",
+        "stage": "SCRIPT",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T13:43:28+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "video_id": "v01",
+        "stage": "HOOK",
+        "attempt": 2,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T13:38:17+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-leap-years-skip-some-century",
+        "video_id": "v01",
+        "stage": "VISUAL_PLAN",
+        "attempt": 2,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T14:12:40+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-leap-years-skip-some-century",
+        "video_id": "v01",
+        "stage": "SUBTITLES",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T14:14:36+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-leap-years-skip-some-century",
+        "video_id": "v01",
+        "stage": "AUDIO",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T13:59:56+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-leap-years-skip-some-century",
+        "video_id": "v01",
+        "stage": "QA",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T14:15:02+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-leap-years-skip-some-century",
+        "video_id": "v01",
+        "stage": "VIDEO",
+        "attempt": 2,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T14:14:05+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-leap-years-skip-some-century",
+        "video_id": "v01",
+        "stage": "SCRIPT",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T13:59:07+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-leap-years-skip-some-century",
+        "video_id": "v01",
+        "stage": "HOOK",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T13:57:57+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "video_id": "v01",
+        "stage": "VISUAL_PLAN",
+        "attempt": 3,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T14:26:33+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "video_id": "v01",
+        "stage": "SUBTITLES",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T14:31:31+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "video_id": "v01",
+        "stage": "AUDIO",
+        "attempt": 3,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T14:24:23+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "video_id": "v01",
+        "stage": "QA",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T14:31:54+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "video_id": "v01",
+        "stage": "VIDEO",
+        "attempt": 2,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T14:31:09+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "video_id": "v01",
+        "stage": "SCRIPT",
+        "attempt": 2,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T14:24:00+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-flamingos-stand-on-one-leg",
+        "video_id": "v01",
+        "stage": "HOOK",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T14:23:00+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "video_id": "v01",
+        "stage": "VISUAL_PLAN",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T14:43:01+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "video_id": "v01",
+        "stage": "SUBTITLES",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T14:44:05+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "video_id": "v01",
+        "stage": "AUDIO",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T14:40:53+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "video_id": "v01",
+        "stage": "QA",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T14:44:26+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "video_id": "v01",
+        "stage": "VIDEO",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T14:43:44+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "video_id": "v01",
+        "stage": "SCRIPT",
+        "attempt": 2,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T14:40:34+00:00"
+      },
+      {
+        "run_id": "2026-10-07-why-the-moon-looks-bigger-near-t",
+        "video_id": "v01",
+        "stage": "HOOK",
+        "attempt": 1,
+        "status": "passed",
+        "errors_json": "[]",
+        "finished_at": "2026-10-07T14:36:42+00:00"
+      }
+    ],
+    "publications": [],
+    "metrics": [],
+    "weights": []
+  }
+}

@@ -39,7 +39,7 @@ The deliverable is a clean copy (scripts/media_clean.py) that carries only what 
 - Streams and pixels are not re-encoded (stream MD5 and decoded pixels unchanged). render_video encodes AAC with +bitexact so no
 encoder string sits inside the audio. Provenance, model and run information stay in provenance.json and reports.
 PACKAGE blocks on PKG.MEDIA_METADATA_CLEAN (audit of every publishable .mp4/.jpg/.png), PKG.FINAL_DECODES and
-PKG.DISCLOSURE (platform AI labels present in metadata.json and the disclosure line in the YouTube description).
+PKG.DISCLOSURE (platform AI labels present in metadata.json; since v3.0.2 no tool line is added to the YouTube description).
 Disclosure is never carried by the media file: the owner sets each platform's AI label by hand at upload from
 metadata.json / PUBLISHING_PACKAGE.md, and the package gate still requires those labels.
 

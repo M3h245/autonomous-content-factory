@@ -5,11 +5,13 @@
 untagged (CHANGELOG):
 - **v3.0.1**: final-media metadata only.
 - **Idea Engine 1.0**: a batch layer above V3.0.1 (`content-factory/scripts/idea_engine.py`). It takes an ideas file,
-  filters it against memory, scores and selects 5 topics, and hands them to 5 V3.0.1 runs, which are packaged and
+  filters it against memory, scores and selects N topics (`--count N`, default 2; 5 before 2026-10-14), and hands
+  them to N V3.0.1 runs, which are packaged and
   copied to the output folder. No LLM API is needed, and the production engine is unchanged.
 
 **The production system is V3.0.1 + Idea Engine 1.0.** Phases 0–5 are complete. Only operation remains: making
-videos (one topic with `factory.py`, or five from an ideas file with `idea_engine.py`), uploading by hand, and
+videos (one topic with `factory.py`, or several from an ideas file with `idea_engine.py`; both make 2 by default,
+`--count N` for another number), uploading by hand, and
 logging analytics. Any further change is a new decision by the owner.
 
 ## Where things are
@@ -76,7 +78,7 @@ For the v1 regression, see CLOUD_HANDOFF.md. To replay a run: `python3 work/phas
   - memory is the factory's own database and rules;
   - research before selection is an offline screen, never claimed as verified;
   - scoring is deterministic with stated reasons;
-  - exactly 5 diverse winners, or a clear failure;
+  - exactly N diverse winners (`--count N`, default 2), or a clear failure;
   - each winner becomes its own V3.0.1 run through `init`;
   - a package is delivered only when V3.0.1 recorded it as passed;
   - nothing is overwritten.

@@ -2,23 +2,23 @@
 """idea_engine — the batch layer above the V3.0.1 production engine (no LLM API needed).
 
   idea_engine.py validate --ideas-file input/ideas.json
-  idea_engine.py select   [--ideas-file input/ideas.json] [--batches-dir batches] [--db factory.db]
-  idea_engine.py run      [--ideas-file input/ideas.json] [--batches-dir …] [--db …] [--output-dir D:\\shorts]
+  idea_engine.py select   [--ideas-file input/ideas.json] [--count N] [--batches-dir batches] [--db factory.db]
+  idea_engine.py run      [--ideas-file input/ideas.json] [--count N] [--batches-dir …] [--db …] [--output-dir D:\\shorts]
                           [--produce claude|none] [--driver-cmd "CMD … {run} …"] [--run-timeout-min 180]
   idea_engine.py produce  --batch batches/<batch-id> [--output-dir …] [--produce …] [--driver-cmd …]
 
 ~50 topic candidates written elsewhere (by hand, or by asking ChatGPT/Claude for the JSON format in
 references/idea-engine.md) → validation → content-memory filter (the factory's own database and rules) → offline
-research screen → deterministic, explainable scoring → diversity selection of exactly 5 → batch manifest → 5 isolated
-V3.0.1 runs (`factory.py init`, one topic each) → production of each run by the existing unattended driver
-(`claude -p /content-factory …`, the same as automation-engineering's run_factory templates) → each verified
-publishing package copied to the output directory → report.
+research screen → deterministic, explainable scoring → diversity selection of exactly N (--count, default 2) → batch
+manifest → N isolated V3.0.1 runs (`factory.py init`, one topic each) → production of each run by the existing
+unattended driver (`claude -p /content-factory …`, the same as automation-engineering's run_factory templates) → each
+verified publishing package copied to the output directory → report.
 
 V3.0.1 stays the single source of truth for research, hooks, scripts, voice, visuals, audio, captions, QA, review,
 packaging, media metadata, platform disclosure and memory ingest. Nothing here changes how a video is made.
 
-Exit: 0 done · 2 invalid input, fewer than 5 usable candidates, or a production run that did not deliver (report) ·
-3 environment not ready (no memory, no driver) — runs prepared so far are kept for `produce`.
+Exit: 0 done · 2 invalid input or --count, fewer than N usable candidates, or a production run that did not deliver
+(report) · 3 environment not ready (no memory, no driver) — runs prepared so far are kept for `produce`.
 """
 from __future__ import annotations
 
@@ -49,7 +49,7 @@ from select_ideas import cos, grams  # noqa: E402   SELECTION's similarity
 
 ENGINE_VERSION = "1.0"
 FILE_VERSION = "1.0"
-WINNERS = 5
+DEFAULT_COUNT = factory.DEFAULT_VIDEO_COUNT   # topics = runs = videos per batch when --count is not given (2)
 NOVELTY_MIN = 0.35          # content-strategy SELECTION: an idea closer than this to past content is rejected
 HOOK_REPEAT = 0.6           # hook engine: a hook this close to a used one is never selected again
 QUALITY_FLOOR = 0.40        # below this total a candidate is not worth a production run (a bare topic scores ≈0.45)
@@ -355,13 +355,13 @@ def similarity(a: dict, b: dict) -> float:
     return round(max(parts) + (0.15 if a.get("category") and a.get("category") == b.get("category") else 0.0), 3)
 
 
-def select(rows: list[dict]) -> tuple[list[dict], list[dict]]:
+def select(rows: list[dict], count: int = DEFAULT_COUNT) -> tuple[list[dict], list[dict]]:
     """Maximal marginal relevance, the same shape as SELECTION (0.75 · quality − 0.25 · similarity to the picks, +0.15
-    for the same category): five strong candidates that differ in subject, angle, hook and visual. A candidate on the
+    for the same category): `count` strong candidates that differ in subject, angle, hook and visual. A candidate on the
     same subject as a pick is never picked. Ties break on the candidate's position in the file."""
     pool = sorted(rows, key=lambda r: (-r["score"]["total"], r["position"]))
     chosen, notes = [], {}
-    while pool and len(chosen) < WINNERS:
+    while pool and len(chosen) < count:
         def mmr(r):
             sims = [(similarity(r, c), c["id"]) for c in chosen]
             s = max(sims, default=(0.0, None))
@@ -382,12 +382,12 @@ def select(rows: list[dict]) -> tuple[list[dict], list[dict]]:
         pool.remove(best)
     for r in pool:
         clash = next((c["id"] for c in chosen if same_subject(r["topic"], c["topic"])), None)
-        notes[r["id"]] = f"same subject as winner {clash}" if clash else "lower marginal score than the five winners"
+        notes[r["id"]] = f"same subject as winner {clash}" if clash else f"lower marginal score than the {len(chosen)} winners"
     return chosen, [{"id": r["id"], "reason": notes[r["id"]]} for r in pool]
 
 
 # ----------------------------------------------------------------------------- the selection pipeline
-def build_selection(cands: list[dict], con, warnings: list[str]) -> dict:
+def build_selection(cands: list[dict], con, warnings: list[str], count: int = DEFAULT_COUNT) -> dict:
     items = cfdb.corpus(con)
     gitems = [grams(it["text"]) for it in items]
     filtered, research, ranked, rejected = [], [], [], []
@@ -416,7 +416,7 @@ def build_selection(cands: list[dict], con, warnings: list[str]) -> dict:
             rejected.append({"id": r["id"], "stage": "quality", "reason": f"total {r['score']['total']:.2f} below the floor {QUALITY_FLOOR}"})
         else:
             kept.append(r)
-    winners, not_selected = select(kept)
+    winners, not_selected = select(kept, count)
     for i, r in enumerate(ranked):
         r["rank"] = i + 1
     return {"filtered": filtered, "research": research, "ranked": ranked, "eligible": [r["id"] for r in kept],
@@ -807,7 +807,7 @@ def cmd_select(a, produce_after: bool) -> int:
     batch = new_batch(batches, raw)
     (batch / "input.json").write_bytes(raw)
     con = cfdb.connect(str(db))
-    sel = build_selection(cands, con, warns)
+    sel = build_selection(cands, con, warns, a.count)
     con.close()
     if mem_info.get("seeded_from"):
         sel["warnings"].append(f"memory was empty; seeded from {mem_info['seeded_from']}")
@@ -815,11 +815,11 @@ def cmd_select(a, produce_after: bool) -> int:
         sel["warnings"].append("memory is empty (--allow-empty-memory): no earlier topics could be refused")
     extra = {"memory": mem_info, "warnings": sel["warnings"]}
     write_analysis(batch, doc, cands, sel)
-    if len(sel["winners"]) < WINNERS:
-        err = (f"only {len(sel['winners'])} usable, mutually different candidates (need {WINNERS}); nothing was produced — "
+    if len(sel["winners"]) < a.count:
+        err = (f"only {len(sel['winners'])} usable, mutually different candidates (need {a.count}); nothing was produced — "
                "add more fresh ideas to the file")
         rep = write_report(batch, "selection_failed", sel, None, {**extra, "error": err})
-        print(json.dumps({"error": "TOO_FEW_CANDIDATES", "batch": str(batch), "usable": len(sel["winners"]), "need": WINNERS,
+        print(json.dumps({"error": "TOO_FEW_CANDIDATES", "batch": str(batch), "usable": len(sel["winners"]), "need": a.count,
                           "rejected": len(rep["rejected"]), "report": str(batch / "report.md")}, indent=1))
         return 2
     m = write_manifest(batch, raw, sel, mem_info, a)
@@ -873,8 +873,11 @@ def main() -> int:
     v = sub.add_parser("validate", help="check an ideas file and print every problem")
     v.add_argument("--ideas-file", default="input/ideas.json")
     for name in ("select", "run"):
-        s = sub.add_parser(name, help="select 5 topics (select) or select and produce them (run)")
+        s = sub.add_parser(name, help=f"select N topics (select) or select and produce them (run); N = --count, "
+                                      f"default {DEFAULT_COUNT}")
         s.add_argument("--ideas-file", default="input/ideas.json")
+        s.add_argument("--count", type=factory.video_count, default=DEFAULT_COUNT,
+                       help=f"number of topics, runs and videos (default {DEFAULT_COUNT}; 1-{factory.MAX_VIDEO_COUNT})")
         s.add_argument("--batches-dir", default=os.environ.get("CF_BATCHES_DIR", "batches"))
         s.add_argument("--db", help="content memory (default: $CF_DB, else $CF_RUNS_DIR/factory.db, as factory.py init)")
         s.add_argument("--allow-empty-memory", action="store_true", help="run with an empty memory on purpose")

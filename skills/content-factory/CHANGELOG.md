@@ -1,5 +1,131 @@
 # Changelog — Autonomous Content Factory
 
+## Video count — 2026-10-14 · default 2 instead of 5, `--count N` everywhere (owner request) · VERSION stays 3.0.1 · untagged
+Scope: `factory.py` (the `init --count` argument only), `idea_engine.py`, the automation-engineering run_factory templates
+and workflow, tests and docs. No stage, gate, contract or experiment behaviour changed.
+### Changed
+- **Default 2 videos.** `factory.py init` makes 2 videos per run when `--count` is not given (was 5). `idea_engine.py
+  select|run` picks 2 topics, so 2 runs and 2 videos (was a fixed 5, `WINNERS`). Both read one constant,
+  `factory.DEFAULT_VIDEO_COUNT`.
+- **`--count N` overrides it** on `factory.py init` and, new, on `idea_engine.py select` and `run`
+  (for example `--count 4`). An existing batch keeps the size it was selected with; `produce --batch` reads the manifest.
+- **Validation.** `--count` must be a positive whole number from 1 to 50 (50 is the brief contract's maximum). `0`, `-1`,
+  `2.5`, `abc`, an empty value or anything above 50 is refused by argparse with exit 2 and the message
+  "invalid count …: must be a positive whole number from 1 to 50, e.g. --count 4 (default 2)", before any run or batch
+  folder is created.
+- **Templates.** `run_factory.ps1 -Count` defaults to 2 and refuses invalid values (exit 2). `run_factory.sh` defaults to 2
+  and accepts `COUNT` or `--count N`, with the same check. `content-factory.yml` defaults to 2 (was 3) and checks the value.
+- **Docs.** SKILL.md, `references/idea-engine.md`, README.md, PROJECT_STATE.md (both copies), CLOUD_HANDOFF.md and the
+  automation-engineering scheduling examples describe the default of 2 and `--count N`.
+### Tests
+- New `tests/test_video_count.py`: the default of 2, `--count 4`, the 1–50 rule and every invalid form, for `factory.py init`
+  and `idea_engine.py select|run`, and the template defaults.
+- `tests/test_idea_engine.py`: the tests built around a five-topic batch now pass `--count 5` explicitly.
+### Not changed
+- `experiment.py`: an experiment's size comes from its frozen plan (six slots, one video per run).
+- The installed copies in `.claude/skills/` are unchanged until they are installed separately.
+
+## Experiment layer 1.2 — 2026-10-14 · `sync-gate` and a stricter `gate` (owner approved) · production engine unchanged (VERSION 3.0.1) · untagged
+Scope: `scripts/experiment.py`, `tests/test_experiment.py`, `references/experiments.md`. No V3.0.1 file changed. The 1.1
+versions are backed up in `checkpoints/experiment-layer-1.2/backup/`.
+### Why
+- Slot 2 of EXP-2026W42-beat3to9-c: SCRIPT escalated (VARIANTS_DISTINCT) inside `drive`, which stopped the slot as `blocked`.
+  After the owner's `factory.py reset` and a re-recorded SCRIPT pass, V3.0.1 says SCRIPT passed, but the slot record still
+  said `blocked` with no approved gate: only `drive` could record a gate, and `drive` goes straight on to audio.
+- `experiment.py gate` returned `ok: true` on a script.json whose SCRIPT stage had failed (`script_select` writes the best
+  variant even when the stage fails).
+### Added
+- `experiment.py sync-gate --batch B --slot N`. It records the pre-audio gate for a slot whose SCRIPT passed outside `drive`.
+  - It runs nothing: no stage, no Claude session, no audio, no factory command, no `drive` or `produce`.
+  - It refuses with nothing written unless all of these hold:
+    - plan, assignment, constraints and manifest verify;
+    - the slot is `prepared`, `blocked` or `gate_failed` and not yet approved;
+    - no `.lock` exists in the run or the batch;
+    - V3.0.1 records HOOK and SCRIPT as passed, the video is `in_progress` and no stage after SCRIPT has passed;
+    - SCRIPT result.json is the recorded one (sha256), its status is passed, and its script output is the current script.json;
+    - the experiment gate passes;
+    - state.json and script.json are unchanged between the check and the write.
+  - On success it writes only `experiment_gate.json` and the slot record. The slot becomes `gate_passed`, with approved_by
+    sync-gate and a sync-gate attempt; history is appended, never rewritten.
+### Changed
+- `gate` is ok only when V3.0.1 recorded SCRIPT as passed. It reports `factory_script` and exits 3 otherwise.
+- `assignment_for` takes the engine label from the plan, not from this file's VERSION. Assignments of an existing batch stay
+  identical after an upgrade; with VERSION 1.2, slot 2's 1.1 assignment would otherwise have failed ready, drive and sync-gate.
+### Tests
+- test_experiment (28; 23 before), in both trees:
+  - gate not ok while SCRIPT is failed or pending (exit 3), and ok once it passed; gate writes nothing;
+  - sync-gate success changes exactly the slot record and experiment_gate.json, with execution paths patched to fail
+    (subprocess, Claude, factory reset, drive, produce, Idea Engine produce); stages unchanged, history kept, a second
+    sync refused with no change;
+  - after sync-gate, drive runs phase B only;
+  - 11 refusal cases leave every batch and run file byte-identical;
+  - the engine label stays the plan's after an upgrade.
+
+## Experiment layer 1.1 — 2026-10-13 · audit fixes 1–6 (owner approved) · production engine unchanged (VERSION 3.0.1) · untagged
+Scope: `scripts/experiment.py`, `tests/test_experiment.py`, `references/experiments.md`, `tools/youtube_sync/yt_sync.py`
+(default output folder), new spec `input/experiments/EXP-2026W42-beat3to9-c.json`. No V3.0.1 stage, gate, reviewer,
+packaging, memory or media code changed. 1.0 files are backed up in `checkpoints/experiment-layer-1.1/backup/`.
+### Changed
+- Experiment `-b` superseded and preserved unchanged: `batches/_superseded/EXP-2026W42-beat3to9-b/`, plan sha256 5d4736a8….
+  The new experiment is `EXP-2026W42-beat3to9-c` (spec sha256 1c4872e9…, plan sha256 632d934d…).
+- Fix 1, the dedicated driver `experiment.py drive`:
+  - phase A (rules in the prompt; stops before AUDIO), then a deterministic gate, then phase B;
+  - non-compliant scripts are reset through `factory.py reset` and rewritten, with at most 2 repairs, then `blocked`;
+  - `experiment.py produce` runs the Idea Engine with this driver and refuses unless `ready`.
+- Fix 2, control arm: the factory's normal structure (twists allowed); only the planned reveal is kept out of the first 9 s.
+- Fix 3, stronger checks:
+  - assigned opening line (or a written override);
+  - question answered within 2 s;
+  - variant reveal identified by its distinctive words starting at 1.5–7 s; setup and hook-repeat checks;
+  - control leak check;
+  - script-to-TTS word alignment verified token by token;
+  - approved script hash enforced in `check`.
+- Fix 4, failure-safe prepare: the manifest is written only when all six runs carry their assignment and constraints. Its
+  created_at is the plan time (otherwise `idea_engine.run_state` would call every prepared run "foreign"). New `ready`
+  preflight.
+- Fix 5, observation windows come from the Analytics data cutoff (last processed day, Pacific time), not the pull time.
+  Data age and pull age are recorded; observations are de-duplicated per cutoff.
+- Fix 6, spec `-c`: unambiguous openings for blind-spot ("Each eye has a hole in its view.") and mirror-eye-movement
+  ("Your mirror can't show your eyes moving."). The afterimage 20-second stare became an on-screen reveal (dashed cyan
+  ghost dot, YOUR EYES ADD THIS).
+- `yt_sync.py pull` now writes to `<repo>/data/analytics` from any folder (1.0 wrote relative to the current folder).
+- `produce` checks that `claude` and the installed skills are present before any driver starts. The driver calls `claude` by
+  its full path (claude.exe or the npm claude.cmd); for a .cmd shim, characters that cmd.exe would re-parse are replaced in the prompt.
+### Tests
+- test_experiment (23): -c valid and -b preserved; plan balanced, write-once, edits refused, normal control rule; partial
+  prepare writes no manifest (verify_batch/ready/produce refuse, exit 2); rerun retries only the failed slot with
+  byte-identical assignments, run_state not foreign, Idea Engine re-preparation is a no-op; tampering detected; driver
+  prompts carry the assignment (stub `claude`); produce drives all six through the experiment driver; non-compliant
+  scripts blocked before audio with the real `factory.py reset`; HOOK reset for openings and repair-then-pass; script
+  change in phase B flagged; each -c topic's compliant script passes its arm and fails the other (estimated and measured);
+  control twist allowed; question/override rules; alignment mismatch; the 10 real produced runs align; cutoff-based windows
+  (the real 13 Oct case: 39 h of data → 24h, not 72h by pull time); before-publication/unknown cutoff; report excludes
+  non-compliant pairs; produce preflight and .cmd-safe prompts; yt_sync default folder.
+
+## Experiment layer 1.0 — 2026-10-13 · paired creative tests above the Idea Engine (owner request) · production engine unchanged (VERSION 3.0.1) · untagged
+Scope: new files only. `scripts/experiment.py`, `tests/test_experiment.py`, `references/experiments.md`; read-only analytics
+pull `tools/youtube_sync/yt_sync.py` (outside the skills). No stage, gate, reviewer, packaging, memory or media code changed.
+### Added
+- `experiment.py plan | prepare | check | link | observe | manual-template | manual | report | status` (cf-experiment/1):
+  - frozen, self-hashed assignments (balanced coin flip);
+  - hand-off as an ordinary idea batch, so `idea_engine.py produce` runs it unchanged;
+  - per-slot `--constraint` rules and `experiment_assignment.json` in each run;
+  - production check from script beats + word timing;
+  - append-only observations with source, time and status (Stayed to watch is manual-only, never substituted);
+  - manual CSV entry and a weekly report with the audit's provisional decision rule.
+- First experiment spec `input/experiments/EXP-2026W42-beat3to9-b.json`: 3 matched pairs (blind spot / afterimage, mirror
+  front-back / mirror eye movement, Moon's face / daytime stars). It isolates the 3–9 s beat; claim-first openings in both arms.
+### Tests
+- test_experiment (10): spec validation; one variant per pair, balanced, alternating slots; write-once/deterministic
+  plan; edited plan refused; prepare produces a batch `IE.verify_batch` accepts, restart-safe, failed init retried alone;
+  variant compliance (setup/hook repeat/no reveal); link + observe without invented metrics, idempotent; manual CSV;
+  report (preliminary, missing data, views never decide). `factory.py init` is stubbed: the real one needs the production machine.
+### Known limits
+- The rules reach the script through brief constraints and the operator; V3.0.1 does not enforce them. `check`
+  detects violations afterwards, and the report lists them as confounders.
+- The memory cleanup of 2026-10-10 removed rows that `test_idea_engine` uses as fixtures. Those tests pass (23/23
+  non-production) against the committed dump (`git show HEAD:memory/dump.json`), not against the current memory/dump.json.
+
 ## Idea Engine 1.0 — 2026-10-07 · batch layer above V3.0.1 (owner decision) · production engine unchanged (VERSION 3.0.1) · untagged
 Scope: a new entry point, `scripts/idea_engine.py`. No stage, gate, reviewer, packaging, memory or media-cleaning code
 changed; V3.0.1 stays the source of truth for how every video is made.

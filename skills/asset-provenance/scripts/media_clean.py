@@ -137,9 +137,120 @@ def clean(src: Path, dst: Path) -> None:
     (clean_mp4 if src.suffix.lower() in (".mp4", ".m4v", ".mov") else clean_jpg)(Path(src), Path(dst))
 
 
-def strings(path: Path, n: int = 5) -> list[str]:
-    data = Path(path).read_bytes()
+def blob_strings(data: bytes, n: int = 5) -> list[str]:
     return [m.group().decode("latin-1") for m in re.finditer(rb"[\x20-\x7e]{%d,}" % n, data)]
+
+
+def strings(path: Path, n: int = 5) -> list[str]:
+    """Every printable run in the whole file (kept for callers; audit() no longer scans compressed samples)."""
+    return blob_strings(Path(path).read_bytes(), n)
+
+
+# v3.0.2 — where the embedded-text scan looks. It used to scan every byte of the file, so 5 random printable bytes inside
+# compressed picture data (e.g. "OnNX5" in an x264 keyframe) failed PKG.MEDIA_METADATA_CLEAN, and a deterministic encode
+# could not clear it. Text a file can actually carry lives in: the MP4 box structure outside `mdat` (udta/meta/ilst/
+# uuid/hdlr/stsd...), any bytes after the last box, the H.264 non-picture NAL units (SEI user data — where x264 writes
+# its version — SPS/PPS/AUD), the AAC bitstream (encoder strings in fill elements: checked against encoder signatures
+# only, since short words can occur by chance in compressed audio), the JPEG header segments before and between scans,
+# and anything after the JPEG end-of-image marker. Whatever cannot be parsed is scanned whole, as before.
+ENCODER_RE = re.compile(r"x264 - core|Lav[fc]\d+\.\d+|libfdk|FAAC|Nero AAC")    # case-sensitive signatures
+VCL_NAL_TYPES = {1, 2, 3, 4, 5, 20, 21}             # H.264 coded-slice NAL units: compressed picture data
+
+
+def _ffmpeg_out(cmd: list) -> bytes | None:
+    p = subprocess.run([ffmpeg_bin(), "-v", "error"] + [str(c) for c in cmd], capture_output=True)
+    return p.stdout if p.returncode == 0 else None
+
+
+def mp4_regions(path: Path, data: bytes) -> list[tuple]:
+    regions, meta, mdat, off = [], bytearray(), [], 0
+    while off + 8 <= len(data):
+        size, typ = struct.unpack(">I4s", data[off:off + 8])
+        hdr = 8
+        if size == 1 and off + 16 <= len(data):
+            size, hdr = struct.unpack(">Q", data[off + 8:off + 16])[0], 16
+        elif size == 0:
+            size = len(data) - off
+        if size < hdr or off + size > len(data):
+            break                                  # not a box: the rest is scanned whole below
+        if typ == b"mdat":
+            meta += data[off:off + hdr]
+            mdat.append(data[off + hdr:off + size])
+        else:
+            meta += data[off:off + size]
+        off += size
+    regions.append(("mp4 boxes", bytes(meta), MEDIA_DENY_RE))
+    if off < len(data):
+        regions.append(("bytes outside the mp4 boxes", data[off:], MEDIA_DENY_RE))
+    if not mdat:
+        return regions
+    p = subprocess.run([ffprobe(), "-v", "error", "-show_entries", "stream=index,codec_type,codec_name", "-of", "json", str(path)],
+                       capture_output=True, text=True)
+    streams = json.loads(p.stdout or "{}").get("streams", []) if p.returncode == 0 else []
+    parsed = bool(streams)
+    for st in streams:
+        i, kind, codec = st.get("index"), st.get("codec_type"), st.get("codec_name")
+        if kind == "video" and codec == "h264":
+            es = _ffmpeg_out(["-i", path, "-map", f"0:{i}", "-c", "copy", "-bsf:v", "h264_mp4toannexb", "-f", "h264", "-"])
+            if es is None:
+                parsed = False
+                continue
+            nals = [n for n in re.split(rb"\x00\x00\x01", es) if n and (n[0] & 0x1F) not in VCL_NAL_TYPES]
+            regions.append((f"h264 stream {i}: SEI/SPS/PPS units", b"\n".join(nals), MEDIA_DENY_RE))
+        elif kind == "audio":
+            es = _ffmpeg_out(["-i", path, "-map", f"0:{i}", "-c", "copy", "-f", "data", "-"])
+            if es is None:
+                parsed = False
+                continue
+            regions.append((f"{codec} stream {i}: encoder signatures", es, ENCODER_RE))
+        else:
+            parsed = False                         # a stream this audit cannot split: scan its samples whole
+    if not parsed:
+        regions.append(("mdat (not parsed)", b"\n".join(mdat), MEDIA_DENY_RE))
+    return regions
+
+
+def jpeg_regions(data: bytes) -> list[tuple]:
+    hdr, i, n = bytearray(data[:2]), 2, len(data)
+    while i + 1 < n:
+        if data[i] != 0xFF:
+            return [("jpeg (unparsed)", data, MEDIA_DENY_RE)]
+        m = data[i + 1]
+        if m == 0xFF:                                # fill byte
+            i += 1
+            continue
+        if m == 0xD9:                                # end of image: anything after it is not picture data
+            return [("jpeg segments", bytes(hdr), MEDIA_DENY_RE)] + (
+                [("bytes after the jpeg end marker", data[i + 2:], MEDIA_DENY_RE)] if data[i + 2:] else [])
+        if 0xD0 <= m <= 0xD7 or m == 0x01:
+            i += 2
+            continue
+        seg_len = int.from_bytes(data[i + 2:i + 4], "big")
+        hdr += data[i:i + 2 + seg_len]
+        i += 2 + seg_len
+        if m == 0xDA:                                # entropy-coded data until the next real marker
+            j = i
+            while True:
+                j = data.find(b"\xff", j)
+                if j < 0 or j + 1 >= n:
+                    return [("jpeg segments", bytes(hdr), MEDIA_DENY_RE)]
+                k = data[j + 1]
+                if k == 0x00 or 0xD0 <= k <= 0xD7 or k == 0xFF:
+                    j += 1 if k == 0xFF else 2
+                    continue
+                break
+            i = j
+    return [("jpeg segments", bytes(hdr), MEDIA_DENY_RE)]
+
+
+def text_regions(path: Path) -> list[tuple]:
+    """(where, bytes, pattern) for every part of a publishable file that can carry text."""
+    data = Path(path).read_bytes()
+    if path.suffix.lower() in (".mp4", ".m4v", ".mov"):
+        return mp4_regions(path, data)
+    if data[:2] == b"\xff\xd8":
+        return jpeg_regions(data)
+    return [("whole file", data, MEDIA_DENY_RE)]
 
 
 def audit(path: Path) -> dict:
@@ -192,9 +303,9 @@ def audit(path: Path) -> dict:
             if k not in ("jfif", "jfif_version", "jfif_unit", "jfif_density", "dpi", "progressive", "progression",
                          "adobe", "adobe_transform"):
                 findings.append({"where": "jpeg info", "key": k, "value": str(im.info[k])[:80]})
-    hits = sorted({m.group() for s in strings(path) for m in MEDIA_DENY_RE.finditer(s)})
-    for h in hits:
-        findings.append({"where": "embedded text", "key": "denylisted string", "value": h})
+    for where, blob, rx in text_regions(path):     # v3.0.2: metadata/text regions only, never compressed samples
+        for h in sorted({m.group() for s in blob_strings(blob) for m in rx.finditer(s)}):
+            findings.append({"where": f"embedded text ({where})", "key": "denylisted string", "value": h})
     return {"file": path.name, "clean": not findings, "findings": findings}
 
 

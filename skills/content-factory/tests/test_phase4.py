@@ -480,7 +480,8 @@ class PackageStageEndToEnd(unittest.TestCase):
     def test_2_disclosure_and_metadata_policy_unchanged(self):
         meta = json.loads((self.pkg / "metadata.json").read_text())
         prov = json.loads((self.pkg / "provenance.json").read_text())
-        self.assertIn(prov["disclosure"]["description_line"], meta["youtube"]["description"])
+        self.assertNotIn(prov["disclosure"]["description_line"], meta["youtube"]["description"])   # v3.0.2: labels only
+        self.assertEqual(meta["hashtags_copy_ready"], ", ".join(h.lstrip("#") for h in meta["hashtags"]))
         self.assertIsNotNone(meta["tiktok"]["ai_generated_label"])
         self.assertIsNotNone(meta["instagram"]["ai_info"])
 

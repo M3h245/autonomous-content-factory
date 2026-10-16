@@ -216,7 +216,7 @@ class PackagedDeliverables(unittest.TestCase):
 
     def test_package_passed(self):
         self.assertEqual(self.p.returncode, 0, self.p.stdout[-1500:] + self.p.stderr[-1500:])
-        res = json.loads((self.pkg / "result.json").read_text())
+        res = json.loads((self.pkg / "result.json").read_text(encoding="utf-8"))
         self.assertEqual(res["status"], "passed")
         checks = {c["id"]: c["passed"] for c in res["gate"]["checks"]}
         self.assertTrue(checks["PKG.MEDIA_METADATA_CLEAN"])
@@ -232,13 +232,13 @@ class PackagedDeliverables(unittest.TestCase):
                 self.assertEqual(jpeg_problems(self.pkg / n), [], n)
 
     def test_disclosure_lives_outside_the_media(self):
-        meta = json.loads((self.pkg / "metadata.json").read_text())
+        meta = json.loads((self.pkg / "metadata.json").read_text(encoding="utf-8"))
         labels = [meta["youtube"].get("altered_or_synthetic"), meta["tiktok"].get("ai_generated_label"),
                   meta["instagram"].get("ai_info")]
         self.assertTrue(all(x is not None for x in labels), labels)
-        prov = json.loads((self.pkg / "provenance.json").read_text())
-        self.assertIn(prov["disclosure"]["description_line"], meta["youtube"]["description"])
-        self.assertIn("AI labels", (self.pkg / "PUBLISHING_PACKAGE.md").read_text())
+        prov = json.loads((self.pkg / "provenance.json").read_text(encoding="utf-8"))
+        self.assertNotIn(prov["disclosure"]["description_line"], meta["youtube"]["description"])   # v3.0.2: labels only
+        self.assertIn("AI labels", (self.pkg / "PUBLISHING_PACKAGE.md").read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":

@@ -67,3 +67,12 @@ Thumbs.db
 !checkpoints/**/*.zip
 !fixtures/**/*.mp4
 !fixtures/**/*.wav
+
+# Local / machine-specific files (2026-10-16)
+/-File
+desktop.ini
+/capabilities.json
+/.claude/
+/memory/backup-*/
+/data/
+/tools/youtube_sync/data/
