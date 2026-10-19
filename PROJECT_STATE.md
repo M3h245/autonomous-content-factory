@@ -1,8 +1,16 @@
-# PROJECT STATE — Autonomous Content Factory · v3.0.1 + Idea Engine 1.0 (frozen; post-freeze additions to v3.0.0) · 2026-10-07
+# PROJECT STATE — Autonomous Content Factory · v3.1.0 (analytics and feedback loop) · 2026-10-19
+
+
+## v3.1.0 (2026-10-18/19) — analytics and feedback loop
+`docs/v3.1.0/` (ROADMAP, AUDIT, ARCHITECTURE, METRICS, VALIDATION, IMPLEMENTATION_REPORT, WINDOWS_SYNC_PROPOSAL),
+`content-analytics/scripts/learning.py`, `learning_apply.py` and `content-database/scripts/reconcile.py`, with the
+consumers in idea_engine, factory init and hook_engine. The synchronisation steps W0–W5 (`WINDOWS_SYNC_PROPOSAL.md`)
+were **applied to the production database** on 2026-10-18/19: runs 36, publications 18, yt_observations 8 584,
+`data/learning/latest.json` in place, `memory/dump.json` re-exported from the 36-run database.
 
 ## Status
-**Development is frozen at v3.0.0** (tag `v3.0.0`). Two post-freeze additions were made by owner decision, both
-untagged (CHANGELOG):
+**The production system is v3.1.0** (Idea Engine 1.0 above V3.0.1; the analytics/learning layer added in v3.1.0).
+v3.0.0 is frozen (tag `v3.0.0`); v3.0.1 and Idea Engine 1.0 were post-freeze additions by owner decision (CHANGELOG):
 - **v3.0.1**: final-media metadata only.
 - **Idea Engine 1.0**: a batch layer above V3.0.1 (`content-factory/scripts/idea_engine.py`). It takes an ideas file,
   filters it against memory, scores and selects N topics (`--count N`, default 2; 5 before 2026-10-14), and hands
@@ -15,13 +23,32 @@ videos (one topic with `factory.py`, or several from an ideas file with `idea_en
 logging analytics. Any further change is a new decision by the owner.
 
 ## Where things are
+- **Outputs (2026-10-19):** `D:\Youtube\autonomous-content-factory\outputs\` via `CF_OUTPUT_DIR` (user env var;
+  `--output-dir` overrides). Delivery is **flat and date-first**: one folder per video directly in `outputs\`,
+  named `YYYY-MM-DD_NN_topic` (e.g. `2026-10-20_01_why-do-ants-not-get-hurt-when-they-fall`) — no batch-id
+  wrapper. Owner workflow: after posting, the folder moves to `outputs\Archive\` unchanged (the name already sorts
+  chronologically). All 18 published folders were renamed to that format on 2026-10-19 and the duplicate-render
+  copy `20261014` (leidenfrost + pareidolia re-renders) was deleted per owner. Superseded project files:
+  `D:\Youtube\autonomous-content-factory\archive\project\`.
+- **Versions (owner decision 2026-10-19):** old releases live **only in git** — GitHub holds every release zip in
+  history; locally only the current release stays (`checkpoints/v3.0.0/`) plus the current version's zips in
+  `D:\Youtube\autonomous-content-factory\versions\`. `checkpoints/v2.0.0-alpha8/` was removed from the working
+  tree (still in git history; restore from git if ever needed). The three ad-hoc `checkpoint_*.zip` state
+  snapshots in `versions\` were deleted per owner on 2026-10-19 (all their run states exist in
+  `cloud-runs-20261016` and the videos are published); the folder stays for current-version zips.
 - `checkpoints/v3.0.0/` (in git):
   - `content-factory-v3.0.0.zip` (the skills)
   - `phase5-package-leap.zip` (the publishable package)
   - `phase5-rejected-for-review.zip` (the two videos the independent judge rejected, for inspection, not for upload)
   - `phase5-records.zip` (run states, events, reports, judgments, authoring scripts)
   - `memory-dump.json`, PHASE_5_REPORT.md, this file, SHA256SUMS.txt
-- `checkpoints/v2.0.0-alpha8/` is unchanged.
+- `checkpoints/v2.0.0-alpha8/` is git-history only since 2026-10-19 (removed from the working tree; restore from
+  git if ever needed).
+- **Batch run media stripped (2026-10-19):** `batches/20261007-*` and `batches/20261009-*` keep the state text
+  (133+ JSON/SVG per run, manifests) and the package (zip containing final.mp4); scene art, rejected-hook frames,
+  audio stems and interim renders were deleted (1.64 GB — batches 2.4 GB → 0.77 GB). The 10-14/10-16 run files are
+  in `C:\Users\M3H245\content-factory\runs\cloud-runs-20261016\` — that is what `learning.py attributes
+  --runs-root` reads for those videos.
 - `seeds/` holds the authored inputs of all five recent runs; `memory/dump.json` holds the channel memory (8 runs).
 
 Integrity: `cd checkpoints/v3.0.0 && sha256sum -c SHA256SUMS.txt`.
@@ -97,8 +124,10 @@ For the v1 regression, see CLOUD_HANDOFF.md. To replay a run: `python3 work/phas
     a fallback.
 
 ## Next
-None — frozen. Operation, either:
+Operation, either:
 - `factory.py init --topic …` → loop `next` → `package --zip`; or
-- `idea_engine.py run --ideas-file input/ideas.json --output-dir <HDD>` → read `batches/<id>/report.md`.
+- `idea_engine.py run --ideas-file input/ideas.json` → read `batches/<id>/report.md` (packages are copied to
+  `CF_OUTPUT_DIR` = `D:\Youtube\autonomous-content-factory\outputs`; `--output-dir <folder>` overrides).
 
-Then upload by hand → `cfdb.py publish` / content-analytics.
+Then upload by hand → `cfdb.py publish` / content-analytics. The feedback loop (pull → ingest → `learning.py
+analyze` → next `idea_engine --learning`) runs by hand today; v3.2 automation is the next planned work.

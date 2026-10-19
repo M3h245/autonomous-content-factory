@@ -30,7 +30,22 @@ Remember everything the factory made and learned so batches don't repeat themsel
 - Novelty check: `cfdb.py similar --db factory.db --text "candidate title or hook"` (char-trigram cosine).
 - Topic check: `cfdb.py topic-check --db factory.db --text "…"` → `{topic, checked, repeats}` (repeat = trigram cosine
   ≥0.6, ≥2 shared content stems, or one topic containing the other).
-- After upload by the user: `cfdb.py publish --video v01 --platform youtube --url … --platform-id …`.
+- After upload by the user: preferred `ingest_youtube.py --publications-only` (content-analytics). It links by file-hash
+  evidence and takes the time from a yt_sync snapshot, writing it only when that snapshot shows the video `public` with
+  no `publishAt`; a video that is not yet public is held, not written.
+- Manual fallback: `cfdb.py publish --run-id RUN --video v01 --platform youtube --url … --platform-id …
+  --published-at YYYY-MM-DDTHH:MM:SSZ`. Every argument is required, the run is never guessed, the time is never
+  generated ("now"), an existing row is never overwritten (exit 3 CONFLICT) and the four legacy channel videos
+  (`LEGACY_CHANNEL_VIDEOS`) are refused. **Limit:** cfdb.py only checks the UTC format of `--published-at`; it has no
+  YouTube access, so it cannot verify that the value is correct, that it is the public time rather than the upload or
+  scheduled time, or that the video is public. That stays the operator's responsibility.
+
+### Cloud → canonical database (v3.1.0)
+`scripts/reconcile.py plan --db factory.db --run <cloud run dir> … --out plan.json`, then, after the owner approves,
+`reconcile.py apply --db factory.db --plan plan.json --report applied.json`. It validates the runs and classifies every row
+as insert, identical or conflict by its full primary key (a `v01` only together with its run_id). It inserts only, takes
+a backup, refuses a stale plan and never writes publications, metrics, weights or `yt_*`. See
+`docs/v3.1.0/ARCHITECTURE.md`.
 
 ## Quality gate
 Upserts are idempotent (primary keys per run/video/stage/attempt); `stats` must show the ingested counts.
@@ -45,7 +60,7 @@ Corrupt or missing DB → rebuild from `dump.json` or by re-ingesting run folder
 capability is available on claude.ai but not provisioned by default.
 
 ## Scripts
-`scripts/cfdb.py init|ingest-run|similar|topic-check|history|publish|log-feedback|weights|export|import|stats`
+`scripts/cfdb.py init|ingest-run|similar|topic-check|history|publish|log-feedback|weights|export|import|stats` · `scripts/reconcile.py plan|apply`
 
 ## Interactions
 content-strategy (history, weights), hook-engineering (weights), content-analytics (metrics), content-factory (run ingest).

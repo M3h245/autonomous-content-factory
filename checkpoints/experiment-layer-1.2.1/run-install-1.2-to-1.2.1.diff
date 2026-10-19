@@ -1,0 +1,79 @@
+--- run-install-1.2.cmd (6afcdf56...)
++++ run-install-1.2.1.cmd (new)
+@@ -1,6 +1,6 @@
+ @echo off
+ setlocal
+-rem run-install-1.2.cmd - starts install-1.2.ps1 (hash-guarded install of experiment layer 1.2 into .claude\skills, then
++rem run-install-1.2.1.cmd - starts install-1.2.1.ps1 (hash-guarded install of experiment layer 1.2.1 into .claude\skills, then
+ rem test_experiment) and decides the result from the script's status file, never from powershell.exe's exit code alone.
+ rem It never runs gate, sync-gate, drive, produce or a rollback.
+ rem
+@@ -9,7 +9,7 @@
+ rem else and with "FINISHED <token> <code> <time>" as its very last action. A status file proves nothing after a power cut,
+ rem an OS crash or a disk failure, and another program could still change or delete it between writes and reads.
+ rem
+-rem Exit codes (same table as in install-1.2.ps1):
++rem Exit codes (same table as in install-1.2.1.ps1):
+ rem   from the script (only accepted when the status says FINISHED with the same token and code), a bit mask;
+ rem   0 = everything succeeded and was verified:
+ rem     2 precondition stop (no target changed)      4 copy stopped, failed or incomplete
+@@ -43,7 +43,7 @@
+ if not defined SystemRoot goto nops
+ if not exist "%PSEXE%" goto nops
+ 
+-"%PSEXE%" -NoProfile -ExecutionPolicy Bypass -File "%~dp0install-1.2.ps1" -StatusFile "%STATUS%" -LaunchToken "%TOKEN%"
++"%PSEXE%" -NoProfile -ExecutionPolicy Bypass -File "%~dp0install-1.2.1.ps1" -StatusFile "%STATUS%" -LaunchToken "%TOKEN%"
+ set "RC=%ERRORLEVEL%"
+ echo.
+ 
+@@ -65,42 +65,42 @@
+ if not "%S3%"=="%RC%" goto inconsistent
+ set "FINAL=%RC%"
+ if "%RC%"=="0" (
+-  echo install-1.2: OVERALL OK, exit code 0
++  echo install-1.2.1: OVERALL OK, exit code 0
+ ) else (
+-  echo install-1.2: NOT OK, exit code %RC% = sum of the bits listed at the top of this file and in the log
++  echo install-1.2.1: NOT OK, exit code %RC% = sum of the bits listed at the top of this file and in the log
+ )
+ goto report
+ 
+ :prepfail
+-echo install-1.2: NOT STARTED - the status file could not be prepared. PowerShell was not run; nothing was done.
++echo install-1.2.1: NOT STARTED - the status file could not be prepared. PowerShell was not run; nothing was done.
+ set "FINAL=512"
+ goto report
+ 
+ :nops
+-echo install-1.2: NOT STARTED - powershell.exe not found at "%PSEXE%". Nothing was done.
++echo install-1.2.1: NOT STARTED - powershell.exe not found at "%PSEXE%". Nothing was done.
+ set "FINAL=512"
+ goto report
+ 
+ :notstarted
+-echo install-1.2: NOT STARTED - the status still says LAUNCHED. PowerShell did not start the script ^(execution policy
++echo install-1.2.1: NOT STARTED - the status still says LAUNCHED. PowerShell did not start the script ^(execution policy
+ echo or parse error^) or the script could not record its start, so it did nothing. powershell.exe exit code: %RC%
+ set "FINAL=512"
+ goto report
+ 
+ :vanished
+-echo install-1.2: INTERRUPTED/UNKNOWN - the status file disappeared after the launch. The result is unknown: check the
++echo install-1.2.1: INTERRUPTED/UNKNOWN - the status file disappeared after the launch. The result is unknown: check the
+ echo four .claude targets and the log before doing anything else. powershell.exe exit code: %RC%
+ set "FINAL=1024"
+ goto report
+ 
+ :interrupted
+-echo install-1.2: INTERRUPTED/UNKNOWN - the script started but did not record FINISHED. The result is unknown: check the
++echo install-1.2.1: INTERRUPTED/UNKNOWN - the script started but did not record FINISHED. The result is unknown: check the
+ echo four .claude targets and the log before doing anything else. powershell.exe exit code: %RC%
+ set "FINAL=1024"
+ goto report
+ 
+ :inconsistent
+-echo install-1.2: INCONSISTENT/UNKNOWN - unexpected status ^(first line: "%LINE%"^), powershell.exe exit code: %RC%.
++echo install-1.2.1: INCONSISTENT/UNKNOWN - unexpected status ^(first line: "%LINE%"^), powershell.exe exit code: %RC%.
+ echo The result is unknown: check the four .claude targets and the log before doing anything else.
+ set "FINAL=2048"
+ 

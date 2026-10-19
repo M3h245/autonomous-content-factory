@@ -76,7 +76,7 @@ def main() -> int:
     if a.continue_run:
         run = Path(a.continue_run)
         state_file = run / "replay_log.json"
-        log = json.loads(state_file.read_text()) if state_file.exists() else []
+        log = json.loads(state_file.read_text(encoding="utf-8")) if state_file.exists() else []
     else:
         run = Path(json.loads(sh(init).stdout)["run"])
         log = []
@@ -84,7 +84,7 @@ def main() -> int:
     actions = 0
     for _ in range(80):
         if a.max_actions and actions >= a.max_actions:
-            (run / "replay_log.json").write_text(json.dumps(log, indent=1))
+            (run / "replay_log.json").write_text(json.dumps(log, indent=1), encoding="utf-8")
             print(json.dumps({"replay_run": str(run), "paused_after_actions": actions, "resume": f"--continue {run}"}))
             return 0
         actions += 1
@@ -122,7 +122,7 @@ def main() -> int:
         else:
             log.append({"step": act, "detail": d})
             break
-    (run / "replay_log.json").write_text(json.dumps(log, indent=1))
+    (run / "replay_log.json").write_text(json.dumps(log, indent=1), encoding="utf-8")
     total = round(time.time() - t0, 1)
     sh([PY, F, "report", "--run", run])
     vids = list(read_json(run / "state.json")["videos"])

@@ -1,5 +1,50 @@
 # Changelog — Autonomous Content Factory
 
+## v3.1.0 — 2026-10-18 · analytics and feedback loop (owner request) · untagged until approved
+Scope: content-analytics (new `learning.py`, `learning_apply.py`), content-database (new `reconcile.py`), consumers in
+`idea_engine.py`, `factory.py init` / HOOK gate command and `hook_engine.py select`, tests, docs (`docs/v3.1.0/`). No
+research, voice, render, QA, packaging or experiment gate changed. Plan and evidence: `docs/v3.1.0/ROADMAP.md`, `AUDIT.md`,
+`VALIDATION.md`, `IMPLEMENTATION_REPORT.md`.
+### Added
+- **learning.py attributes:** creative attributes per published video, read from the run's own files with their hashes.
+  Covers opening form, curiosity mechanism, hook length, first-explanation time, beat roles, scene density, duration,
+  format, title form, CTA and loop beats, and category (only when an idea batch assigned it).
+- **learning.py kpis:** fixed-age KPIs (D1/D3/D7 views, engaged views, engaged share) from daily per-video rows, plus
+  lifetime values labelled with their age. Maturity classes `none / early / d3 / d7`; missing data is NULL with a status.
+- **learning.py analyze:**
+  - group comparisons on the D3 engaged share, with shrinkage, a bootstrap interval, confidence labels and the avg view % guardrail;
+  - findings with evidence and sample size;
+  - bounded directives, the next hypothesis, tracking of earlier hypotheses and experiment arms, and the registered experiments;
+  - outputs `learning_summary.json` (cf-learning/1) and `LEARNING_REPORT.md`.
+- **Directive rule:** a directive needs n≥3 per side, an 80 % interval that excludes 0, and a guardrail (avg view %) no
+  more than 5 pp worse; otherwise the level is listed under `explore` with the reason.
+- **Duplicate run folders:** when the same run exists twice (a stale PC copy and a finished cloud copy), the most
+  complete folder is used and the duplicate is reported.
+- **learning_apply.py:** the shared, bounded read side used by every consumer.
+- **reconcile.py plan|apply:** cloud run folders or dumps reach the canonical database insert-only. Runs are validated
+  first; the tool detects conflicts, refuses a stale plan, takes a backup, verifies the result and writes a report.
+### Changed (all opt-out, recorded)
+- **idea_engine select|run:**
+  - reads `--learning`, else `$CF_LEARNING`, else `data/learning/latest.json`; `--no-learning` restores the old behaviour exactly;
+  - category priors are bounded at ±15 % and the quality floor uses the unadjusted score;
+  - the influence is recorded in ranking, selected and manifest, and the summary is passed to each run's init. A summary
+    that changed after selection is refused (LEARNING_CHANGED).
+- **factory.py init --learning:**
+  - records the summary in run.json, copies it to `learning.json` and adds its guidance to the constraints;
+  - merges the format priors into SELECTION's `weights.json`;
+  - a broken file is refused (LEARNING_INVALID). The HOOK v2 gate passes `--learning` when the run has a summary.
+- **hook_engine select --learning:**
+  - a bounded bonus (±1.5 review points max) re-ranks only the candidates that passed the review;
+  - records `learning_influence` (choice without learning, bonuses, changed or not) and adds HOOK.LEARNING_COVERAGE (minor).
+### Tests
+- New: `content-analytics/tests/test_learning.py` (15), `content-database/tests/test_reconcile.py` (5),
+  `content-factory/tests/test_learning_loop.py` (7).
+- `test_idea_engine.py` now also clears `CF_LEARNING`.
+### Not changed
+- The production database, `memory/dump.json`, YouTube data and experiment specs.
+- `cfdb.py publish` (still available, not used by the workflow).
+- The installed `.claude/skills` copies (they need a separate install).
+
 ## Video count — 2026-10-14 · default 2 instead of 5, `--count N` everywhere (owner request) · VERSION stays 3.0.1 · untagged
 Scope: `factory.py` (the `init --count` argument only), `idea_engine.py`, the automation-engineering run_factory templates
 and workflow, tests and docs. No stage, gate, contract or experiment behaviour changed.

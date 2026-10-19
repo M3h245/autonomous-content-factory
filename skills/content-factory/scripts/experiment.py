@@ -251,7 +251,7 @@ def manifest_for(batch: Path, plan: dict, db: str) -> dict:
     # than the batch ("foreign"); a manifest stamped after prepare would make every prepared run foreign.
     m = {"schema": "cf-idea-batch/1", "batch_id": batch.name, "created_at": plan["created_at"], "manifest_written_at": now_iso(),
          "engine": f"experiment {VERSION} ({SCHEMA}) via idea_engine {IE.ENGINE_VERSION}",
-         "factory_version": (IE.SKILLS / "content-factory" / "VERSION").read_text().strip(),
+         "factory_version": (IE.SKILLS / "content-factory" / "VERSION").read_text(encoding="utf-8").strip(),
          "ideas_file": {"path": str((batch / "input.json").resolve()), "sha256": plan["spec_sha256"], "archived_as": "input.json"},
          "memory": {"db": db, "items": None, "history_sha256": None},
          "selected": [{"slot": s["slot"], "id": s["topic_key"], "position": s["slot"], "topic": s["topic"],

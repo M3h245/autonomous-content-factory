@@ -47,6 +47,7 @@ runs_*/
 /input/*.json
 !/input/ideas.example.json
 /out/
+# outputs moved to D:\Youtube\autonomous-content-factory (CF_OUTPUT_DIR); entry kept as a safety net
 /outputs/
 /scratch/
 cf_fx_*/
@@ -73,6 +74,7 @@ Thumbs.db
 desktop.ini
 /capabilities.json
 /.claude/
+/.agents/
 /memory/backup-*/
 /data/
 /tools/youtube_sync/data/

@@ -189,8 +189,12 @@ batches/<YYYYMMDD-HHMMSS-sha8>/          one folder per batch; never reused
   runs/<run-id>/    the N V3.0.1 runs (each its own folder, state, lock and package)
   logs/NN-<run>.<attempt>.log   driver output per attempt (never overwritten)
   report.json, report.md
-<output-dir>/<batch-id>/NN-<run-id>/package/…  plus <run-id>_package.zip     verified copy of each delivered package
+<output-dir>/<YYYY-MM-DD>_NN_<slug>/package/…  plus <run-id>_package.zip     verified copy of each delivered package
 ```
+
+Delivery is flat and date-first: one folder per video directly in `--output-dir`, named
+`YYYY-MM-DD_NN_slug` (e.g. `2026-10-08_01_stars-twinkle`) — no batch-id wrapper. After posting, the owner moves
+the folder into `outputs\Archive\` unchanged (the name already sorts chronologically).
 
 The report answers:
 - how many candidates were supplied, how many were invalid and why
@@ -298,7 +302,7 @@ with `TOO_FEW_CANDIDATES` (exit 2): no manifest, no runs, and no invented topics
 3. **Verification and delivery.** Only V3.0.1's state is evidence. A run is delivered when every video is `packaged`,
    its PACKAGE stage passed, and `package/<vid>/result.json` is byte-identical to the envelope `record` stored
    (sha256).
-   - The package is copied to `<output-dir>/<batch-id>/NN-<run>/`, together with the zip.
+   - The package is copied to `<output-dir>/<YYYY-MM-DD>_NN_<slug>/`, together with the zip.
    - Every file is verified against the run's `checksums.sha256`, before and after the copy.
    - An existing output folder is never overwritten. An identical one counts as delivered; a different one is refused.
 

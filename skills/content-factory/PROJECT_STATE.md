@@ -1,8 +1,16 @@
-# PROJECT STATE — Autonomous Content Factory · v3.0.1 + Idea Engine 1.0 (frozen; post-freeze additions to v3.0.0) · 2026-10-07
+# PROJECT STATE — Autonomous Content Factory · v3.1.0 (analytics and feedback loop) · 2026-10-19
+
+
+## v3.1.0 (2026-10-18/19) — analytics and feedback loop
+`docs/v3.1.0/` (ROADMAP, AUDIT, ARCHITECTURE, METRICS, VALIDATION, IMPLEMENTATION_REPORT, WINDOWS_SYNC_PROPOSAL),
+`content-analytics/scripts/learning.py`, `learning_apply.py` and `content-database/scripts/reconcile.py`, with the
+consumers in idea_engine, factory init and hook_engine. The synchronisation steps W0–W5 (`WINDOWS_SYNC_PROPOSAL.md`)
+were **applied to the production database** on 2026-10-18/19: runs 36, publications 18, yt_observations 8 584,
+`data/learning/latest.json` in place, `memory/dump.json` re-exported from the 36-run database.
 
 ## Status
-**Development is frozen at v3.0.0** (tag `v3.0.0`). Two post-freeze additions were made by owner decision, both
-untagged (CHANGELOG):
+**The production system is v3.1.0** (Idea Engine 1.0 above V3.0.1; the analytics/learning layer added in v3.1.0).
+v3.0.0 is frozen (tag `v3.0.0`); v3.0.1 and Idea Engine 1.0 were post-freeze additions by owner decision (CHANGELOG):
 - **v3.0.1**: final-media metadata only.
 - **Idea Engine 1.0**: a batch layer above V3.0.1 (`content-factory/scripts/idea_engine.py`). It takes an ideas file,
   filters it against memory, scores and selects N topics (`--count N`, default 2; 5 before 2026-10-14), and hands

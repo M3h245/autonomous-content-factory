@@ -34,7 +34,7 @@ FACT = ROOT / "content-factory" / "scripts" / "factory.py"
 CFDB = ROOT / "content-database" / "scripts" / "cfdb.py"
 DUMP = Path(__file__).resolve().parent / "fixtures" / "memory_dump_v3.0.0.json"   # frozen test snapshot (= checkpoints/v3.0.0/memory-dump.json), never the live memory
 KNUCKLES = REPO / "fixtures" / "phase4_package_run" / "2026-10-07-why-your-knuckles-crack"
-CF_ENV = ("CF_DB", "CF_RUNS_DIR", "CF_OUTPUT_DIR", "CF_BATCHES_DIR", "ANTHROPIC_API_KEY", "OPENAI_API_KEY")
+CF_ENV = ("CF_DB", "CF_RUNS_DIR", "CF_OUTPUT_DIR", "CF_BATCHES_DIR", "CF_LEARNING", "ANTHROPIC_API_KEY", "OPENAI_API_KEY")
 
 # ---- a realistic ~50-candidate file, as a person would paste it from a chat (built here, not shipped in the engine)
 FRESH = [
@@ -566,8 +566,9 @@ class Production(unittest.TestCase):
         outs = [Path(self.slot(self.rep2, n)["output"]) for n in range(1, 6)]
         self.assertEqual(len({o for o in outs}), 5)
         for n, o in enumerate(outs, 1):
-            self.assertEqual(o.parent, (self.out_dir / self.batch.name).resolve())
-            self.assertTrue(o.name.startswith(f"{n:02d}-"))
+            run_name = Path(self.slot(self.rep2, n)["run_dir"]).name        # "YYYY-MM-DD-slug"
+            self.assertEqual(o.parent, self.out_dir.resolve())             # flat: no batch-id wrapper
+            self.assertEqual(o.name, f"{run_name[:10]}_{n:02d}_{run_name[11:]}")
             self.assertTrue((o / "package" / "v01" / "final.mp4").exists())
             self.assertTrue(any(o.glob("*_package.zip")))
 

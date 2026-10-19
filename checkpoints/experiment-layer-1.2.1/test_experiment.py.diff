@@ -1,0 +1,126 @@
+--- skills/content-factory/tests/test_experiment.py (1.2, 1e8e737c...)
++++ skills/content-factory/tests/test_experiment.py (proposed, 393000b4...)
+@@ -62,7 +62,7 @@
+ mode = os.environ.get("STUB_MODE", "good"); st = factory.load(run)
+ v = st["videos"].setdefault("v01", factory.unit("en", None, "i1")); d = run / "videos" / "v01"
+ if "Then STOP" in prompt:                                  # phase A: hook + script, then stop before AUDIO
+-    cnt = run / "stub_phase_a_calls"; n = int(cnt.read_text()) + 1 if cnt.exists() else 1; cnt.write_text(str(n))
++    cnt = run / "stub_phase_a_calls"; n = int(cnt.read_text(encoding="utf-8")) + 1 if cnt.exists() else 1; cnt.write_text(str(n), encoding="utf-8")
+     beats = compliant_beats(asg)
+     if mode == "bad" or (mode == "bad-then-good" and n == 1):
+         if asg["arm"] == "variant":                        # setup instead of the reveal
+@@ -209,7 +209,7 @@
+             self.plan(p2)
+         self.assertEqual(p.read_bytes(), first)
+         d = json.loads(first); d["slots"][0]["arm"] = "variant" if d["slots"][0]["arm"] == "control" else "control"
+-        p.write_text(json.dumps(d))
++        p.write_text(json.dumps(d), encoding="utf-8")
+         with self.assertRaises(EX.ExpError):
+             EX.load_plan(self.batch)
+ 
+@@ -241,9 +241,9 @@
+         m = IE.verify_batch(self.batch)
+         for s in plan["slots"]:
+             run = self.run_of(s["slot"])
+-            self.assertEqual(json.loads((run / "run.json").read_text())["constraints"], s["constraints"])
+-            self.assertEqual(json.loads((run / "experiment_assignment.json").read_text()), EX.assignment_for(plan, s))
+-            sl = next(x for x in json.loads((self.batch / "slots.json").read_text())["slots"] if x["slot"] == s["slot"])
++            self.assertEqual(json.loads((run / "run.json").read_text(encoding="utf-8"))["constraints"], s["constraints"])
++            self.assertEqual(json.loads((run / "experiment_assignment.json").read_text(encoding="utf-8")), EX.assignment_for(plan, s))
++            sl = next(x for x in json.loads((self.batch / "slots.json").read_text(encoding="utf-8"))["slots"] if x["slot"] == s["slot"])
+             self.assertNotEqual(IE.run_state(run, sl, m)["status"], "foreign")   # manifest created_at precedes the runs
+         self.assertTrue(EX.cmd_ready(A(batch=str(self.batch)))["ready"])
+         # a third prepare and the Idea Engine's own re-preparation change nothing
+@@ -255,9 +255,9 @@
+     def test_ready_detects_tampered_assignment_or_constraints(self):
+         _, plan = self.prepared()
+         self.assertTrue(EX.cmd_ready(A(batch=str(self.batch)))["ready"])
+-        ap = self.run_of(2) / "experiment_assignment.json"; a = json.loads(ap.read_text())
+-        a["arm"] = "variant" if a["arm"] == "control" else "control"; ap.write_text(json.dumps(a))
+-        rp = self.run_of(5) / "run.json"; b = json.loads(rp.read_text()); b["constraints"] = b["constraints"][:2]; rp.write_text(json.dumps(b))
++        ap = self.run_of(2) / "experiment_assignment.json"; a = json.loads(ap.read_text(encoding="utf-8"))
++        a["arm"] = "variant" if a["arm"] == "control" else "control"; ap.write_text(json.dumps(a), encoding="utf-8")
++        rp = self.run_of(5) / "run.json"; b = json.loads(rp.read_text(encoding="utf-8")); b["constraints"] = b["constraints"][:2]; rp.write_text(json.dumps(b), encoding="utf-8")
+         rd = EX.cmd_ready(A(batch=str(self.batch)))
+         self.assertFalse(rd["ready"])
+         self.assertTrue(any("slot 2" in p and "assignment" in p for p in rd["problems"]))
+@@ -425,7 +425,7 @@
+         for s in plan["slots"]:
+             self.drive(s["slot"])
+             run = self.run_of(s["slot"]); (run / "package" / "v01").mkdir(parents=True, exist_ok=True)
+-            (run / "package" / "v01" / "publishing_package.json").write_text(json.dumps({"public": {"title": f"Title {s['slot']}"}}))
++            (run / "package" / "v01" / "publishing_package.json").write_text(json.dumps({"public": {"title": f"Title {s['slot']}"}}), encoding="utf-8")
+         chk = EX.cmd_check(A(batch=str(self.batch)))
+         self.assertTrue(chk["publishable"], chk)
+         return plan
+@@ -434,7 +434,7 @@
+         p = self.tmp / f"snap-{len(list(self.tmp.glob('snap-*')))}.json"
+         daily = [{"day": d} for d in ([last_day] if last_day else [])]
+         p.write_text(json.dumps({"pulled_at": pulled_at, "until": pulled_at[:10], "videos": videos, "per_video": per_video,
+-                                 "channel_daily": daily}))
++                                 "channel_daily": daily}), encoding="utf-8")
+         return p
+ 
+     def vids(self, plan, published="2026-10-09T16:00:00Z", **over):
+@@ -505,14 +505,14 @@
+         mres = EX.cmd_manual(A(batch=str(self.batch), csv=t["template"]))
+         self.assertEqual(len(mres["added"]), 1); self.assertTrue(any("unreadable" in s["why"] for s in mres["skipped"]))
+         EX.cmd_report(A(batch=str(self.batch)))
+-        data = json.loads(sorted((self.batch / "experiment" / "reports").glob("*.json"))[-1].read_text())
++        data = json.loads(sorted((self.batch / "experiment" / "reports").glob("*.json"))[-1].read_text(encoding="utf-8"))
+         self.assertEqual((data["pairs_with_primary"], data["wins"], data["median_diff_pp"]), (3, 3, 15.0))
+         self.assertTrue(data["preliminary"]); self.assertEqual(data["recommendation"], "continue testing")
+         self.assertTrue(any("stayed_to_watch" in x for x in data["missing"]))
+         self.assertNotIn("views", data["pairs"][0]["metrics"])
+         rec = EX.slot_rec(self.batch, 1); EX.save_slot(self.batch, rec, "noncompliant")   # one non-compliant run
+         EX.cmd_report(A(batch=str(self.batch)))
+-        data = json.loads(sorted((self.batch / "experiment" / "reports").glob("*.json"))[-1].read_text())
++        data = json.loads(sorted((self.batch / "experiment" / "reports").glob("*.json"))[-1].read_text(encoding="utf-8"))
+         self.assertEqual(data["pairs_with_primary"], 2); self.assertEqual(data["excluded_pairs_noncompliant"], ["P1"])
+ 
+     def test_report_without_data_is_insufficient(self):
+@@ -543,7 +543,7 @@
+         return plan, s, run
+ 
+     def snapshot_files(self) -> dict:
+-        return {str(p.relative_to(self.batch)): hashlib.sha256(p.read_bytes()).hexdigest()
++        return {p.relative_to(self.batch).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+                 for p in sorted(self.batch.rglob("*")) if p.is_file()}
+ 
+     def no_execution(self):
+@@ -577,7 +577,7 @@
+         self.assertTrue(r["synced"]); self.assertEqual((r["previous_status"], r["status"]), ("blocked", "gate_passed"))
+         after = self.snapshot_files()
+         changed = {k for k in after if before.get(k) != after[k]}
+-        self.assertEqual(changed, {"experiment/slots/02.json", str((run / "experiment_gate.json").relative_to(self.batch))})
++        self.assertEqual(changed, {"experiment/slots/02.json", (run / "experiment_gate.json").relative_to(self.batch).as_posix()})
+         rec = EX.slot_rec(self.batch, 2)
+         self.assertEqual(rec["history"][:len(hist_before)], hist_before)               # history kept, one entry appended
+         self.assertEqual(len(rec["history"]), len(hist_before) + 1); self.assertIn("sync-gate", rec["history"][-1]["note"])
+@@ -607,12 +607,12 @@
+             "audio already passed": lambda run: self._edit_state(run, lambda v: v["stages"]["AUDIO"].update(status="passed")),
+             "video escalated": lambda run: self._edit_state(run, lambda v: v.update(status="escalated")),
+             "result not the recorded one": lambda run: (run / "videos/v01/script/result.json").write_text(
+-                (run / "videos/v01/script/result.json").read_text() + " "),
++                (run / "videos/v01/script/result.json").read_text(encoding="utf-8") + " ", encoding="utf-8"),
+             "script edited after the gate": lambda run: (run / "videos/v01/script/script.json").write_text(
+-                (run / "videos/v01/script/script.json").read_text() + " "),
+-            "run locked": lambda run: (run / ".lock").write_text("{}"),
+-            "batch locked": lambda run: (self.batch / ".lock").write_text("{}"),
+-            "assignment tampered": lambda run: (run / "experiment_assignment.json").write_text("{}"),
++                (run / "videos/v01/script/script.json").read_text(encoding="utf-8") + " ", encoding="utf-8"),
++            "run locked": lambda run: (run / ".lock").write_text("{}", encoding="utf-8"),
++            "batch locked": lambda run: (self.batch / ".lock").write_text("{}", encoding="utf-8"),
++            "assignment tampered": lambda run: (run / "experiment_assignment.json").write_text("{}", encoding="utf-8"),
+             "slot already approved": lambda run: EX.save_slot(self.batch, {**EX.slot_rec(self.batch, 2),
+                                                                            "gate": {"approved": True, "attempts": []}}, None),
+             "slot already produced": lambda run: EX.save_slot(self.batch, EX.slot_rec(self.batch, 2), "produced"),
+@@ -643,7 +643,7 @@
+ 
+     def test_assignment_keeps_the_plan_engine_after_an_upgrade(self):
+         _, plan = self.prepared()
+-        a = json.loads((self.run_of(1) / "experiment_assignment.json").read_text())
++        a = json.loads((self.run_of(1) / "experiment_assignment.json").read_text(encoding="utf-8"))
+         self.assertEqual(a["engine"], plan["engine"])
+         old = dict(plan, engine="experiment 1.1")
+         self.assertEqual(EX.assignment_for(old, plan["slots"][0])["engine"], "experiment 1.1")

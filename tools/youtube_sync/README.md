@@ -26,3 +26,16 @@ It runs on Windows itself, not inside Claude's sandbox: the sandbox cannot reach
 This writes `data/analytics/<timestamp>/snapshot.json`, `videos.csv` and `data/analytics/latest.json` under the repository root, whichever folder you run it from (since experiment layer 1.1; 1.0 wrote relative to the current folder).
 
 Secrets stay in `%USERPROFILE%\.brain-academy\`, outside the repository. The tool never prints tokens. The scopes are read-only.
+
+## Uploaded-file details (for linking a YouTube video to a factory output)
+
+`pull` also asks `videos.list` for `fileDetails,processingDetails`. These are owner-only: Google fills `fileDetails` only when `processingDetails.fileDetailsAvailability` is `available`. Every video row in `snapshot.json` gets:
+
+- `file_details: {"status": "available", "file_name", "file_size", "availability"}`, with the values exactly as the API returned them; or
+- `file_details: {"status": "unavailable", "reason"}`.
+
+If the API refuses the parts, the pull still finishes without them, and `capabilities.file_details.error` says why. The console summary shows `file_details.available_for`.
+
+`skills/content-analytics/scripts/ingest_youtube.py --videos <snapshot.json> --outputs outputs --runs-dir <runs>` uses these values. It links a video only when its file size and name match exactly one output file and that file is hash-linked to a run. A title match alone is reported as probable and never written.
+
+Offline tests: `python tools\youtube_sync\test_yt_sync.py`.

@@ -11,6 +11,13 @@ Secrets live outside the repository, in %USERPROFILE%/.brain-academy/ (override 
 Scopes are read-only (youtube.readonly, yt-analytics.readonly). Nothing is uploaded, edited or published.
 Free: uses the YouTube Data API v3 and YouTube Analytics API quotas of your own Google Cloud project.
 Not available from any API: Studio's "Stayed to watch" and "Shown in feed". engagedViews / views is the proxy.
+
+Uploaded-file evidence (for linking a YouTube id to a factory output file): videos.list part=fileDetails is owner-only and
+is filled only when processingDetails.fileDetailsAvailability is "available". Each video row gets
+  file_details = {"status": "available", "file_name": ..., "file_size": <bytes>, "availability": ...}
+  or {"status": "unavailable", "reason": ...}
+Values are copied from the API response only; nothing is derived or guessed. If the API rejects the part, the pull
+continues without it and snapshot["capabilities"]["file_details"] says why.
 """
 from __future__ import annotations
 
@@ -131,6 +138,45 @@ class Api:
         return [dict(zip(cols, row)) for row in r.get("rows", []) or []]
 
 
+FILE_PARTS = "fileDetails,processingDetails"
+
+
+def file_details_of(v: dict) -> dict:
+    """fileDetails of one videos.list item, as returned by the API; never invented."""
+    if "fileDetails" not in v and "processingDetails" not in v:
+        return {"status": "unavailable", "reason": "fileDetails not requested or not returned"}
+    avail = (v.get("processingDetails") or {}).get("fileDetailsAvailability")
+    fd = v.get("fileDetails") or {}
+    name, size = fd.get("fileName"), fd.get("fileSize")
+    try:
+        size = int(size) if size is not None else None   # unsigned long, serialised as a JSON string
+    except (TypeError, ValueError):
+        return {"status": "unavailable", "reason": f"fileSize is not an integer: {size!r}", "availability": avail}
+    if avail != "available":
+        return {"status": "unavailable", "reason": f"processingDetails.fileDetailsAvailability={avail!r}",
+                "availability": avail}
+    if size is None and not name:
+        return {"status": "unavailable", "reason": "fileDetails has neither fileName nor fileSize", "availability": avail}
+    return {"status": "available", "file_name": name, "file_size": size, "availability": avail}
+
+
+def fetch_videos(api, ids: list[str]) -> tuple[list[dict], dict]:
+    """videos.list with fileDetails; if the API refuses those parts, retry without them and say so."""
+    base = "snippet,contentDetails,statistics,status"
+    cap = {"requested": True, "error": None}
+    items = []
+    for i in range(0, len(ids), 50):
+        chunk = ",".join(ids[i:i + 50])
+        if cap["error"] is None:
+            try:
+                items += api.get(DATA + "videos", {"part": base + "," + FILE_PARTS, "id": chunk}).get("items", [])
+                continue
+            except RuntimeError as e:
+                cap["error"] = str(e)[:300]
+        items += api.get(DATA + "videos", {"part": base, "id": chunk}).get("items", [])
+    return items, cap
+
+
 def cmd_pull(a) -> int:
     api = Api()
     today = dt.date.today().isoformat()
@@ -145,15 +191,20 @@ def cmd_pull(a) -> int:
         page = r.get("nextPageToken")
         if not page: break
     videos = []
-    for i in range(0, len(ids), 50):
-        r = api.get(DATA + "videos", {"part": "snippet,contentDetails,statistics,status", "id": ",".join(ids[i:i + 50])})
-        for v in r.get("items", []):
-            videos.append({"video_id": v["id"], "title": v["snippet"]["title"], "published_at": v["snippet"]["publishedAt"],
-                           "duration": v["contentDetails"]["duration"], "privacy": v["status"]["privacyStatus"],
-                           "publish_at": v["status"].get("publishAt"),
-                           "public_views": int(v["statistics"].get("viewCount", 0)),
-                           "public_likes": int(v["statistics"].get("likeCount", 0)),
-                           "public_comments": int(v["statistics"].get("commentCount", 0))})
+    items, file_cap = fetch_videos(api, ids)
+    for v in items:
+        videos.append({"video_id": v["id"], "title": v["snippet"]["title"], "published_at": v["snippet"]["publishedAt"],
+                       "duration": v["contentDetails"]["duration"], "privacy": v["status"]["privacyStatus"],
+                       "publish_at": v["status"].get("publishAt"),
+                       "public_views": int(v["statistics"].get("viewCount", 0)),
+                       "public_likes": int(v["statistics"].get("likeCount", 0)),
+                       "public_comments": int(v["statistics"].get("commentCount", 0)),
+                       "file_details": file_details_of(v)})
+        if file_cap["error"] and "fileDetails" not in v and "processingDetails" not in v:
+            videos[-1]["file_details"] = {"status": "unavailable",
+                                          "reason": "videos.list refused fileDetails: " + file_cap["error"]}
+    file_cap["available_for"] = sum(1 for v in videos if v["file_details"]["status"] == "available")
+    file_cap["videos"] = len(videos)
     by_video = {r["video"]: r for r in api.report(startDate=a.since, endDate=today, metrics=VIDEO_METRICS,
                                                   dimensions="video", sort="-views", maxResults=200)}
     traffic = api.report(startDate=a.since, endDate=today, metrics="views,engagedViews,estimatedMinutesWatched",
@@ -186,12 +237,15 @@ def cmd_pull(a) -> int:
                         "views": ch["statistics"].get("viewCount"), "videos": ch["statistics"].get("videoCount")},
             "note": "Analytics rows lag 1-3 days; Stayed to watch / Shown in feed are Studio-only (engaged_share is the proxy).",
             "videos": rows, "channel_traffic": traffic, "channel_daily": daily_channel, "per_video": per_video,
-            "errors": errors, "api_calls": api.calls}
+            "capabilities": {"file_details": file_cap}, "errors": errors, "api_calls": api.calls}
     (out / "snapshot.json").write_text(json.dumps(snap, ensure_ascii=False, indent=1), encoding="utf-8")
     (Path(a.out) / "latest.json").write_text(json.dumps(snap, ensure_ascii=False, indent=1), encoding="utf-8")
+    flat = [{**{k: v for k, v in r.items() if k != "file_details"}, "file_details_status": r["file_details"]["status"],
+             "file_name": r["file_details"].get("file_name"), "file_size": r["file_details"].get("file_size")} for r in rows]
     with open(out / "videos.csv", "w", newline="", encoding="utf-8") as fh:
-        w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()) if rows else ["video_id"]); w.writeheader(); w.writerows(rows)
+        w = csv.DictWriter(fh, fieldnames=list(flat[0].keys()) if flat else ["video_id"]); w.writeheader(); w.writerows(flat)
     print(json.dumps({"ok": True, "out": str(out), "videos": len(rows), "with_analytics": len(by_video),
+                      "file_details": {k: file_cap[k] for k in ("available_for", "videos", "error")},
                       "errors": len(errors), "api_calls": api.calls}))
     return 0
 

@@ -65,13 +65,38 @@ def S(skill: str, script: str) -> str:
     return str(skill_script(skill, script))
 
 
+def learning_api():
+    """content-analytics/learning_apply.py (the shared read side of a learning summary)."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("learning_apply", S("content-analytics", "learning_apply.py"))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
 # ----------------------------------------------------------------------------- locks (Phase 5)
 LOCK_STALE_S = 12 * 3600
 
 
 def _pid_alive(pid) -> bool:
-    if os.name == "nt":       # os.kill(pid, 0) would terminate the process on Windows; rely on the lock's age there
-        return True
+    if os.name == "nt":       # os.kill(pid, 0) would terminate the process on Windows; ask the OS directly instead
+        try:
+            import ctypes
+            PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+            STILL_ACTIVE = 259
+            k32 = ctypes.windll.kernel32
+            h = k32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, int(pid))
+            if not h:
+                return False                      # no such process (or access denied → treat as gone; age limit still applies)
+            try:
+                code = ctypes.c_ulong()
+                if k32.GetExitCodeProcess(h, ctypes.byref(code)):
+                    return code.value == STILL_ACTIVE
+                return True
+            finally:
+                k32.CloseHandle(h)
+        except (OSError, ValueError, TypeError, OverflowError):
+            return True
     try:
         os.kill(int(pid), 0)
     except ProcessLookupError:
@@ -205,7 +230,8 @@ def gate_cmd(run: Path, st: dict, stage: str, vid: str | None) -> list:
     if stage == "HOOK" and v2:
         return [PY, S("hook-engineering", "hook_engine.py"), "select", "--hooks", p["hooks"], "--dossier", r / "research" / "dossier.json",
                 "--out-dir", p["dir"] / "hook", "--result", p["result"]["HOOK"], "--voice", voice, "--attempt", att] + \
-            (["--history", r / "history.json"] if (r / "history.json").exists() else [])   # Phase 5: no repeated past hooks
+            (["--history", r / "history.json"] if (r / "history.json").exists() else []) + \
+            (["--learning", r / "learning.json"] if (r / "learning.json").exists() else [])   # v3.1.0: evidence re-ranks passing hooks
     if stage == "SCRIPT" and v2:
         return [PY, S("short-form-script", "script_select.py"), "select", "--variants", p["script"].with_name("script_variants.json"),
                 "--hook", p["dir"] / "hook" / "selected_hook.json", "--dossier", r / "research" / "dossier.json", "--out", p["script"],
@@ -661,6 +687,19 @@ def cmd_init(a) -> int:
              "review_backend": a.review_backend, "hook_engine": "v2", "cta_engine": "v1", "package_engine": "v1",
              "audience": a.audience, "tone": a.tone,
              "constraints": a.constraint or [], "created_at": now_iso(), "memory": {"db": str(db) if db else None}}
+    learning = None
+    if a.learning:                       # v3.1.0: evidence from published videos (content-analytics learning.py)
+        try:
+            LA = learning_api()
+            learning = LA.load(a.learning)
+        except Exception as e:  # noqa: BLE001  (LearningError or import problem: refuse, never run on a broken file)
+            print(json.dumps({"error": "LEARNING_INVALID", "path": a.learning, "detail": str(e)[:300]}))
+            return 2
+        g = LA.guidance(learning)
+        brief["learning"] = {**LA.reference(learning, a.learning), "hook_guidance": g["hook"], "script_guidance": g["script"],
+                             "rule": "bounded priors; the gates and the independent review still decide"}
+        brief["constraints"] = list(brief["constraints"]) + [f"Learning {learning['summary_id']} / hooks: {x}" for x in g["hook"]] + \
+            [f"Learning {learning['summary_id']} / script: {x}" for x in g["script"]]
     errs = validate(brief, SCHEMAS["brief"])
     if errs:
         print(json.dumps({"error": "invalid brief", "details": errs}))
@@ -701,6 +740,15 @@ def cmd_init(a) -> int:
                 shutil.rmtree(run, ignore_errors=True)
                 print(json.dumps({"error": "MEMORY_FAILED", "step": cmd[2], "db": str(db), "stderr": (p.stderr or p.stdout)[-400:]}))
                 return 2
+    if learning:
+        shutil.copyfile(a.learning, run / "learning.json")
+        fw = LA.format_weights(learning)
+        if fw:                           # SELECTION reads run/weights.json: learned format priors multiply the memory weights
+            w = read_json(run / "weights.json") if (run / "weights.json").exists() else {"weights": {}}
+            base = dict(w.get("weights") or {})
+            w["weights"] = {**base, **{k: round(base.get(k, 1.0) * v, 4) for k, v in fw.items()}}
+            w["learning"] = {"summary_id": learning["summary_id"], "format_priors": fw, "memory_weights": base}
+            write_json(run / "weights.json", w)
     write_json(run / "run.json", brief)
     st = {"run_id": run.name, "brief": brief, "status": "in_progress", "created_at": now_iso(),
           "global": {s: {"status": "pending", "attempt": 0} for s in GLOBAL_STAGES}, "videos": {}, "events": []}
@@ -808,6 +856,9 @@ def main() -> int:
     i.add_argument("--db", help="content memory (default: $CF_DB, else RUNS_DIR/factory.db; created if missing)")
     i.add_argument("--no-db", action="store_true", help="no content memory: no history, no repetition checks, no ingest")
     i.add_argument("--allow-similar-topic", metavar="REASON", help="audited override of the topic-repetition check")
+    i.add_argument("--learning", help="learning summary (content-analytics learning.py, cf-learning/1): its hook and script "
+                                      "guidance join the constraints, its format priors the SELECTION weights, and the HOOK "
+                                      "gate re-ranks passing candidates with it; recorded in run.json")
     i.add_argument("--runs-dir", default=os.environ.get("CF_RUNS_DIR", str(Path.home() / "content-factory" / "runs")))
     for name in ("next", "status"):
         s = sub.add_parser(name); s.add_argument("--run", required=True)

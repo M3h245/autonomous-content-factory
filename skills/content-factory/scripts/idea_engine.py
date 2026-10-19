@@ -37,7 +37,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 SKILLS = HERE.parents[1]
 for _p in (HERE, SKILLS / "content-database" / "scripts", SKILLS / "content-strategy" / "scripts",
-           SKILLS / "content-research" / "scripts", SKILLS / "hook-engineering" / "scripts"):
+           SKILLS / "content-research" / "scripts", SKILLS / "hook-engineering" / "scripts", SKILLS / "content-analytics" / "scripts"):
     sys.path.insert(0, str(_p))
 import cfdb  # noqa: E402   content memory: topic_repeats (init's rule), corpus (SELECTION's novelty corpus)
 import factory  # noqa: E402   V3.0.1 state machine: load, next_action, FileLock, PASSED
@@ -46,6 +46,7 @@ from dossier_tool import domain as src_domain, tier as src_tier  # noqa: E402   
 from hook_engine import jaccard as hook_jaccard  # noqa: E402   the HOOK gate's past-hook similarity
 from hook_lint import CLICKBAIT, CONTRAST, OPENERS, WPS  # noqa: E402   hook hard/soft rules
 from select_ideas import cos, grams  # noqa: E402   SELECTION's similarity
+import learning_apply as LA  # noqa: E402   v3.1.0: evidence from published videos (bounded topic priors)
 
 ENGINE_VERSION = "1.0"
 FILE_VERSION = "1.0"
@@ -387,7 +388,17 @@ def select(rows: list[dict], count: int = DEFAULT_COUNT) -> tuple[list[dict], li
 
 
 # ----------------------------------------------------------------------------- the selection pipeline
-def build_selection(cands: list[dict], con, warnings: list[str], count: int = DEFAULT_COUNT) -> dict:
+def apply_learning(sc: dict, c: dict, learning: dict | None) -> dict:
+    """v3.1.0: a bounded, recorded multiplier from the learning summary's topic-category prior. The quality floor still
+    uses the unadjusted total, so evidence never rescues a weak candidate or sinks a strong one below the floor."""
+    if not learning:
+        return sc
+    m, why = LA.topic_multiplier(learning, c.get("category"))
+    return {**sc, "base_total": sc["total"], "total": round(sc["total"] * m, 4),
+            "evidence": {"summary_id": learning["summary_id"], "multiplier": m, "reasons": why}}
+
+
+def build_selection(cands: list[dict], con, warnings: list[str], count: int = DEFAULT_COUNT, learning: dict | None = None) -> dict:
     items = cfdb.corpus(con)
     gitems = [grams(it["text"]) for it in items]
     filtered, research, ranked, rejected = [], [], [], []
@@ -405,15 +416,16 @@ def build_selection(cands: list[dict], con, warnings: list[str], count: int = DE
         if any(x in f"{c['topic']} {c.get('angle') or ''}".lower() for x in CLICKBAIT):
             rejected.append({"id": c["id"], "stage": "quality", "reason": f"misleading clickbait phrasing {res['clickbait']}"})
             continue
-        ranked.append({**c, "memory": mem, "research": res, "score": score(c, mem, res)})
+        ranked.append({**c, "memory": mem, "research": res, "score": apply_learning(score(c, mem, res), c, learning)})
     ranked.sort(key=lambda r: (-r["score"]["total"], r["position"]))
     kept = []
     for r in ranked:                              # near-duplicates inside the file: keep the better-scored phrasing
         dup = next((k for k in kept if same_subject(r["topic"], k["topic"])), None)
         if dup:
             rejected.append({"id": r["id"], "stage": "duplicate", "reason": f"same subject as {dup['id']} (kept, higher score)"})
-        elif r["score"]["total"] < QUALITY_FLOOR:
-            rejected.append({"id": r["id"], "stage": "quality", "reason": f"total {r['score']['total']:.2f} below the floor {QUALITY_FLOOR}"})
+        elif r["score"].get("base_total", r["score"]["total"]) < QUALITY_FLOOR:
+            rejected.append({"id": r["id"], "stage": "quality", "reason": f"total {r['score'].get('base_total', r['score']['total']):.2f} "
+                                                                       f"below the floor {QUALITY_FLOOR}"})
         else:
             kept.append(r)
     winners, not_selected = select(kept, count)
@@ -421,6 +433,7 @@ def build_selection(cands: list[dict], con, warnings: list[str], count: int = DE
         r["rank"] = i + 1
     return {"filtered": filtered, "research": research, "ranked": ranked, "eligible": [r["id"] for r in kept],
             "winners": winners, "not_selected": not_selected, "rejected": rejected, "warnings": warnings,
+            "learning": LA.reference(learning) if learning else None,
             "memory_items": len(items), "history_sha256": sha256_bytes(canonical(items).encode())}
 
 
@@ -439,23 +452,27 @@ def write_analysis(batch: Path, doc: dict, cands: list[dict], sel: dict) -> None
     write_json(batch / "filtered.json", {"rule": {"topic_repeat": "factory init (TOPIC_REPEATED)", "novelty_min": NOVELTY_MIN,
                                                   "hook_repeat": HOOK_REPEAT}, "candidates": sel["filtered"]})
     write_json(batch / "research.json", {"mode": "offline", "candidates": sel["research"]})
-    write_json(batch / "ranking.json", {"weights": WEIGHTS, "quality_floor": QUALITY_FLOOR,
-                                        "ranked": [{"rank": r["rank"], **public(r), "total": r["score"]["total"],
+    ev = lambda r: ({"base_total": r["score"]["base_total"], "evidence": r["score"]["evidence"]}  # noqa: E731
+                    if "evidence" in r["score"] else {})
+    lr = {"learning": sel["learning"]} if sel.get("learning") else {}
+    write_json(batch / "ranking.json", {"weights": WEIGHTS, "quality_floor": QUALITY_FLOOR, **lr,
+                                        "ranked": [{"rank": r["rank"], **public(r), "total": r["score"]["total"], **ev(r),
                                                     "components": r["score"]["components"], "reasons": r["score"]["reasons"],
                                                     "eligible": r["id"] in sel["eligible"]} for r in sel["ranked"]]})
-    write_json(batch / "selected.json", {"winners": [{**public(r), "rank": r["rank"], "total": r["score"]["total"],
+    write_json(batch / "selected.json", {"winners": [{**public(r), "rank": r["rank"], "total": r["score"]["total"], **ev(r),
                                                       "selection": r["selection"], "why": top_reasons(r)} for r in sel["winners"]],
-                                         "not_selected": sel["not_selected"]})
+                                         "not_selected": sel["not_selected"], **lr})
 
 
 def write_manifest(batch: Path, raw: bytes, sel: dict, mem_info: dict, args) -> dict:
-    fv = (SKILLS / "content-factory" / "VERSION").read_text().strip()
+    fv = (SKILLS / "content-factory" / "VERSION").read_text(encoding="utf-8").strip()
     m = {"schema": "cf-idea-batch/1", "batch_id": batch.name, "created_at": now_iso(), "engine": f"idea_engine {ENGINE_VERSION}",
          "factory_version": fv, "ideas_file": {"path": str(Path(args.ideas_file).resolve()), "sha256": sha256_bytes(raw),
                                                "archived_as": "input.json"},
          "memory": {"db": mem_info["db"], "items": sel["memory_items"], "history_sha256": sel["history_sha256"]},
          "selected": [{"slot": i + 1, **public(r), "total": r["score"]["total"]} for i, r in enumerate(sel["winners"])],
-         "production": {"runs_dir": str(batch / "runs"), "init": init_defaults(args)}}
+         "production": {"runs_dir": str(batch / "runs"), "init": init_defaults(args),
+                        **({"learning": sel["learning"]} if sel.get("learning") else {})}}
     m["manifest_sha256"] = sha256_bytes(canonical(manifest_core(m)).encode())
     write_json(batch / "manifest.json", m)
     return m
@@ -486,6 +503,12 @@ def prepare_runs(batch: Path, m: dict, db: str) -> list[dict]:
         cmd = [sys.executable, str(HERE / "factory.py"), "init", "--topic", w["topic"], "--count", str(ini["count"]),
                "--languages", ini["languages"], "--min-s", str(ini["min_s"]), "--max-s", str(ini["max_s"]),
                "--runs-dir", str(runs_dir), "--db", db]
+        lr = m["production"].get("learning")
+        if lr and lr.get("path") and Path(lr["path"]).is_file():
+            if LA.sha256_file(lr["path"]) != lr.get("sha256"):
+                raise BatchRefused("the learning summary changed after selection; select a new batch",
+                                   error="LEARNING_CHANGED", path=lr["path"])
+            cmd += ["--learning", lr["path"]]
         for label, k in (("Angle (from the idea batch)", "angle"), ("Hook idea (optional; the hook engine decides)", "hook"),
                          ("Visual idea (optional)", "visual")):
             if w.get(k):
@@ -563,7 +586,7 @@ def checksums_ok(pkg: Path) -> list[str]:
     if not cs.exists():
         return ["checksums.sha256 missing"]
     bad = []
-    for line in cs.read_text().splitlines():
+    for line in cs.read_text(encoding="utf-8").splitlines():
         h, _, rel = line.partition("  ")
         f = pkg / rel
         if not f.exists() or hashlib.sha256(f.read_bytes()).hexdigest() != h:
@@ -572,7 +595,10 @@ def checksums_ok(pkg: Path) -> list[str]:
 
 
 def deliver(run: Path, state: dict, out_root: Path, slot: dict, batch_id: str) -> dict:
-    dest = out_root / batch_id / f"{slot['slot']:02d}-{run.name}"
+    # Readable, flat, date-first folder: YYYY-MM-DD_NN_slug (run.name is already YYYY-MM-DD-<slug>). No batch-id
+    # wrapper — the owner moves the folder to outputs\Archive after posting.
+    rid_date, rid_slug = run.name[:10], run.name[11:] if len(run.name) > 11 else run.name
+    dest = out_root / f"{rid_date}_{slot['slot']:02d}_{rid_slug}"
     src = Path(state["package_dir"])
     if dest.exists():                        # never overwrite: identical → already delivered; different → refuse
         same = not checksums_ok(dest / "package") and (dest / "package" / "checksums.sha256").read_bytes() == \
@@ -806,8 +832,14 @@ def cmd_select(a, produce_after: bool) -> int:
         return 3
     batch = new_batch(batches, raw)
     (batch / "input.json").write_bytes(raw)
+    try:
+        lp = LA.resolve(getattr(a, "learning", None), Path.cwd(), getattr(a, "no_learning", False))
+        learning = LA.load(lp) if lp else None
+    except LA.LearningError as e:
+        print(json.dumps({"error": "LEARNING_INVALID", "detail": str(e)}))
+        return 2
     con = cfdb.connect(str(db))
-    sel = build_selection(cands, con, warns, a.count)
+    sel = build_selection(cands, con, warns, a.count, learning)
     con.close()
     if mem_info.get("seeded_from"):
         sel["warnings"].append(f"memory was empty; seeded from {mem_info['seeded_from']}")
@@ -884,6 +916,9 @@ def main() -> int:
         s.add_argument("--allow-reused-input", action="store_true", help="accept an ideas file an earlier batch already used")
         s.add_argument("--languages", default="en"); s.add_argument("--min-s", type=float, default=20)
         s.add_argument("--max-s", type=float, default=45)
+        s.add_argument("--learning", help="learning summary (cf-learning/1); default $CF_LEARNING, else "
+                                          "data/learning/latest.json when it exists")
+        s.add_argument("--no-learning", action="store_true", help="ignore any learning summary (old behaviour)")
     for name in ("run", "produce"):
         s = sub.choices[name] if name in sub.choices else sub.add_parser(name, help="(re)produce the runs of a batch")
         if name == "produce":

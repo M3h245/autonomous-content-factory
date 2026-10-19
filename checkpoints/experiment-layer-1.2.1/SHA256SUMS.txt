@@ -1,0 +1,35 @@
+# experiment-layer 1.2.1 checkpoint (2026-10-14). Paths are relative to the project folder.
+# Only change of 1.2.1: tests\test_experiment.py made Windows-compatible (explicit UTF-8 file I/O, .as_posix() path keys).
+# experiment.py, CHANGELOG.md and references\experiments.md are unchanged (same as 1.2).
+
+# skills\content-factory\tests\test_experiment.py  (changed directly, after the backup below was written and verified)
+#   before (1.2):
+1e8e737caede03695f13813f213c069c96ef278bca892f588c0bcb60f5e91464  skills\content-factory\tests\test_experiment.py
+#   after (1.2.1, verified on disk):
+393000b42e651d7d8620f2d6c58cf9b84b1f7ee5efe4132137e962910495d4ba  skills\content-factory\tests\test_experiment.py
+
+# .claude\skills\content-factory\tests\test_experiment.py  (NOT changed now; only install-1.2.1.ps1 may replace it)
+#   now (OLD = 1.2):
+1e8e737caede03695f13813f213c069c96ef278bca892f588c0bcb60f5e91464  .claude\skills\content-factory\tests\test_experiment.py
+#   expected after the install (NEW = 1.2.1):
+393000b42e651d7d8620f2d6c58cf9b84b1f7ee5efe4132137e962910495d4ba  .claude\skills\content-factory\tests\test_experiment.py
+
+# backup of the 1.2 test file (identical to both test files before this change)
+1e8e737caede03695f13813f213c069c96ef278bca892f588c0bcb60f5e91464  checkpoints\experiment-layer-1.2.1\backup\test_experiment.py.1.2
+
+# installer hash table (NEW = must be the source and the final target, OLD = the only replaceable target hash)
+#   scripts\experiment.py        NEW 3cc21864d348e88e8b3e30cb3cb97f6b3906b2e8e661b797c68db0cec313ca05  OLD d9a52eb7d152c26d71f17fbdb55757c6ef89484840c0a23b54222acbe3100132
+#   tests\test_experiment.py     NEW 393000b42e651d7d8620f2d6c58cf9b84b1f7ee5efe4132137e962910495d4ba  OLD 1e8e737caede03695f13813f213c069c96ef278bca892f588c0bcb60f5e91464
+#   CHANGELOG.md                 NEW 199ecb49230fe92923d180cf5b27f6e93f62fe6779a29fdb1bbc79732cfaa06a  OLD b59efb41055b5cb808179117b834572a777d8e5886c6d513e5ae7b1b5cebf5bf
+#   references\experiments.md    NEW ff243bfd347099ef36a85df7e16a451aa18de46783f20fa6655582392146c019  OLD 98c8f2840f8820d40652053a4596e100ecbdfba47dc80da807f5a70bdc7dd7fa
+
+# files of this checkpoint
+4549577ad30e1316c63f59d269ee7e8292e13dc12ec9a4814bd012e02277dc03  checkpoints\experiment-layer-1.2.1\install-1.2.1.ps1
+b0c591dc9c6f17bbcdb211d3ed59257d6b2eed51871f6d36784fde0577e2d648  checkpoints\experiment-layer-1.2.1\run-install-1.2.1.cmd
+a87c355e5a672f3fa27705a630dc218e4b53f0385b32b0b0b9bba37db61147d0  checkpoints\experiment-layer-1.2.1\test_experiment.py.diff
+e39ac97267ed8c6313b4f39362872326c05699705cb612fb1cfe886e94e15cb9  checkpoints\experiment-layer-1.2.1\install-1.2-to-1.2.1.diff
+b90f771e4b2bcca4c4baad7db00085a77b2aaa43ce7eeb0786175417c14e2a2d  checkpoints\experiment-layer-1.2.1\run-install-1.2-to-1.2.1.diff
+
+# unchanged (for reference)
+984623d13f4600a4e64b2960bfeea639ab2523dc3f09e29b95a5cd9a25838aa5  checkpoints\experiment-layer-1.2\install-1.2.ps1
+6afcdf562bb4d30707964c15a9d3f81de43333acb0fdc6051555a07379661f6d  checkpoints\experiment-layer-1.2\run-install-1.2.cmd

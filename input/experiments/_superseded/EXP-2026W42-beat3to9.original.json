@@ -1,0 +1,93 @@
+{
+ "experiment_id": "EXP-2026W42-beat3to9",
+ "week": "2026-W42",
+ "variable": "beat_3_9s: a second concrete surprise / test / visual reveal between about 3 and 9 s (variant) vs the factory's normal post-hook structure (control)",
+ "hypothesis": "Among viewers who stay past the opening, a second surprise in the 3-9 s window keeps more of them at 8 s than the normal setup/explanation beat (audit 2026-10-13: 30-53 points lost at 4-8 s).",
+ "primary_metric": "retention_8s",
+ "secondary_metrics": ["stayed_to_watch", "engaged_views"],
+ "guardrail_metric": "average_view_percentage",
+ "decision_rule": {"min_pairs": 7, "min_wins": 5, "min_median_gain_pp": 3, "source": "Brain Academy Shorts Performance Audit, 2026-10-13 (provisional)"},
+ "duration_s": {"min": 22, "max": 28, "target": 25},
+ "schedule": {"days": ["2026-10-15", "2026-10-16", "2026-10-17"], "slots": ["18:00", "23:00"], "tz": "Europe/Rome",
+              "note": "planned; actual publish times are recorded by `experiment.py link`. Published or scheduled videos are not touched."},
+ "shared_rules": [
+  "Every claim must pass the RESEARCH gate; if a planned line is not supported, reword it rather than keep it.",
+  "No new topic: the topic and angle are fixed by the experiment."
+ ],
+ "arm_rules": {
+  "control": "Claim-first opening; normal post-hook structure in 3-9 s; payoff and loop ending.",
+  "variant": "Claim-first opening; a second concrete surprise, test or visual reveal in 3-9 s; no hook repeat, setup, definitions or jargon there; payoff and loop ending."
+ },
+ "pairs": [
+  {"pair_id": "P1", "match_rationale": "Both are eye/vision illusions with an at-home test, similar complexity (one mechanism), same 'your senses lie' series, human_body/visual category.",
+   "topics": [
+    {"topic_key": "blind-spot", "category": "human_body",
+     "topic": "Why don't you notice the blind spot in each of your eyes?",
+     "angle": "Where the optic nerve leaves the eye there are no light-sensing cells, so each eye has a gap in its view; the brain fills it in from the surroundings and from the other eye.",
+     "opening_line": "Each of your eyes has a hole.",
+     "frame0_visual": "a big doodle eye with a black hole in the middle of what it sees",
+     "variant_beat_3_9": "Test it now: close your left eye, stare at the cross with your right eye and move closer; the dot to its right vanishes (show the cross-and-dot test card filling the screen).",
+     "claims": [
+      {"claim": "The optic disc has no photoreceptors, so part of each eye's visual field is blind.", "sources": ["https://en.wikipedia.org/wiki/Blind_spot_(vision)"]},
+      {"claim": "The blind spot lies about 12-15 degrees toward the outer (temporal) side of the field of view.", "sources": ["https://en.wikipedia.org/wiki/Blind_spot_(vision)"]},
+      {"claim": "The brain fills the gap using surrounding detail and the other eye.", "sources": ["https://en.wikipedia.org/wiki/Blind_spot_(vision)"]}],
+     "revisions": ["Audit draft 'Two holes, your whole life' kept only as a loop idea; opening shortened to 6 words."]},
+    {"topic_key": "afterimage-colors", "category": "visual_phenomena",
+     "topic": "Why do you see a ghost color after staring at something red?",
+     "angle": "After staring at red, the visual system's response to red adapts and weakens, so on a white page the opposite colour of the red-cyan pair wins for a few seconds.",
+     "opening_line": "That cyan ghost isn't really there.",
+     "frame0_visual": "a red dot beside a faint cyan ghost dot on a white page",
+     "variant_beat_3_9": "Try it: stare at the red dot for 20 seconds, then look at the white side; a cyan dot appears that the screen never showed.",
+     "claims": [
+      {"claim": "Negative afterimages appear in the complementary colour; red pairs with cyan in opponent-process accounts.", "sources": ["https://en.wikipedia.org/wiki/Afterimage", "https://www.illusionsindex.org/i/negative-afterimages"]},
+      {"claim": "They arise from adaptation in the retina after prolonged exposure.", "sources": ["https://en.wikipedia.org/wiki/Afterimage"]}],
+     "revisions": ["Idea file said 'green ghost' for red: corrected to cyan.", "Idea file said 'the cones get tired': reworded to adaptation (the sources describe retinal adaptation and opponent channels, not simple cone fatigue)."]}
+   ]},
+  {"pair_id": "P2", "match_rationale": "Both are about what a mirror shows you, with a mirror test the viewer can do at once; similar complexity; human perception.",
+   "topics": [
+    {"topic_key": "mirror-front-back", "category": "counterintuitive",
+     "topic": "Why does a mirror swap left and right but not top and bottom?",
+     "angle": "A plane mirror reverses front and back (the direction perpendicular to it). The left-right swap is in our heads: we imagine turning around to stand where the reflection is.",
+     "opening_line": "Mirrors don't flip left and right.",
+     "frame0_visual": "a person facing a mirror, an arrow pointing into the glass and its reflection pointing back out",
+     "variant_beat_3_9": "Raise your right hand: the reflection's raised hand is on the same side as yours. Point at the mirror: the reflection points straight back at you. Front and back flipped, not left and right.",
+     "claims": [
+      {"claim": "A plane mirror reverses the direction perpendicular to its surface (front-back), not left-right.", "sources": ["https://www.desy.de/user/projects/Physics/General/mirrors.html"]},
+      {"claim": "The perceived left-right swap comes from mentally turning around into the reflection's position.", "sources": ["https://www.desy.de/user/projects/Physics/General/mirrors.html"]}],
+     "revisions": ["Audit wording kept; 'writing looks reversed because you turned the page' kept as payoff."]},
+    {"topic_key": "mirror-eye-movement", "category": "human_body",
+     "topic": "Why can't you see your own eyes move in a mirror?",
+     "angle": "During fast eye movements (saccades) the brain briefly suppresses vision, so the motion of your own eyes is edited out; someone watching you sees them move.",
+     "opening_line": "You can't watch your own eyes move.",
+     "frame0_visual": "a face in a mirror, eyes mid-dart, a blank flash covering the movement",
+     "variant_beat_3_9": "Try it: in a mirror, look from your left eye to your right eye. You never see them move, but a friend beside you does.",
+     "claims": [
+      {"claim": "Saccadic masking suppresses visual processing during rapid eye movements, so observers cannot see their own eyes move in a mirror.", "sources": ["https://en.wikipedia.org/wiki/Saccadic_masking", "https://indianapublicmedia.org/amomentofscience/saccade/"]},
+      {"claim": "An external observer clearly sees the eyes move.", "sources": ["https://en.wikipedia.org/wiki/Saccadic_masking"]}],
+     "revisions": ["Idea hook 'Your brain hides your eye movements from you' shortened to a 7-word assertion."]}
+   ]},
+  {"pair_id": "P3", "match_rationale": "Both are everyday-sky space topics a viewer can check by looking up; one mechanism each; similar length of explanation.",
+   "topics": [
+    {"topic_key": "moon-same-face", "category": "space",
+     "topic": "Why do we only see one side of the Moon?",
+     "angle": "Earth's tides slowed the Moon's spin until one rotation takes as long as one orbit (tidal locking), so the same face points at us; slight rocking (libration) lets us see about 59% over time.",
+     "opening_line": "The Moon always shows us one face.",
+     "frame0_visual": "Earth and the Moon, one crater on the Moon marked and pointing at Earth",
+     "variant_beat_3_9": "But it does spin: exactly once per orbit, so the marked crater keeps facing us all the way round (animate the Moon circling with the crater always pointing at Earth).",
+     "claims": [
+      {"claim": "The Moon is tidally locked: it rotates once per orbit, so one face points toward Earth.", "sources": ["https://science.gsfc.nasa.gov/attic/eclipse2017.gsfc.nasa.gov/what's-lunar-libration.html"]},
+      {"claim": "Because of libration, about 59% of the Moon's surface can be seen from Earth over time.", "sources": ["https://science.gsfc.nasa.gov/attic/eclipse2017.gsfc.nasa.gov/what's-lunar-libration.html"]}],
+     "revisions": ["Audit line 'You have never seen the back of the Moon' rejected (spacecraft and astronauts have; libration shows ~59%). 'Always shows us one face' kept: true for the near side."]},
+    {"topic_key": "daytime-stars", "category": "space",
+     "topic": "Where do the stars go when the Sun is up?",
+     "angle": "They are still there: sunlight scattered by the atmosphere makes the daytime sky far brighter than starlight, so the stars are drowned out.",
+     "opening_line": "The stars never leave in the morning.",
+     "frame0_visual": "a bright blue daytime sky with faint stars drawn behind the glare",
+     "variant_beat_3_9": "Proof: telescopes with cameras still record bright stars in broad daylight; the stars never left, the sky just got brighter.",
+     "claims": [
+      {"claim": "Stars are hidden in daytime because the atmosphere scatters sunlight into a bright glow that overwhelms faint starlight.", "sources": ["https://stardate.org/faq/why-arent-stars-visible-in-the-daytime"]},
+      {"claim": "Astronomers measure bright stars during the day with telescopes and digital detectors.", "sources": ["https://www.scientificamerican.com/article/how-to-see-stars-satellites-and-more-in-the-daytime-sky"]}],
+     "revisions": ["Variant reveal limited to instrument detection (not naked-eye viewing), as the source describes."]}
+   ]}
+ ]
+}

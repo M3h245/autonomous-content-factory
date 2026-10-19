@@ -105,7 +105,7 @@ class OpeningTokenisation(unittest.TestCase):
         """Regression (Phase 3 run): 'TEAR GAS?' on screen was reported as not visible because 'GAS?' != 'GAS'."""
         import re
         shown, want = "TEAR GAS?", re.findall(r"[A-Za-z0-9']+", "TEAR GAS?".upper())
-        src = (ROOT / "visual-storyboarding/scripts/storyboard_tool.py").read_text()
+        src = (ROOT / "visual-storyboarding/scripts/storyboard_tool.py").read_text(encoding="utf-8")
         self.assertIn('got = set(re.findall(r"[A-Za-z0-9\']+", shown.upper()))', src)
         self.assertTrue(all(w in set(re.findall(r"[A-Za-z0-9']+", shown.upper())) for w in want))
 
@@ -119,9 +119,9 @@ class RuntimePinning(unittest.TestCase):
         rv = tts.runtime_versions("kokoro-onnx")
         self.assertIn("onnxruntime", rv)
         self.assertEqual(tts.runtime_versions("elevenlabs"), {})
-        src = (ROOT / "voice-production/scripts/tts.py").read_text()
+        src = (ROOT / "voice-production/scripts/tts.py").read_text(encoding="utf-8")
         self.assertIn('"runtime": runtime_versions(getattr(tts, "name", ""))', src)
-        setup = (ROOT / "content-factory/scripts/setup_env.py").read_text()
+        setup = (ROOT / "content-factory/scripts/setup_env.py").read_text(encoding="utf-8")
         self.assertIn('"onnxruntime==', setup)
         self.assertIn('"kokoro-onnx==', setup)
 

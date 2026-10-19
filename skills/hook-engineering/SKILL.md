@@ -48,6 +48,13 @@ reasons; change strategy), HOOK.FUTILE_RESUBMISSION (identical failed candidates
 Phase 3: each candidate's spoken line is synthesised with the real voice (sentence cache — the AUDIO stage later
 reuses it) and judged on its measured length; the calibrated estimate under-predicted short hooks by ~0.45 s.
 
+### Learning (v3.1.0)
+`hook_engine.py select … --learning run/learning.json` (passed by factory.py when the run has one) adds a bounded bonus
+(at most ±1.5 review points, ±0.5 at low confidence) for the opening form and curiosity mechanism that the evidence
+favours. It applies **only to candidates that passed the independent review**. The engine records the choice without
+learning, the bonuses and whether the choice changed. HOOK.LEARNING_COVERAGE (minor) asks for at least one candidate
+in each evidence-preferred or tested level.
+
 ## Quality gate
 HOOK.SCHEMA (≥3 candidates) and HOOK.SELECTABLE (a candidate passes the hard rules) are blocking;
 HOOK.ARCHETYPE_VARIETY is major; HOOK.STRENGTH (score ≥ 65) is minor.

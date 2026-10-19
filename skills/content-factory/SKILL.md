@@ -79,6 +79,18 @@ manifest; `produce --batch …` resumes. Format, prompt template, scoring and tr
 `references/idea-engine.md`. When asked to continue a run "prepared by the idea batch", loop on that existing run
 (`next --run RUN`) and never `init` a new one.
 
+### Evidence from published videos (v3.1.0)
+When `data/learning/latest.json` exists (or `$CF_LEARNING`, or `--learning PATH`), `idea_engine.py select|run` multiplies
+each candidate's score by the summary's bounded topic-category prior. The quality floor still uses the unadjusted score.
+The engine records the influence in `ranking.json`, `selected.json` and the manifest, and passes the summary to every
+`factory.py init --learning`. A run then:
+- records the summary in `run.json` (`learning`) and copies it to `learning.json`;
+- adds the hook and script guidance to the constraints;
+- multiplies SELECTION's `weights.json` by the format priors;
+- has the HOOK gate re-rank only the candidates that passed the review (`selected_hook.json → learning_influence`).
+
+`--no-learning` reproduces the old behaviour exactly. Producing the summary is described in content-analytics, "Learning loop".
+
 ## Quality gates
 Every stage ends with a gate script that writes a `result.json` envelope; nothing proceeds unless it passed.
 Table of gates, error codes and fix routes: `references/orchestration-spec.md`.

@@ -32,6 +32,13 @@ for sib in ("video-production", "voice-production", "video-quality-assurance"):
     sys.path.insert(0, str(ROOT / sib / "scripts"))
 from cf_common import StageResult, emit, exit_for, fix, read_json, validate_artifact, write_json  # noqa: E402
 
+sys.path.insert(0, str(ROOT / "content-analytics" / "scripts"))
+import learning_apply as LA  # noqa: E402  (v3.1.0: shared read side of the learning summary)
+
+
+def load_learning(path):
+    return LA.load(path)
+
 FUTURE_MODES = ["doodle", "motion_graphics", "diagram", "kinetic_typography", "generated_visual", "character", "hybrid"]
 STOP = set("a an the and or but so of to in on at for with is are was were be it its this that you your we they i as by from "
            "do does did can will just".split())
@@ -59,13 +66,14 @@ def measure_spoken(text: str, voice: str, speed: float, work: Path) -> float | N
     beats = [{"id": "b1", "role": "hook", "text": text, "claim_ids": []}, {"id": "b2", "role": "value", "text": "Filler.", "claim_ids": []},
              {"id": "b3", "role": "payoff", "text": "Filler.", "claim_ids": []}]
     (work / "s.json").write_text(json.dumps({"video_id": "hook", "language": "en", "beats": beats,
-                                             "publish": {"title_options": ["h"], "description": "", "hashtags": []}}))
+                                             "publish": {"title_options": ["h"], "description": "", "hashtags": []}}),
+                                 encoding="utf-8")
     p = subprocess.run([sys.executable, str(tts), "synth", "--script", work / "s.json", "--out-dir", work, "--result", work / "r.json",
                         "--voice", voice, "--speed", str(speed), "--min-s", "0.5", "--max-s", "99"], capture_output=True, text=True)
     t = work / "timing.json"
     if p.returncode not in (0, 2) or not t.exists():
         return None
-    sents = [x for x in json.loads(t.read_text())["sentences"] if x["beat_id"] == "b1"]
+    sents = [x for x in json.loads(t.read_text(encoding="utf-8"))["sentences"] if x["beat_id"] == "b1"]
     return round(sents[-1]["end"] - sents[0]["start"], 2) if sents else None
 
 
@@ -236,16 +244,45 @@ def cmd_select(a) -> int:
             hist["failed"][r["fingerprint"]] = {"hook_id": r["hook_id"], "attempt": a.attempt,
                                                 "reasons": [f.get("id") for f in rv["failures"]]}
     write_json(hist_path, hist)
-    passing = sorted([r for r in rendered if r["review"]["verdict"] == "PASS"],
-                     key=lambda r: (-r["total"], r["estimated_duration_s"]))
+    # ---- v3.1.0: evidence from published videos re-ranks PASSING candidates only (bounded bonus, recorded)
+    learning = load_learning(a.learning) if getattr(a, "learning", None) else None
+    for r in rendered:
+        b, why = LA.hook_bonus(learning, LA.opening_form(r["spoken_text"]), r["curiosity_mechanism"]) if learning else (0.0, [])
+        r["opening_form"] = LA.opening_form(r["spoken_text"])
+        r["learning_bonus"], r["learning_reasons"] = b, why
+    passing_plain = sorted([r for r in rendered if r["review"]["verdict"] == "PASS"],
+                           key=lambda r: (-r["total"], r["estimated_duration_s"]))
+    passing = sorted(passing_plain, key=lambda r: (-(r["total"] + r["learning_bonus"]), r["estimated_duration_s"]))
     sel = passing[0] if passing else None
+    influence = None
+    if learning:
+        pref = {"opening_form": LA.preferred_levels(learning, "opening_form") + LA.tested_levels(learning, "opening_form"),
+                "curiosity_mechanism": LA.preferred_levels(learning, "curiosity_mechanism") +
+                LA.tested_levels(learning, "curiosity_mechanism")}
+        have = {"opening_form": {LA.opening_form(c["spoken_text"]) for c in cands},
+                "curiosity_mechanism": {c["curiosity_mechanism"].strip().lower() for c in cands}}
+        miss = {k: sorted(set(v) - have[k]) for k, v in pref.items() if set(v) - have[k]}
+        sr.check("HOOK.LEARNING_COVERAGE", not miss, "minor",
+                 f"candidate set lacks evidence-preferred or tested levels {miss}" if miss else
+                 f"candidates cover the evidence-preferred and tested levels ({learning['summary_id']})",
+                 fix=fix("HOOK", "regenerate", strategy="add", missing_levels=miss) if miss else None)
+        influence = {"summary_id": learning["summary_id"], "summary_sha256": learning.get("_sha256"),
+                     "selected": sel["hook_id"] if sel else None,
+                     "without_learning": passing_plain[0]["hook_id"] if passing_plain else None,
+                     "changed_choice": bool(sel and passing_plain and sel["hook_id"] != passing_plain[0]["hook_id"]),
+                     "bonuses": {r["hook_id"]: r["learning_bonus"] for r in rendered},
+                     "reasons": sel["learning_reasons"] if sel else [],
+                     "rule": f"bonus = {LA.HOOK_BONUS_SCALE:g} x (opening-form prior x mechanism prior - 1), capped at "
+                             f"±{LA.MAX_HOOK_BONUS}; only candidates that passed the independent review are re-ranked"}
+        sr.metric("learning_influence", influence)
     by_id = {c["hook_id"]: c for c in cands}
     write_json(out / "hooks.scored.json", {"topic": d["topic"], "selected": sel["hook_id"] if sel else None, "candidates": rows,
                                            "diversity": {"mechanisms": sorted(mechs), "pairwise_similarity": sims}})
     if sel:
         c = by_id[sel["hook_id"]]
         write_json(out / "selected_hook.json", {**c, "estimated_duration_s": sel["estimated_duration_s"], "review": sel["review"],
-                                                "measurements": sel["measurements"]})
+                                                "measurements": sel["measurements"],
+                                                **({"learning_influence": influence} if influence else {})})
         write_json(out / "opening_brief.json", opening_brief(c, sel["measurements"], c["first_frame_svg"], reviews[sel["hook_id"]]))
         sr.output(out / "selected_hook.json", "selected_hook", "application/json")
         sr.output(out / "opening_brief.json", "opening_brief", "application/json")
@@ -258,7 +295,10 @@ def cmd_select(a) -> int:
              f"no candidate reaches hook ≥4, first frame ≥4 and coherence ≥4: {why}",
              fix=None if sel else fix("HOOK", "regenerate", strategy="change", failed=why,
                                       tried_mechanisms=sorted(mechs)))
-    lines = [f"# Hook selection — {d['topic']}", "", f"selected: **{sel['hook_id'] if sel else 'none'}**", "",
+    lines = [f"# Hook selection — {d['topic']}", "", f"selected: **{sel['hook_id'] if sel else 'none'}**", ""] + \
+        ([f"learning {influence['summary_id']}: without it **{influence['without_learning']}**; bonuses "
+          f"{influence['bonuses']}; {'changed the choice' if influence['changed_choice'] else 'did not change the choice'}", ""]
+         if influence else []) + [
              "| id | mechanism | spoken | on screen | est s | hook | frame 0 | coherence | verdict |", "|---|---|---|---|---|---|---|---|---|"]
     for r in rows:
         s = (r.get("review") or {}).get("scores", {})
@@ -282,6 +322,7 @@ def main() -> int:
     s.add_argument("--result", required=True); s.add_argument("--voice", default="am_michael"); s.add_argument("--speed", type=float, default=1.0)
     s.add_argument("--attempt", type=int, default=1)
     s.add_argument("--history", help="content memory export (cfdb.py history): candidates repeating a past hook are not selectable")
+    s.add_argument("--learning", help="learning summary (cf-learning/1): bounded bonus for passing candidates, recorded")
     a = ap.parse_args()
     return cmd_select(a)
 

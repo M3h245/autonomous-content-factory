@@ -128,7 +128,7 @@ class RunLock(unittest.TestCase):
         p = fact(self.run_, "next")
         self.assertNotEqual(p.returncode, 0)
         self.assertIn("LOCKED", p.stderr + p.stdout)
-        self.assertEqual(json.loads(self.lock.read_text())["pid"], os.getpid(), "a live owner's lock is never taken")
+        self.assertEqual(json.loads(self.lock.read_text(encoding="utf-8"))["pid"], os.getpid(), "a live owner's lock is never taken")
         self.lock.unlink()
         self.assertEqual(fact(self.run_, "next").returncode, 0)
         self.assertFalse(self.lock.exists(), "the lock is released when the command ends")

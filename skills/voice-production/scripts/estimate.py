@@ -173,7 +173,8 @@ def cmd_calibrate(a) -> int:
     with tempfile.TemporaryDirectory() as td:
         sp = Path(td) / "script.json"
         sp.write_text(json.dumps({"video_id": "calib", "language": "en", "beats": beats,
-                                  "publish": {"title_options": ["c"], "description": "", "hashtags": []}}))
+                                  "publish": {"title_options": ["c"], "description": "", "hashtags": []}}),
+                      encoding="utf-8")
         subprocess.run([sys.executable, str(HERE / "tts.py"), "synth", "--script", sp, "--out-dir", td, "--result",
                         Path(td) / "r.json", "--voice", a.voice, "--min-s", "1", "--max-s", "9999"], check=False, capture_output=True)
         smp = samples_from_timing([str(Path(td) / "timing.json")])[a.voice]
