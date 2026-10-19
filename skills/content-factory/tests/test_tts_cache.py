@@ -35,14 +35,14 @@ class TtsCache(unittest.TestCase):
         d.mkdir(parents=True, exist_ok=True)
         script = {"video_id": "t", "language": "en", "beats": [{"id": i, "role": r, "text": t, "claim_ids": []} for i, r, t in beats],
                   "publish": {"title_options": ["t"], "description": "", "hashtags": []}}
-        (d / "script.json").write_text(json.dumps(script))
+        (d / "script.json").write_text(json.dumps(script), encoding="utf-8")
         cmd = [sys.executable, str(TTS), "synth", "--script", str(d / "script.json"), "--out-dir", str(d), "--result",
                str(d / "result.json"), "--min-s", "1", "--max-s", "60", "--voice", "am_michael", *extra]
         if lexicon is not None:
-            (d / "lex.json").write_text(json.dumps(lexicon))
+            (d / "lex.json").write_text(json.dumps(lexicon), encoding="utf-8")
             cmd += ["--lexicon", str(d / "lex.json")]
         subprocess.run(cmd, capture_output=True, text=True, env=self.env)
-        res = json.loads((d / "result.json").read_text())
+        res = json.loads((d / "result.json").read_text(encoding="utf-8"))
         failed = {e["code"] for e in res["errors"]}
         self.assertNotIn("AUDIO.TIMING_MONOTONIC", failed, f"{name}: word timings overlap")  # regression (Phase 0 run)
         wav = hashlib.sha256((d / "voice.wav").read_bytes()).hexdigest()

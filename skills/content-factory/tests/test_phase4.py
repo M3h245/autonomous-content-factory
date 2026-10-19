@@ -21,7 +21,7 @@ for p in ("content-factory/scripts", "video-quality-assurance/scripts", "asset-p
 import package_engine as PE  # noqa: E402
 import media_clean as MC  # noqa: E402
 
-POL_ALL = json.loads((ROOT / "video-quality-assurance" / "references" / "review-policy.json").read_text())
+POL_ALL = json.loads((ROOT / "video-quality-assurance" / "references" / "review-policy.json").read_text(encoding="utf-8"))
 POL = POL_ALL["packaging"]
 PALETTE = ["#ffd23f", "#e8452c", "#3b82c4", "#2f9e44", "#f783ac"]
 SENTS = ["What actually pops when you crack your knuckles?", "Not your bones.", "Your joints sit in a capsule of fluid.",
@@ -90,7 +90,7 @@ def ids_of(checks):
 
 def render(svg_text):
     d = Path(tempfile.mkdtemp(prefix="p4thumb_"))
-    (d / "t.svg").write_text(svg_text)
+    (d / "t.svg").write_text(svg_text, encoding="utf-8")
     return PE.render_thumb(d / "t.svg", PALETTE, d, POL), d
 
 
@@ -240,13 +240,13 @@ def make_fixture(tmp: Path, candidates: list, svgs: dict) -> dict:
     v = tmp / "v"
     (v / "package" / "svg").mkdir(parents=True)
     for k, s in svgs.items():
-        (v / "package" / "svg" / f"{k}.svg").write_text(s)
-    (v / "package" / "package_candidates.json").write_text(json.dumps({"video_id": "v01", "language": "en", "candidates": candidates}))
+        (v / "package" / "svg" / f"{k}.svg").write_text(s, encoding="utf-8")
+    (v / "package" / "package_candidates.json").write_text(json.dumps({"video_id": "v01", "language": "en", "candidates": candidates}), encoding="utf-8")
     script = {"video_id": "v01", "language": "en", "beats": [{"id": "b1", "role": "hook", "text": SENTS[0]}],
               "publish": {"title_options": ["x"], "description": "", "hashtags": []}, "cta": CTA}
-    (tmp / "script.json").write_text(json.dumps(script))
-    (tmp / "timing.json").write_text(json.dumps({"language": "en", "duration_s": TR["duration_s"], "sentences": TR["sentences"], "words": []}))
-    (tmp / "dossier.json").write_text(json.dumps({"topic": "knuckles", "facts": FACTS, "sources": []}))
+    (tmp / "script.json").write_text(json.dumps(script), encoding="utf-8")
+    (tmp / "timing.json").write_text(json.dumps({"language": "en", "duration_s": TR["duration_s"], "sentences": TR["sentences"], "words": []}), encoding="utf-8")
+    (tmp / "dossier.json").write_text(json.dumps({"topic": "knuckles", "facts": FACTS, "sources": []}), encoding="utf-8")
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "lavfi", "-i", "color=c=0xf4efe4:s=1080x1920:d=1", "-c:v", "libx264",
                     "-pix_fmt", "yuv420p", str(tmp / "final.mp4")], check=True)
     return {"cands": v / "package" / "package_candidates.json", "out": v / "package"}
@@ -257,7 +257,7 @@ def run_engine(tmp: Path, fx: dict, judgment: Path | None = None) -> tuple[int, 
            "--script", tmp / "script.json", "--timing", tmp / "timing.json", "--final", tmp / "final.mp4",
            "--dossier", tmp / "dossier.json", "--out-dir", fx["out"]] + (["--judgment", judgment] if judgment else [])
     p = subprocess.run([str(c) for c in cmd], capture_output=True, text=True)
-    return p.returncode, json.loads((fx["out"] / "package_selection.json").read_text())
+    return p.returncode, json.loads((fx["out"] / "package_selection.json").read_text(encoding="utf-8"))
 
 
 THREE = ([cand(),
@@ -340,7 +340,7 @@ class PackageReviewer(unittest.TestCase):
         cls.tmp = Path(tempfile.mkdtemp(prefix="p4rev_"))
         cls.fx = make_fixture(cls.tmp, *copy.deepcopy(THREE))
         cls.rc, cls.sel = run_engine(cls.tmp, cls.fx)
-        cls.rev = json.loads((cls.fx["out"] / "review" / "package_reviews.json").read_text())
+        cls.rev = json.loads((cls.fx["out"] / "review" / "package_reviews.json").read_text(encoding="utf-8"))
 
     @classmethod
     def tearDownClass(cls):
@@ -349,10 +349,10 @@ class PackageReviewer(unittest.TestCase):
     def test_packets_carry_no_author_intent(self):
         for c in ("P1", "P2", "P3"):
             pk = self.fx["out"] / "review" / "packets" / c
-            man = json.loads((pk / "manifest.json").read_text())
+            man = json.loads((pk / "manifest.json").read_text(encoding="utf-8"))
             names = " ".join(man["files"])
             self.assertNotIn(".svg", names)
-            body = (pk / "text" / "package.json").read_text()
+            body = (pk / "text" / "package.json").read_text(encoding="utf-8")
             for k in ("strategy", "concept", "rationale", "svg"):
                 self.assertNotIn(f'"{k}"', body)
 
@@ -379,12 +379,12 @@ class PackageReviewer(unittest.TestCase):
     def test_external_judgment_can_lower_but_not_raise(self):
         j = self.tmp / "judgment.json"
         j.write_text(json.dumps({"candidates": {"P1": {"scores": {"curiosity": 2, "accuracy": 5}, "notes": {"curiosity": "flat"}},
-                                                "P2": {"scores": {"curiosity": 5}}}}))
+                                                "P2": {"scores": {"curiosity": 5}}}}), encoding="utf-8")
         out = self.tmp / "rv2"
         pk = [str(self.fx["out"] / "review" / "packets" / c) for c in ("P1", "P2", "P3")]
         subprocess.run([sys.executable, str(ROOT / "video-quality-assurance" / "scripts" / "reviewer.py"), "review-package",
                         "--packets", *pk, "--out", str(out), "--judgment", str(j)], check=True, capture_output=True)
-        res = {r["candidate"]: r for r in json.loads((out / "package_reviews.json").read_text())["results"]}
+        res = {r["candidate"]: r for r in json.loads((out / "package_reviews.json").read_text(encoding="utf-8"))["results"]}
         self.assertEqual(res["P1"]["scores"]["curiosity"]["score"], 2)
         self.assertEqual(res["P1"]["verdict"], "FAIL")
         base = {r["candidate"]: r for r in self.rev["results"]}
@@ -399,7 +399,7 @@ class PackageReviewer(unittest.TestCase):
             s["P1"] = SVG + fist() + text("CRACK YOUR KNUCKLES", size=110) + "</svg>"
             fx = make_fixture(tmp, c, s)
             run_engine(tmp, fx)
-            rev = {r["candidate"]: r for r in json.loads((fx["out"] / "review" / "package_reviews.json").read_text())["results"]}
+            rev = {r["candidate"]: r for r in json.loads((fx["out"] / "review" / "package_reviews.json").read_text(encoding="utf-8"))["results"]}
             self.assertLessEqual(rev["P1"]["scores"]["complementarity"]["score"], 2)
         finally:
             shutil.rmtree(tmp, ignore_errors=True)
@@ -407,7 +407,7 @@ class PackageReviewer(unittest.TestCase):
     def test_packet_tampering_is_refused(self):
         pk = self.tmp / "tampered"
         shutil.copytree(self.fx["out"] / "review" / "packets" / "P1", pk)
-        (pk / "text" / "package.json").write_text('{"title": "changed"}')
+        (pk / "text" / "package.json").write_text('{"title": "changed"}', encoding="utf-8")
         p = subprocess.run([sys.executable, str(ROOT / "video-quality-assurance" / "scripts" / "reviewer.py"), "review-package",
                             "--packets", str(pk), "--out", str(self.tmp / "rv3")], capture_output=True, text=True)
         self.assertIn("boundary_violation", p.stdout)
@@ -457,7 +457,7 @@ class PackageStageEndToEnd(unittest.TestCase):
     def package(self):
         p = subprocess.run([sys.executable, str(ROOT / "content-factory" / "scripts" / "package_run.py"), "--run", str(self.rundir),
                             "--video", "v01"], capture_output=True, text=True)
-        return p.returncode, json.loads((self.pkg / "result.json").read_text())
+        return p.returncode, json.loads((self.pkg / "result.json").read_text(encoding="utf-8"))
 
     def test_1_package_passes_with_all_gates(self):
         rc, res = self.package()
@@ -466,20 +466,20 @@ class PackageStageEndToEnd(unittest.TestCase):
         for g in ("PKG.PACKAGING", "PKG.MEDIA_METADATA_CLEAN", "PKG.FINAL_DECODES", "PKG.DISCLOSURE", "PKG.PUBLIC_COPY_CLEAN",
                   "PKG.THUMBNAIL_DECODES", "PKG.FILES", "PKG.CHECKSUM"):
             self.assertTrue(got.get(g), g)
-        meta = json.loads((self.pkg / "metadata.json").read_text())
-        sel = json.loads((self.rundir / "videos" / "v01" / "package" / "package_selection.json").read_text())["selected"]
+        meta = json.loads((self.pkg / "metadata.json").read_text(encoding="utf-8"))
+        sel = json.loads((self.rundir / "videos" / "v01" / "package" / "package_selection.json").read_text(encoding="utf-8"))["selected"]
         self.assertEqual(meta["title"], sel["title"])
         self.assertEqual((self.pkg / "cover.jpg").read_bytes(), (self.pkg / "thumbnail.jpg").read_bytes())
         self.assertIn(meta["youtube"]["description"].split("\n")[0], sel["opening_promise"])
-        pub = json.loads((self.pkg / "publishing_package.json").read_text())
+        pub = json.loads((self.pkg / "publishing_package.json").read_text(encoding="utf-8"))
         self.assertTrue(pub["internal"]["rejected"])
         self.assertNotIn(sel["id"], json.dumps(pub["public"]))
         for f in ("thumbnail.jpg", "cover.jpg", "thumbnail_crops.jpg", "final.mp4"):
             self.assertTrue(MC.audit(self.pkg / f)["clean"], f)
 
     def test_2_disclosure_and_metadata_policy_unchanged(self):
-        meta = json.loads((self.pkg / "metadata.json").read_text())
-        prov = json.loads((self.pkg / "provenance.json").read_text())
+        meta = json.loads((self.pkg / "metadata.json").read_text(encoding="utf-8"))
+        prov = json.loads((self.pkg / "provenance.json").read_text(encoding="utf-8"))
         self.assertNotIn(prov["disclosure"]["description_line"], meta["youtube"]["description"])   # v3.0.2: labels only
         self.assertEqual(meta["hashtags_copy_ready"], ", ".join(h.lstrip("#") for h in meta["hashtags"]))
         self.assertIsNotNone(meta["tiktok"]["ai_generated_label"])
@@ -505,12 +505,12 @@ class PackageStageEndToEnd(unittest.TestCase):
         run2 = self.tmp / "nocands"
         shutil.copytree(self.rundir, run2, ignore=shutil.ignore_patterns("*.zip"))
         (run2 / "videos" / "v01" / "package" / "package_candidates.json").unlink()
-        b = json.loads((run2 / "run.json").read_text())
+        b = json.loads((run2 / "run.json").read_text(encoding="utf-8"))
         b["package_engine"] = "v1"
-        (run2 / "run.json").write_text(json.dumps(b))
+        (run2 / "run.json").write_text(json.dumps(b), encoding="utf-8")
         p = subprocess.run([sys.executable, str(ROOT / "content-factory" / "scripts" / "package_run.py"), "--run", str(run2),
                             "--video", "v01"], capture_output=True, text=True)
-        res = json.loads((run2 / "package" / "v01" / "result.json").read_text())
+        res = json.loads((run2 / "package" / "v01" / "result.json").read_text(encoding="utf-8"))
         self.assertNotEqual(p.returncode, 0)
         self.assertIn("PKG.CANDIDATES", {c["id"] for c in res["gate"]["checks"] if not c["passed"]})
 
@@ -523,8 +523,8 @@ class PackageStageEndToEnd(unittest.TestCase):
                             "--video", "v01"], capture_output=True, text=True)
         self.assertEqual(p.returncode, 0, p.stdout[-500:])
         self.assertFalse((run3 / "package" / "v01" / "thumbnail.jpg").exists())
-        meta = json.loads((run3 / "package" / "v01" / "metadata.json").read_text())
-        script = json.loads((run3 / "videos" / "v01" / "script" / "script.json").read_text())
+        meta = json.loads((run3 / "package" / "v01" / "metadata.json").read_text(encoding="utf-8"))
+        script = json.loads((run3 / "videos" / "v01" / "script" / "script.json").read_text(encoding="utf-8"))
         self.assertEqual(meta["title"], script["publish"]["title_options"][0])
 
 

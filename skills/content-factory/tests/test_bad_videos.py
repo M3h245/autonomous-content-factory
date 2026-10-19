@@ -53,7 +53,7 @@ class BadVideos(unittest.TestCase):
     def test_D_bad_cta(self):
         r = fk.fixture_D_bad_cta(BASE / "D_bad_cta")
         import json
-        vid = {e["code"] for e in json.loads((BASE / "D_bad_cta" / "video" / "result.json").read_text())["errors"]}
+        vid = {e["code"] for e in json.loads((BASE / "D_bad_cta" / "video" / "result.json").read_text(encoding="utf-8"))["errors"]}
         self.assertTrue({"VID.CTA_ENDING", "VID.CTA_RELEVANCE"} <= vid, vid)              # VIDEO gate, real timeline
         rv = r["review"]
         ids = {f["id"] for f in rv["failures"]}

@@ -30,15 +30,15 @@ def make_inputs(d: Path) -> dict:
                     "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac", "-shortest", str(d / "final.mp4")], check=True)
     words = [{"w": w, "start": 0.1 + 0.3 * i, "end": 0.35 + 0.3 * i, "sentence": 0} for i, w in enumerate("Fingers are not soggy".split())]
     json.dump({"language": "en", "words": words, "sentences": [{"i": 0, "text": "Fingers are not soggy", "beat_id": "b1", "start": 0.1,
-               "end": 1.25}]}, open(d / "timing.json", "w"))
+               "end": 1.25}]}, open(d / "timing.json", "w", encoding="utf-8"))
     (d / "captions.ass").write_text("[V4+ Styles]\nStyle: Doodle,Permanent Marker,136,&H0,&H0,&H0,&H0,0,0,0,0,100,100,1,0,1,8,2,5,0,0,0,1\n"
-                                    "[Events]\nDialogue: 1,0:00:00.10,0:00:01.25,Doodle,,0,0,0,,{\\an5\\pos(540,1210)}Fingers are not\n")
+                                    "[Events]\nDialogue: 1,0:00:00.10,0:00:01.25,Doodle,,0,0,0,,{\\an5\\pos(540,1210)}Fingers are not\n", encoding="utf-8")
     json.dump({"beats": [{"id": "b1", "text": "SECRET-BEAT-STRUCTURE"}], "publish": {"title_options": ["Why fingers prune"],
-               "description": "d", "hashtags": ["#x"]}}, open(d / "script.json", "w"))
+               "description": "d", "hashtags": ["#x"]}}, open(d / "script.json", "w", encoding="utf-8"))
     json.dump({"checks": [{"id": "QA.LOUDNESS", "passed": True, "severity": "major"},
                           {"id": "V.HOOK_FRAME", "passed": True, "severity": "major", "message": "author self-review"}],
                "metrics": {"lufs": -14.0, "true_peak_dbtp": -2.0, "ocr_rate": 1.0}, "review": {"reviewer": "author"}},
-              open(d / "qa_report.json", "w"))
+              open(d / "qa_report.json", "w", encoding="utf-8"))
     return {"final": d / "final.mp4", "timing": d / "timing.json", "captions": d / "captions.ass", "publish": d / "script.json",
             "qa": d / "qa_report.json"}
 
@@ -72,17 +72,17 @@ class Reviewer(unittest.TestCase):
     # ---- boundary
     def test_builder_refuses_authoring_inputs(self):
         sb = self.tmp / "in" / "storyboard.json"
-        sb.write_text("{}")
+        sb.write_text("{}", encoding="utf-8")
         p = build_packet(self.inp, self.tmp / "bad_packet", ["--measure", f"plan={sb}"])
         self.assertNotEqual(p.returncode, 0)
         self.assertIn("BOUNDARY", p.stderr + p.stdout)
 
     def test_packet_contains_no_creative_state(self):
-        man = json.loads(Path(self.packet / "manifest.json").read_text())
+        man = json.loads(Path(self.packet / "manifest.json").read_text(encoding="utf-8"))
         self.assertFalse([f for f in man["files"] if R.forbidden(f)])
         blob = "".join((self.packet / f).read_text(errors="ignore") for f in man["files"] if f.endswith(".json"))
         self.assertNotIn("SECRET-BEAT-STRUCTURE", blob, "beat structure leaked into the packet")
-        qa = json.loads(Path(self.packet / "measurements" / "qa_report.json").read_text())
+        qa = json.loads(Path(self.packet / "measurements" / "qa_report.json").read_text(encoding="utf-8"))
         self.assertFalse([c for c in qa["checks"] if c["id"].startswith("V.")], "author self-review leaked")
         self.assertNotIn("review", qa)
 
@@ -94,7 +94,7 @@ class Reviewer(unittest.TestCase):
             pk.path("../in/script.json")
         with self.assertRaises(R.BoundaryError):
             pk.path("text/notes.txt")
-        (cp / "text" / "publish.json").write_text('{"title": "tampered"}')
+        (cp / "text" / "publish.json").write_text('{"title": "tampered"}', encoding="utf-8")
         with self.assertRaises(R.BoundaryError):
             pk.path("text/publish.json")
         self.assertEqual(len(pk.refused), 2)
@@ -102,12 +102,12 @@ class Reviewer(unittest.TestCase):
     def test_reviewer_process_is_isolated_and_logged(self):
         code, d = review(self.packet, self.tmp / "rv_h", "--backend", "heuristic")
         self.assertIn(code, (0, 2))
-        log = json.loads(Path(self.tmp / "rv_h" / "boundary_log.json").read_text())
-        man = json.loads(Path(self.packet / "manifest.json").read_text())
+        log = json.loads(Path(self.tmp / "rv_h" / "boundary_log.json").read_text(encoding="utf-8"))
+        man = json.loads(Path(self.packet / "manifest.json").read_text(encoding="utf-8"))
         self.assertEqual(log["authoring_modules_loaded"], [])
         self.assertTrue({r["name"] for r in log["files_read"]} <= set(man["files"]))
         self.assertNotEqual(log["process"]["pid"], os.getpid())
-        rep = json.loads(Path(self.tmp / "rv_h" / "review_report.json").read_text())
+        rep = json.loads(Path(self.tmp / "rv_h" / "review_report.json").read_text(encoding="utf-8"))
         for dname, v in rep["scores"].items():
             self.assertTrue(v["evidence"], dname)
             if v["score"] < 4:
@@ -130,7 +130,7 @@ class Reviewer(unittest.TestCase):
 
     def test_judge_routes_spoken_hook_to_HOOK(self):
         heur = {d: {"score": 4, "evidence": ["✓ visual subject at frame 0"], "cap": 4} for d in R.DIMS}
-        pol = json.loads(Path(R.DEFAULT_POLICY).read_text())
+        pol = json.loads(Path(R.DEFAULT_POLICY).read_text(encoding="utf-8"))
         j = judgment(4)
         j["hook_strength"] = {"score": 3, "evidence": "opening question", "explanation": "the spoken line answers itself"}
         hook = lambda m: [f for f in R.decide(m, [], pol)[1] if f["id"] == "hook_strength"][0]["fix_route"]["stage"]
@@ -142,7 +142,7 @@ class Reviewer(unittest.TestCase):
         self.assertTrue(R.validate_judgment(j))
 
     def test_policy(self):
-        pol = json.loads(Path(R.DEFAULT_POLICY).read_text())
+        pol = json.loads(Path(R.DEFAULT_POLICY).read_text(encoding="utf-8"))
         ok = {d: {"score": 4, "explanation": "", "evidence": ["e"]} for d in R.DIMS}
         self.assertEqual(R.decide(ok, [], pol)[0], "PASS")
         weak = {**ok, "hook_strength": {"score": 3, "explanation": "frame 0 plain", "evidence": ["e"]}}
@@ -193,13 +193,13 @@ class Reviewer(unittest.TestCase):
         out = self.tmp / "rv_s"
         code, d = review(self.packet, out, "--backend", "subagent")
         self.assertEqual((code, d["verdict"]), (3, "AWAITING_JUDGMENT"))
-        self.assertIn(str(self.packet), (out / "review_request.md").read_text())
-        Path(out / "judgment.json").write_text(json.dumps(judgment(4)))
+        self.assertIn(str(self.packet), (out / "review_request.md").read_text(encoding="utf-8"))
+        Path(out / "judgment.json").write_text(json.dumps(judgment(4)), encoding="utf-8")
         code, d = review(self.packet, out, "--backend", "subagent")
         self.assertEqual(d["judge"], "subagent")
         bad = judgment(4)
         bad["ending_quality"] = {"score": 2, "evidence": "x", "explanation": ""}
-        Path(out / "judgment.json").write_text(json.dumps(bad))
+        Path(out / "judgment.json").write_text(json.dumps(bad), encoding="utf-8")
         code, d = review(self.packet, out, "--backend", "subagent")
         self.assertEqual((code, d["verdict"]), (1, "ERROR"))
 

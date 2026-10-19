@@ -49,7 +49,7 @@ def variant_b():
 class Phase2Script(unittest.TestCase):
     def setUp(self):
         self.d = Path(tempfile.mkdtemp(prefix="p2s_"))
-        (self.d / "selected_hook.json").write_text(json.dumps(HOOK))
+        (self.d / "selected_hook.json").write_text(json.dumps(HOOK), encoding="utf-8")
 
     def run_sel(self, variants):
         return K.select_script(self.d, self.d / "selected_hook.json", variants)
@@ -97,7 +97,7 @@ class Phase2Script(unittest.TestCase):
         self.assertEqual(rows["B"]["verdict"], "FAIL")
         self.assertLessEqual(rows["B"]["scores"]["message_clarity"], 2)              # a 32-word sentence is hard to follow by ear
         self.assertEqual(r["scored"]["selected"], "A")
-        self.assertEqual(json.loads((self.d / "script.json").read_text())["beats"][0]["text"], HOOK["spoken_text"])
+        self.assertEqual(json.loads((self.d / "script.json").read_text(encoding="utf-8"))["beats"][0]["text"], HOOK["spoken_text"])
 
     def test_numbers_are_spoken_forms(self):
         self.assertEqual(E.spoken("In 2013, 30 people"), "In twenty thirteen, thirty people")
@@ -109,10 +109,10 @@ class Phase2Script(unittest.TestCase):
         beats = [B("b1", "hook", "Why does popcorn pop?", []), B("b2", "value", "Every kernel holds a tiny drop of water.", []),
                  B("b3", "value", "Heat turns it into steam, and the pressure builds until the hull bursts at about 180 degrees.", []),
                  B("b4", "payoff", "The fluffy part is starch that puffed up and set in a split second.", [])]
-        (self.d / "s.json").write_text(json.dumps({"video_id": "t", "language": "en", "beats": beats, "publish": PUB}))
+        (self.d / "s.json").write_text(json.dumps({"video_id": "t", "language": "en", "beats": beats, "publish": PUB}), encoding="utf-8")
         subprocess.run([sys.executable, str(ROOT / "voice-production/scripts/tts.py"), "synth", "--script", self.d / "s.json", "--out-dir",
                         self.d, "--result", self.d / "r.json", "--voice", "am_michael", "--min-s", "1", "--max-s", "99"], capture_output=True)
-        actual = json.loads((self.d / "timing.json").read_text())["duration_s"]
+        actual = json.loads((self.d / "timing.json").read_text(encoding="utf-8"))["duration_s"]
         new = E.estimate_script({"beats": beats}, "am_michael", 1.0)["total_s"]
         old = sum(len(b["text"].split()) / 3.0 for b in beats) + 0.2 * (len(beats) - 1)
         self.assertLessEqual(abs(new - actual) / actual, 0.08, f"new {new} vs actual {actual}")
@@ -125,10 +125,10 @@ class Phase2Script(unittest.TestCase):
                      B("b3", "payoff", "And blue blood.", [], pause_before=pause)]
             out = self.d / f"p{pause}"
             out.mkdir()
-            (out / "s.json").write_text(json.dumps({"video_id": "t", "language": "en", "beats": beats, "publish": PUB}))
+            (out / "s.json").write_text(json.dumps({"video_id": "t", "language": "en", "beats": beats, "publish": PUB}), encoding="utf-8")
             subprocess.run([sys.executable, str(ROOT / "voice-production/scripts/tts.py"), "synth", "--script", out / "s.json", "--out-dir", out,
                             "--result", out / "r.json", "--voice", "am_michael", "--min-s", "1", "--max-s", "99"], capture_output=True)
-            return json.loads((out / "timing.json").read_text()), json.loads((out / "r.json").read_text()), out
+            return json.loads((out / "timing.json").read_text(encoding="utf-8")), json.loads((out / "r.json").read_text(encoding="utf-8")), out
         t, r, out = synth(0.8)
         s = t["sentences"]
         gap = s[2]["start"] - s[1]["end"]

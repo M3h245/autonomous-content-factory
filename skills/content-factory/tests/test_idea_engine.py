@@ -187,10 +187,10 @@ fx = Path(sys.argv[5])
 for d in ("research", "ideation", "selection", "videos"):
     shutil.rmtree(run / d, ignore_errors=True)
     shutil.copytree(fx / d, run / d)
-st = json.loads((fx / "state.json").read_text())
-own = json.loads((run / "state.json").read_text())
+st = json.loads((fx / "state.json").read_text(encoding="utf-8"))
+own = json.loads((run / "state.json").read_text(encoding="utf-8"))
 st.update(run_id=own["run_id"], brief=own["brief"], created_at=own["created_at"])
-(run / "state.json").write_text(json.dumps(st, indent=1))
+(run / "state.json").write_text(json.dumps(st, indent=1), encoding="utf-8")
 p = subprocess.run([sys.executable, sys.argv[6], "package", "--run", str(run), "--zip"], capture_output=True, text=True)
 sys.exit(p.returncode)
 '''
@@ -198,7 +198,7 @@ sys.exit(p.returncode)
 
 def stub_cmd(tmp: Path, mode: str = "ok", fail: str = "") -> str:
     s = tmp / "stub_driver.py"
-    s.write_text(STUB)
+    s.write_text(STUB, encoding="utf-8")
     return f'"{PY}" "{s}" "{{run}}" {{slot}} {mode} "{fail}" "{KNUCKLES}" "{FACT}"'
 
 
@@ -229,7 +229,7 @@ class IdeasFile(unittest.TestCase):
         self.assertEqual(sorted(c["id"] for c in cands if not c["valid"]), ["empty", "wrong-type"])
         self.assertEqual(cands[0]["source_hint"], ["https://www.nasa.gov/"])
         self.assertEqual(cands[1]["source_hint"], [])
-        (self.tmp / "ideas.json").write_text(json.dumps(doc))
+        (self.tmp / "ideas.json").write_text(json.dumps(doc), encoding="utf-8")
         rc, out, _ = engine("validate", "--ideas-file", self.tmp / "ideas.json", cwd=self.tmp)
         self.assertEqual(rc, 0)
         self.assertEqual((out["valid"], out["candidates"], out["usable"]), (True, 50, 48))
@@ -240,7 +240,7 @@ class IdeasFile(unittest.TestCase):
         with self.assertRaises(IE.IdeaFileError) as e:
             IE.parse_ideas(self.raw(bad))
         self.assertRegex(e.exception.problems[0], r"not valid JSON: .* line 1, column \d+")
-        (self.tmp / "ideas.json").write_text(bad)
+        (self.tmp / "ideas.json").write_text(bad, encoding="utf-8")
         rc, out, _ = engine("select", "--ideas-file", self.tmp / "ideas.json", "--batches-dir", self.tmp / "b",
                             "--db", fresh_db(self.tmp), cwd=self.tmp)
         self.assertEqual((rc, out["error"]), (2, "INVALID_IDEAS_FILE"))
@@ -303,7 +303,7 @@ class Selection(unittest.TestCase):
         cls.tmp = Path(tempfile.mkdtemp(prefix="ie_sel_"))
         cls.db = fresh_db(cls.tmp)
         cls.ideas = cls.tmp / "ideas.json"
-        cls.ideas.write_text(json.dumps(make_candidates(), indent=1))
+        cls.ideas.write_text(json.dumps(make_candidates(), indent=1), encoding="utf-8")
         cls.history_before = hashlib.sha256(cls.db.read_bytes()).hexdigest()
         # --count 5: this class checks a full five-topic selection (the default is 2; see test_video_count)
         cls.rc, cls.out, cls.err = engine("select", "--ideas-file", cls.ideas, "--batches-dir", cls.tmp / "batches", "--db", cls.db,
@@ -431,12 +431,12 @@ class Selection(unittest.TestCase):
         try:
             m = self.j("manifest.json", b)
             m["selected"][0]["topic"] = "Why do zebras have stripes?"
-            (b / "manifest.json").write_text(json.dumps(m))
+            (b / "manifest.json").write_text(json.dumps(m), encoding="utf-8")
             rc, out, _ = engine("produce", "--batch", b, "--produce", "none", cwd=self.tmp)
             self.assertEqual((rc, out["error"]), (2, "STALE_MANIFEST"))
             self.assertIn("changed after selection", out["why"])
             (b / "manifest.json").write_bytes(saved)
-            (b / "input.json").write_text("{}")                              # the archived input swapped
+            (b / "input.json").write_text("{}", encoding="utf-8")                              # the archived input swapped
             rc, out, _ = engine("produce", "--batch", b, "--produce", "none", cwd=self.tmp)
             self.assertEqual((rc, out["error"]), (2, "STALE_MANIFEST"))
             self.assertIn("input.json", out["why"])
@@ -473,7 +473,7 @@ class TooFew(unittest.TestCase):
         try:
             all_c = {c["id"]: c for c in make_candidates()["candidates"]}
             pick = ["sky", "sky-2", "purr", "purr-2", "mirror", "mem-onions", "mem-tickle", "empty", "bait"]
-            (tmp / "ideas.json").write_text(json.dumps({"version": "1.0", "candidates": [all_c[i] for i in pick]}))
+            (tmp / "ideas.json").write_text(json.dumps({"version": "1.0", "candidates": [all_c[i] for i in pick]}), encoding="utf-8")
             rc, out, _ = engine("run", "--ideas-file", tmp / "ideas.json", "--batches-dir", tmp / "b", "--db", fresh_db(tmp),
                                 "--count", 5, "--driver-cmd", "false", cwd=tmp)
             self.assertEqual((rc, out["error"], out["usable"], out["need"]), (2, "TOO_FEW_CANDIDATES", 3, 5))
@@ -500,11 +500,11 @@ class Production(unittest.TestCase):
         cls.tmp = Path(tempfile.mkdtemp(prefix="ie_prod_"))
         cls.db = fresh_db(cls.tmp)
         cls.ideas = cls.tmp / "ideas.json"
-        cls.ideas.write_text(json.dumps(make_candidates()))
+        cls.ideas.write_text(json.dumps(make_candidates()), encoding="utf-8")
         cls.out_dir = cls.tmp / "hdd"
         cls.other_runs = cls.tmp / "other-runs"                 # the owner's normal runs folder: must stay untouched
         (cls.other_runs / "keep").mkdir(parents=True)
-        (cls.other_runs / "keep" / "state.json").write_text("{}")
+        (cls.other_runs / "keep" / "state.json").write_text("{}", encoding="utf-8")
         (cls.tmp / "memory").mkdir()                         # a project folder: memory/dump.json is exported after production
         env = clean_env(CF_RUNS_DIR=str(cls.other_runs))
         cls.prep = engine("run", "--ideas-file", cls.ideas, "--batches-dir", cls.tmp / "batches", "--db", cls.db,
@@ -527,8 +527,8 @@ class Production(unittest.TestCase):
         res = r1 / "package" / "v01" / "result.json"
         res.write_text(res.read_text(encoding="utf-8") + " ", encoding="utf-8")
         out2 = Path(next(s["output"] for s in cls.rep2["runs"] if s["slot"] == 2))
-        (out2 / "package" / "run_summary.md").write_text("edited on the HDD\n")
-        (out2 / "package" / "checksums.sha256").write_text("0" * 64 + "  run_summary.md\n")
+        (out2 / "package" / "run_summary.md").write_text("edited on the HDD\n", encoding="utf-8")
+        (out2 / "package" / "checksums.sha256").write_text("0" * 64 + "  run_summary.md\n", encoding="utf-8")
         cls.third = engine("produce", "--batch", cls.batch, "--output-dir", cls.out_dir,
                            "--driver-cmd", stub_cmd(cls.tmp, "noop", ""), cwd=cls.tmp, env=env)
         cls.rep3 = json.loads((cls.batch / "report.json").read_text(encoding="utf-8"))
@@ -634,7 +634,7 @@ class Production(unittest.TestCase):
         try:
             slots["slots"][3]["run_dir"] = str(self.other_runs / "keep")              # outside this batch
             slots["slots"][4]["run_dir"] = str(b / "runs" / "no-such-run")              # missing
-            (b / "slots.json").write_text(json.dumps(slots))
+            (b / "slots.json").write_text(json.dumps(slots), encoding="utf-8")
             before = (b / "driver_calls.txt").read_text(encoding="utf-8")
             rc, out, _ = engine("produce", "--batch", b, "--driver-cmd", stub_cmd(self.tmp, "noop", ""), cwd=self.tmp)
             rep = json.loads((b / "report.json").read_text(encoding="utf-8"))
@@ -649,11 +649,11 @@ class Production(unittest.TestCase):
             self.assertEqual(sorted(p.name for p in self.other_runs.iterdir()), ["keep"])
             self.assertEqual((self.other_runs / "keep" / "state.json").read_text(encoding="utf-8"), "{}")
         finally:
-            (b / "slots.json").write_text(saved)
+            (b / "slots.json").write_text(saved, encoding="utf-8")
 
     def test_16f_one_producer_per_batch(self):
         lock = self.batch / ".lock"
-        lock.write_text(json.dumps({"pid": os.getpid(), "host": socket.gethostname(), "since": "now", "cmd": "test"}))
+        lock.write_text(json.dumps({"pid": os.getpid(), "host": socket.gethostname(), "since": "now", "cmd": "test"}), encoding="utf-8")
         try:
             rc, out, err = engine("produce", "--batch", self.batch, "--produce", "none", cwd=self.tmp)
             self.assertNotEqual(rc, 0)

@@ -6,6 +6,7 @@ param(
   [string]$Project = "D:\shorts-ai\factory"
 )
 $ErrorActionPreference = "Stop"
+$env:PYTHONUTF8 = "1"   # CPython reads/writes text as UTF-8: non-ASCII topics/titles must never hit the cp1252 default
 if ($Count -notmatch '^[0-9]{1,3}$' -or [int]$Count -lt 1 -or [int]$Count -gt 50) {
   [Console]::Error.WriteLine("run_factory: invalid -Count '$Count': must be a positive whole number from 1 to 50, e.g. -Count 4 (default 2)")
   exit 2 }

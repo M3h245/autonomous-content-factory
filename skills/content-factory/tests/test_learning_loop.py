@@ -49,7 +49,7 @@ def summary(sid: str, category=None, opening=None, fmt=None, conf="medium") -> d
 
 def write(tmp: Path, s: dict) -> Path:
     p = tmp / f"{s['summary_id']}.json"
-    p.write_text(json.dumps(s))
+    p.write_text(json.dumps(s), encoding="utf-8")
     return p
 
 
@@ -83,7 +83,7 @@ class TopicDecision(unittest.TestCase):
         try:
             db = TI.fresh_db(tmp)
             ideas = tmp / "ideas.json"
-            ideas.write_text(json.dumps(TI.make_candidates()))
+            ideas.write_text(json.dumps(TI.make_candidates()), encoding="utf-8")
             env = TI.clean_env()
             out = {}
             for name, extra in (("plain", ["--no-learning"]),
@@ -143,7 +143,7 @@ class InitDecision(unittest.TestCase):
         self.assertNotIn("learning", brief)
         self.assertFalse((Path(res["run"]) / "learning.json").exists())
         bad = self.tmp / "bad.json"
-        bad.write_text(json.dumps({"schema": "nope"}))
+        bad.write_text(json.dumps({"schema": "nope"}), encoding="utf-8")
         code, res = self.init("--learning", bad)
         self.assertEqual((code, res.get("error")), (2, "LEARNING_INVALID"))
 

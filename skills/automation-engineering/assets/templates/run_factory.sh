@@ -2,6 +2,7 @@
 # Content Factory — unattended run on Linux/macOS (cron friendly). Never publishes.
 # usage: run_factory.sh "TOPIC" [COUNT | --count N] [LANGUAGES]     COUNT: videos per run, default 2, a whole number 1-50
 set -uo pipefail
+export PYTHONUTF8=1   # CPython reads/writes text as UTF-8; harmless on Linux, required intent everywhere
 TOPIC="${1:?usage: run_factory.sh \"TOPIC\" [COUNT | --count N] [LANGUAGES]}"; shift
 if [ "${1:-}" = "--count" ]; then COUNT="${2:-}"; shift 2 2>/dev/null || shift $#; else COUNT="${1:-2}"; [ $# -gt 0 ] && shift; fi
 LANGS="${1:-en}"

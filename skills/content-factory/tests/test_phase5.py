@@ -124,7 +124,7 @@ class RunLock(unittest.TestCase):
         shutil.rmtree(self.runs, ignore_errors=True)
 
     def test_second_mutating_process_is_refused(self):
-        self.lock.write_text(json.dumps({"pid": os.getpid(), "host": socket.gethostname(), "cmd": "media"}))
+        self.lock.write_text(json.dumps({"pid": os.getpid(), "host": socket.gethostname(), "cmd": "media"}), encoding="utf-8")
         p = fact(self.run_, "next")
         self.assertNotEqual(p.returncode, 0)
         self.assertIn("LOCKED", p.stderr + p.stdout)
@@ -136,13 +136,13 @@ class RunLock(unittest.TestCase):
     def test_lock_of_a_dead_process_is_taken_over(self):
         dead = subprocess.Popen([PY, "-c", "pass"])
         dead.wait()
-        self.lock.write_text(json.dumps({"pid": dead.pid, "host": socket.gethostname(), "cmd": "media"}))
+        self.lock.write_text(json.dumps({"pid": dead.pid, "host": socket.gethostname(), "cmd": "media"}), encoding="utf-8")
         p = fact(self.run_, "next")
         self.assertEqual(p.returncode, 0, p.stderr)
         self.assertFalse(self.lock.exists())
 
     def test_unlock_is_audited(self):
-        self.lock.write_text(json.dumps({"pid": os.getpid(), "host": socket.gethostname(), "cmd": "media"}))
+        self.lock.write_text(json.dumps({"pid": os.getpid(), "host": socket.gethostname(), "cmd": "media"}), encoding="utf-8")
         p = subprocess.run([PY, str(FACT), "unlock", "--run", str(self.run_), "--note", "media process killed by OOM"],
                            capture_output=True, text=True)
         self.assertEqual(p.returncode, 0, p.stderr)
@@ -242,7 +242,7 @@ class NoSilentFailures(unittest.TestCase):
 
     def test_init_refuses_a_machine_that_cannot_render_doodles(self):
         fake = tmpdir("fakeskia")
-        (fake / "skia.py").write_text("raise ImportError('libEGL.so.1: cannot open shared object file: No such file or directory')\n")
+        (fake / "skia.py").write_text("raise ImportError('libEGL.so.1: cannot open shared object file: No such file or directory')\n", encoding="utf-8")
         env = {**os.environ, "PYTHONPATH": str(fake) + os.pathsep + os.environ.get("PYTHONPATH", "")}
         before = {p.name for p in self.runs.iterdir()}
         rc, out = init(self.runs, "no doodles here", "--no-db", env=env)
@@ -269,8 +269,8 @@ class Gates(unittest.TestCase):
     def test_doodle_scene_rendered_by_a_fallback_fails(self):
         d = tmpdir("fallback")
         (d / "svg").mkdir()
-        (d / "svg" / "s1.svg").write_text('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920"><g data-in="none"><rect')
-        (d / "svg" / "s2.svg").write_text(K.STRONG_SVG)
+        (d / "svg" / "s1.svg").write_text('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920"><g data-in="none"><rect', encoding="utf-8")
+        (d / "svg" / "s2.svg").write_text(K.STRONG_SVG, encoding="utf-8")
         beats = [{"id": "b1", "role": "hook", "text": "Flamingos rest on one leg.", "claim_ids": []},
                  {"id": "b2", "role": "value", "text": "Not water. Nerves.", "claim_ids": []},
                  {"id": "b3", "role": "payoff", "text": "That is the trick.", "claim_ids": []}]

@@ -137,7 +137,7 @@ def main() -> int:
     run([PY, qa, "check", "--video", corrupt, "--timing", work / "audio/timing.json", "--captions", work / "subtitles/captions.ass",
          "--nosubs", work / "video/video_nosubs.mp4", "--out-dir", bad, "--result", bad / "result.json", "--min-s", "3",
          "--max-s", "20", "--ocr", "off"], expect=("failed",))
-    res = json.loads((bad / "result.json").read_text())
+    res = json.loads((bad / "result.json").read_text(encoding="utf-8"))
     assert any(c["id"] == "QA.DECODE_OK" and not c["passed"] for c in res["gate"]["checks"]), "decode gate missed corruption"
     print("SMOKE TEST PASSED")
     if not a.keep:

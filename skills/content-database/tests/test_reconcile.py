@@ -29,19 +29,19 @@ def make_run(root: Path, rid: str, topic: str, packaged=True, corrupt=False) -> 
     v = run / "videos" / "v01"
     (v / "script").mkdir(parents=True)
     (run / "selection").mkdir(); (run / "ideation").mkdir(); (run / "package" / "v01").mkdir(parents=True)
-    (run / "run.json").write_text(json.dumps({"run_id": rid, "topic": topic, "created_at": "2026-10-17T10:00:00Z"}))
+    (run / "run.json").write_text(json.dumps({"run_id": rid, "topic": topic, "created_at": "2026-10-17T10:00:00Z"}), encoding="utf-8")
     (run / "state.json").write_text(json.dumps({"run_id": rid, "status": "in_progress",
                                                 "global": {"RESEARCH": {"status": "passed"}, "IDEATION": {"status": "passed"},
                                                            "SELECTION": {"status": "passed"}},
-                                                "videos": {"v01": {"status": "packaged" if packaged else "in_progress"}}}))
-    (run / "ideation" / "ideas.json").write_text(json.dumps({"ideas": [{"id": "i1", "title": topic, "angle": "a", "format": "explainer"}]}))
-    (run / "selection" / "selection.json").write_text(json.dumps({"selected": [{"video_id": "v01", "idea_id": "i1", "final_score": 0.9}]}))
+                                                "videos": {"v01": {"status": "packaged" if packaged else "in_progress"}}}), encoding="utf-8")
+    (run / "ideation" / "ideas.json").write_text(json.dumps({"ideas": [{"id": "i1", "title": topic, "angle": "a", "format": "explainer"}]}), encoding="utf-8")
+    (run / "selection" / "selection.json").write_text(json.dumps({"selected": [{"video_id": "v01", "idea_id": "i1", "final_score": 0.9}]}), encoding="utf-8")
     (v / "script" / "script.json").write_text(json.dumps({"language": "en", "beats": [{"text": f"Hook of {topic}"}],
-                                                          "publish": {"title_options": [topic]}}))
+                                                          "publish": {"title_options": [topic]}}), encoding="utf-8")
     mp4 = b"fake-mp4-" + rid.encode()
     (run / "package" / "v01" / "final.mp4").write_bytes(mp4 + (b"x" if corrupt else b""))
     (run / "package" / "v01" / "provenance.json").write_text(json.dumps(
-        {"final": {"sha256": hashlib.sha256(mp4).hexdigest()}, "assets": [{"sha256": "aa", "role": "voice", "license": "x", "source": "y"}]}))
+        {"final": {"sha256": hashlib.sha256(mp4).hexdigest()}, "assets": [{"sha256": "aa", "role": "voice", "license": "x", "source": "y"}]}), encoding="utf-8")
     return run
 
 
@@ -103,7 +103,7 @@ class Reconcile(unittest.TestCase):
         r1 = make_run(self.cloud, "new-run-1", "Topic one")
         code, res = self.plan([r1])
         self.assertEqual(res["totals"]["by_table"]["runs"]["conflict"], 1)
-        plan = json.loads((self.tmp / "plan.json").read_text())
+        plan = json.loads((self.tmp / "plan.json").read_text(encoding="utf-8"))
         self.assertEqual(plan["conflict"][0]["diff"]["topic"], {"canonical": "A different topic", "candidate": "Topic one"})
         self.rec("apply", "--db", self.db, "--plan", self.tmp / "plan.json")
         con = sqlite3.connect(self.db)
@@ -136,7 +136,7 @@ class Reconcile(unittest.TestCase):
                            "publications": [{"run_id": "d-run", "video_id": "v01", "platform": "youtube", "url": "u",
                                              "platform_video_id": "YT", "published_at": "2026-10-17T16:00:00Z"}],
                            "yt_snapshots": [{"snapshot_sha256": "s"}]}}
-        (self.tmp / "dump.json").write_text(json.dumps(dump))
+        (self.tmp / "dump.json").write_text(json.dumps(dump), encoding="utf-8")
         code, res = self.rec("plan", "--db", self.db, "--dump", self.tmp / "dump.json", "--out", self.tmp / "p.json")
         self.assertEqual(code, 0, res)
         self.assertEqual(res["totals"]["insert"], 1)

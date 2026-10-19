@@ -1,5 +1,23 @@
 # Changelog — Autonomous Content Factory
 
+## v3.1.1 — 2026-10-19 · Windows correctness patch (locale-independent text I/O)
+Scope: production scripts and tests only. No stage, gate, contract, output layout or decision changed — the same
+videos are produced, and the analytics/learning behaviour is identical.
+### Fixed
+- **UTF-8 everywhere.** On Windows the default text encoding is cp1252, so any file read or written without an explicit
+  encoding corrupted or crashed as soon as it carried a non-ASCII character (`…`, `’`, `—`, or a Persian topic). Fixed in
+  production code (`idea_engine.py` VERSION + checksums reads; `experiment.py`; `hook_engine.py`; `replay_run.py`;
+  `estimate.py`) and in the test helpers (`fixture_kit.py`, `phase2_kit.py`) and test reads.
+- **Dead-process lock takeover on Windows** (`factory.py _pid_alive`). `os.kill(pid, 0)` terminates a process on Windows,
+  so the previous code returned "alive" for every pid and a crashed run stayed locked for the full 12 h staleness window.
+  It now asks the OS (`OpenProcess` + `GetExitCodeProcess`) whether the pid is really alive.
+### Changed
+- `run_factory.ps1` / `run_factory.sh` / `content-factory.yml` set `PYTHONUTF8=1` so unattended runs are locale-safe.
+- Docs: `PROJECT_STATE.md` (root and skill), `IMPLEMENTATION_REPORT.md` and `WINDOWS_SYNC_PROPOSAL.md` now record that
+  W0–W5 were **applied** to the production database (they previously said "pending owner approval").
+### Tests
+- The full Windows suite runs green (previously the lock test and two cp1252 `UnicodeDecodeError` tests failed).
+
 ## v3.1.0 — 2026-10-18 · analytics and feedback loop (owner request) · untagged until approved
 Scope: content-analytics (new `learning.py`, `learning_apply.py`), content-database (new `reconcile.py`), consumers in
 `idea_engine.py`, `factory.py init` / HOOK gate command and `hook_engine.py select`, tests, docs (`docs/v3.1.0/`). No

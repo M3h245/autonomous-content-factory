@@ -61,7 +61,7 @@ def voice(work: Path, beats: list[tuple[str, str]], lead: float = 0.08, tail: fl
     (work / "audio").mkdir(parents=True, exist_ok=True)
     sf.write(work / "audio" / "voice.wav", audio, sr)
     json.dump({"video_id": "fx", "language": "en", "audio_path": str(work / "audio/voice.wav"), "duration_s": round(len(audio) / sr, 3),
-               "backend": "synthetic", "words": words, "sentences": sents}, open(work / "audio" / "timing.json", "w"))
+               "backend": "synthetic", "words": words, "sentences": sents}, open(work / "audio" / "timing.json", "w", encoding="utf-8"))
 
 
 def build(work: Path, beats, scenes: dict, cameras: dict | None = None, title: str = "Why fingers wrinkle in water",
@@ -73,14 +73,14 @@ def build(work: Path, beats, scenes: dict, cameras: dict | None = None, title: s
     json.dump({"video_id": "fx", "language": "en", "beats": [{"id": b, "role": r, "text": t} for (b, t), r in
                                                              zip(beats, roles or ["hook", "value", "payoff", "loop", "value", "value"])],
                "publish": {"title_options": [title], "description": "test fixture", "hashtags": ["#test"]},
-               **({"cta": cta} if cta else {})}, open(work / "script/script.json", "w"))
+               **({"cta": cta} if cta else {})}, open(work / "script/script.json", "w", encoding="utf-8"))
     (work / "visual/svg").mkdir(parents=True, exist_ok=True)
     sc = []
     for i, (sid, body) in enumerate(scenes.items()):
-        (work / f"visual/svg/{sid}.svg").write_text(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920">{body}</svg>')
+        (work / f"visual/svg/{sid}.svg").write_text(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920">{body}</svg>', encoding="utf-8")
         sc.append({"id": sid, "beat_ids": [beats[i][0]], "visual": {"kind": "doodle", "svg_path": f"svg/{sid}.svg"},
                    "camera": (cameras or {}).get(sid, {"drift": "none"}), "transition": {"type": "cut"}})
-    json.dump({"video_id": "fx", "style": {"palette": PALETTE}, "scenes": sc}, open(work / "visual/storyboard.json", "w"))
+    json.dump({"video_id": "fx", "style": {"palette": PALETTE}, "scenes": sc}, open(work / "visual/storyboard.json", "w", encoding="utf-8"))
     r = {}
     r["visual_plan"] = run([PY, SB, "render", "--storyboard", work / "visual/storyboard.json", "--script", work / "script/script.json",
                             "--out-dir", work / "visual", "--result", work / "visual/result.json", "--timing", work / "audio/timing.json"])

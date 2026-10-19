@@ -96,7 +96,7 @@ class Phase2Hooks(unittest.TestCase):
         self.assertEqual(sel, min(tied, key=lambda k: rows[k]["estimated_duration_s"]))
         self.assertNotIn(sel, {"w1", "w2", "w3"})
         self.assertTrue((d / "opening_brief.json").exists())
-        ob = json.loads((d / "opening_brief.json").read_text())["opening_beat"]
+        ob = json.loads((d / "opening_brief.json").read_text(encoding="utf-8"))["opening_beat"]
         for k in ("subject", "subject_size_target", "composition", "first_frame_state", "on_screen_text", "spoken_line",
                   "visual_action", "emphasis_words", "camera_intent", "safe_margin"):
             self.assertIn(k, ob)

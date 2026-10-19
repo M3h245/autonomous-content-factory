@@ -47,10 +47,10 @@ class Regressions(unittest.TestCase):
         res.parent.mkdir(parents=True, exist_ok=True)
         for status in ("failed", "passed"):
             res.write_text(json.dumps({"stage": "RESEARCH", "status": status, "started_at": "2026-10-05T00:00:00+00:00",
-                                       "finished_at": "2026-10-05T00:00:01+00:00", "errors": [], "outputs": []}))
+                                       "finished_at": "2026-10-05T00:00:01+00:00", "errors": [], "outputs": []}), encoding="utf-8")
             st["events"].append({"ts": "x", "stage": "RESEARCH", "video_id": None, "status": status, "attempt": 1,
                                  "result": str(res), "wall_s": 1.0})
-        (run / "state.json").write_text(json.dumps(st))
+        (run / "state.json").write_text(json.dumps(st), encoding="utf-8")
         subprocess.run([sys.executable, str(F), "report", "--run", str(run)], check=True, capture_output=True)
         rep = json.loads((run / "report" / "report.json").read_text(encoding="utf-8"))
         row = next(g for g in rep["stages"] if g["stage"] == "RESEARCH")

@@ -40,9 +40,9 @@ def staged_run(backend: str) -> Path:
                      (FX / "subtitles", p["subs"])):
         shutil.copytree(src, dst, dirs_exist_ok=True)
     for f in (p["timing"], p["script"]):            # the fixture was built as video "fx"; this run calls it v01
-        d = json.loads(f.read_text())
+        d = json.loads(f.read_text(encoding="utf-8"))
         d["video_id"] = "v01"
-        f.write_text(json.dumps(d))
+        f.write_text(json.dumps(d), encoding="utf-8")
     return run
 
 
@@ -53,7 +53,7 @@ class FactoryReview(unittest.TestCase):
                            capture_output=True, text=True)
         d = json.loads(r.stdout[r.stdout.index("{"):])
         st = F.load(run)
-        qa = json.loads(F.vp(run, "v01")["result"]["QA"].read_text())
+        qa = json.loads(F.vp(run, "v01")["result"]["QA"].read_text(encoding="utf-8"))
         ids = {c["id"] for c in qa["gate"]["checks"]}
         self.assertEqual(qa["status"], "failed")
         self.assertTrue({"REV.PACING_RETENTION", "REV.AUDIO_BALANCE", "REV.ENDING_QUALITY"} <= {e["code"] for e in qa["errors"]}, qa["errors"])

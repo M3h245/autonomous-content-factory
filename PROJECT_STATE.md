@@ -1,5 +1,9 @@
-# PROJECT STATE — Autonomous Content Factory · v3.1.0 (analytics and feedback loop) · 2026-10-19
+# PROJECT STATE — Autonomous Content Factory · v3.1.1 (Windows correctness patch over v3.1.0) · 2026-10-19
 
+
+## v3.1.1 (2026-10-19) — Windows correctness patch
+Locale-independent text I/O (UTF-8) in the production scripts and tests, and a real dead-process lock check on
+Windows (`_pid_alive` via `OpenProcess`). No stage, gate, contract or output layout changed. See the CHANGELOG.
 
 ## v3.1.0 (2026-10-18/19) — analytics and feedback loop
 `docs/v3.1.0/` (ROADMAP, AUDIT, ARCHITECTURE, METRICS, VALIDATION, IMPLEMENTATION_REPORT, WINDOWS_SYNC_PROPOSAL),

@@ -232,9 +232,9 @@ class MediaMetadata(unittest.TestCase):
         self.assertTrue(MC.audit(self.d / "be_c.mp4")["clean"], MC.audit(self.d / "be_c.mp4"))   # …and +bitexact removes it
 
     def test_render_video_encodes_audio_bitexact(self):
-        src = (ROOT / "video-production/scripts/render_video.py").read_text()
+        src = (ROOT / "video-production/scripts/render_video.py").read_text(encoding="utf-8")
         self.assertIn('"-flags:a", "+bitexact"', src)
-        prov = (ROOT / "asset-provenance/scripts/provenance.py").read_text()
+        prov = (ROOT / "asset-provenance/scripts/provenance.py").read_text(encoding="utf-8")
         self.assertNotIn('"-metadata", f"comment=', prov)
 
 

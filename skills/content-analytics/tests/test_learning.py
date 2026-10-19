@@ -82,7 +82,7 @@ class Base(unittest.TestCase):
 
     def ingest(self, snap: dict, name: str) -> dict:
         p = self.tmp / name
-        p.write_text(json.dumps(snap))
+        p.write_text(json.dumps(snap), encoding="utf-8")
         r = subprocess.run([PY, str(INGEST), "--db", str(self.db), "--snapshot", str(p), "--apply"], capture_output=True, text=True)
         self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
         return json.loads(r.stdout)
@@ -94,7 +94,7 @@ class Base(unittest.TestCase):
     def kpis(self) -> dict:
         code, res = self.run_learn("kpis", "--db", self.db, "--out", self.tmp / "kpis.json")
         self.assertEqual(code, 0, res)
-        return {v["platform_video_id"]: v for v in json.loads((self.tmp / "kpis.json").read_text())["videos"]}
+        return {v["platform_video_id"]: v for v in json.loads((self.tmp / "kpis.json").read_text(encoding="utf-8"))["videos"]}
 
 
 def four_videos():
@@ -167,10 +167,10 @@ class Analysis(Base):
     def analyze(self, forms: dict, mech: dict | None = None) -> dict:
         rows = [{"platform_video_id": p, "opening_form": f, "curiosity_mechanism": (mech or {}).get(p, "m"), "format": "explainer",
                  "duration_s": 25.0} for p, f in forms.items()]
-        (self.tmp / "attrs.json").write_text(json.dumps(attrs_doc(rows)))
+        (self.tmp / "attrs.json").write_text(json.dumps(attrs_doc(rows)), encoding="utf-8")
         code, res = self.run_learn("analyze", "--db", self.db, "--attributes", self.tmp / "attrs.json", "--out-dir", self.tmp / "L")
         self.assertEqual(code, 0, res)
-        return json.loads((self.tmp / "L" / "learning_summary.json").read_text())
+        return json.loads((self.tmp / "L" / "learning_summary.json").read_text(encoding="utf-8"))
 
     def test_effect_found_bounded_and_explained(self):
         shares = {"s1": .50, "s2": .48, "s3": .52, "s4": .47, "q1": .30, "q2": .33, "q3": .28, "q4": .31}
@@ -184,7 +184,7 @@ class Analysis(Base):
             self.assertLessEqual(abs(e["multiplier"] - 1), LN.POLICY["caps"]["low"] + 1e-9)
         self.assertTrue(any(f["attribute"] == "opening_form" for f in s["findings"]["appears_to_work"]))
         self.assertTrue(all("n=" in f["evidence"] for k in s["findings"] for f in s["findings"][k]))
-        self.assertIn("Correlation", (self.tmp / "L" / "LEARNING_REPORT.md").read_text())
+        self.assertIn("Correlation", (self.tmp / "L" / "LEARNING_REPORT.md").read_text(encoding="utf-8"))
         self.assertIsNotNone(s["next_experiment"])
 
     def test_small_groups_make_no_directive(self):
@@ -224,23 +224,23 @@ class Attributes(Base):
             (v / d).mkdir(parents=True)
         (run / "selection").mkdir()
         (run / "run.json").write_text(json.dumps({"run_id": "run-A", "topic": "Why is the sky blue?",
-                                                  "constraints": ["H1-2026W43-opening-form arm=statement: first line"]}))
+                                                  "constraints": ["H1-2026W43-opening-form arm=statement: first line"]}), encoding="utf-8")
         (v / "hook" / "selected_hook.json").write_text(json.dumps({"spoken_text": "Pinch your nose. Now hum.",
-                                                                   "curiosity_mechanism": "Direct_Challenge"}))
+                                                                   "curiosity_mechanism": "Direct_Challenge"}), encoding="utf-8")
         (v / "script" / "script.json").write_text(json.dumps({"beats": [{"id": "b1", "role": "hook"}, {"id": "b2", "role": "setup"},
-                                                                         {"id": "b3", "role": "value"}, {"id": "b4", "role": "loop"}]}))
+                                                                         {"id": "b3", "role": "value"}, {"id": "b4", "role": "loop"}]}), encoding="utf-8")
         (v / "audio" / "timing.json").write_text(json.dumps({"duration_s": 24.0, "sentences": [
-            {"beat_id": "b1", "start": 0.1, "end": 1.9}, {"beat_id": "b2", "start": 2.1, "end": 3.0}, {"beat_id": "b3", "start": 3.4, "end": 9}]}))
-        (v / "visual" / "storyboard.json").write_text(json.dumps({"scenes": [{}] * 6}))
-        (v / "package" / "package_selection.json").write_text(json.dumps({"selected": {"title": "Why can't you hum?"}}))
-        (run / "selection" / "selection.json").write_text(json.dumps({"selected": [{"video_id": "v01", "format": "explainer"}]}))
+            {"beat_id": "b1", "start": 0.1, "end": 1.9}, {"beat_id": "b2", "start": 2.1, "end": 3.0}, {"beat_id": "b3", "start": 3.4, "end": 9}]}), encoding="utf-8")
+        (v / "visual" / "storyboard.json").write_text(json.dumps({"scenes": [{}] * 6}), encoding="utf-8")
+        (v / "package" / "package_selection.json").write_text(json.dumps({"selected": {"title": "Why can't you hum?"}}), encoding="utf-8")
+        (run / "selection" / "selection.json").write_text(json.dumps({"selected": [{"video_id": "v01", "format": "explainer"}]}), encoding="utf-8")
         self.link("YT1", "run-A", 3)
         man = self.tmp / "manifest.json"
-        man.write_text(json.dumps({"selected": [{"slot": 1, "topic": "Why is the sky blue?", "category": "science"}]}))
+        man.write_text(json.dumps({"selected": [{"slot": 1, "topic": "Why is the sky blue?", "category": "science"}]}), encoding="utf-8")
         code, res = self.run_learn("attributes", "--db", self.db, "--runs-root", self.tmp / "runs", "--manifests", man,
                                    "--out", self.tmp / "a.json")
         self.assertEqual(code, 0, res)
-        a = json.loads((self.tmp / "a.json").read_text())["videos"][0]
+        a = json.loads((self.tmp / "a.json").read_text(encoding="utf-8"))["videos"][0]
         self.assertEqual((a["opening_form"], a["curiosity_mechanism"], a["hook_spoken_s"], a["first_value_s"]),
                          ("imperative", "direct_challenge", 1.9, 3.4))
         self.assertEqual((a["has_setup_beat"], a["ends_with_loop"], a["cta_beat"], a["scenes_n"], a["scenes_per_10s"]),
@@ -252,27 +252,27 @@ class Attributes(Base):
     def test_duplicate_run_folder_most_complete_wins(self):
         stale = self.tmp / "pc" / "run-D"
         (stale / "videos").mkdir(parents=True)
-        (stale / "run.json").write_text(json.dumps({"run_id": "run-D", "topic": "stale"}))
+        (stale / "run.json").write_text(json.dumps({"run_id": "run-D", "topic": "stale"}), encoding="utf-8")
         done = self.tmp / "cloud" / "run-D"
         (done / "videos" / "v01" / "hook").mkdir(parents=True); (done / "package" / "v01").mkdir(parents=True)
-        (done / "run.json").write_text(json.dumps({"run_id": "run-D", "topic": "finished"}))
-        (done / "videos" / "v01" / "hook" / "selected_hook.json").write_text(json.dumps({"spoken_text": "Why?"}))
-        (done / "package" / "v01" / "provenance.json").write_text("{}")
+        (done / "run.json").write_text(json.dumps({"run_id": "run-D", "topic": "finished"}), encoding="utf-8")
+        (done / "videos" / "v01" / "hook" / "selected_hook.json").write_text(json.dumps({"spoken_text": "Why?"}), encoding="utf-8")
+        (done / "package" / "v01" / "provenance.json").write_text("{}", encoding="utf-8")
         self.link("YT9", "run-D", 3)
         code, res = self.run_learn("attributes", "--db", self.db, "--runs-root", self.tmp / "pc", "--runs-root", self.tmp / "cloud",
                                    "--out", self.tmp / "a.json")
-        doc = json.loads((self.tmp / "a.json").read_text())
+        doc = json.loads((self.tmp / "a.json").read_text(encoding="utf-8"))
         self.assertEqual(doc["videos"][0]["topic"], "finished")
         self.assertEqual(doc["duplicate_run_folders"][0]["ignored"], [str(stale)])
 
     def test_no_manifest_means_no_category(self):
         run = self.tmp / "runs" / "run-B"
         (run / "videos" / "v01").mkdir(parents=True)
-        (run / "run.json").write_text(json.dumps({"run_id": "run-B", "topic": "x"}))
+        (run / "run.json").write_text(json.dumps({"run_id": "run-B", "topic": "x"}), encoding="utf-8")
         self.link("YT2", "run-B", 3)
         self.link("YT3", "run-missing", 4)
         code, res = self.run_learn("attributes", "--db", self.db, "--runs-root", self.tmp / "runs", "--out", self.tmp / "a.json")
-        doc = json.loads((self.tmp / "a.json").read_text())
+        doc = json.loads((self.tmp / "a.json").read_text(encoding="utf-8"))
         a = doc["videos"][0]
         self.assertIsNone(a["category"]); self.assertTrue(a["category_source"].startswith("unavailable"))
         self.assertIn("opening_form", a["missing"])
@@ -296,7 +296,7 @@ class Apply(unittest.TestCase):
 
     def test_load_rejects_wrong_schema(self):
         d = Path(tempfile.mkdtemp())
-        (d / "x.json").write_text(json.dumps({"schema": "other"}))
+        (d / "x.json").write_text(json.dumps({"schema": "other"}), encoding="utf-8")
         with self.assertRaises(LA.LearningError):
             LA.load(d / "x.json")
         shutil.rmtree(d)

@@ -59,18 +59,18 @@ def write_set(d: Path, svgs: dict[str, str], cands: list[dict]) -> Path:
 def select_hooks(d: Path, attempt: int = 1) -> dict:
     subprocess.run([PY, str(HOOK_ENGINE), "select", "--hooks", d / "hooks.json", "--dossier", d / "dossier.json", "--out-dir", d,
                     "--result", d / "result.json", "--attempt", str(attempt)], capture_output=True, text=True)
-    scored = json.loads((d / "hooks.scored.json").read_text()) if (d / "hooks.scored.json").exists() else {}
-    return {"result": json.loads((d / "result.json").read_text()), "scored": scored}
+    scored = json.loads((d / "hooks.scored.json").read_text(encoding="utf-8")) if (d / "hooks.scored.json").exists() else {}
+    return {"result": json.loads((d / "result.json").read_text(encoding="utf-8")), "scored": scored}
 
 
 def select_script(d: Path, hook_json: Path, variants: list[dict], min_s=10, max_s=60) -> dict:
-    (d / "script_variants.json").write_text(json.dumps({"video_id": "t", "language": "en", "hook_id": "h1", "variants": variants}))
-    (d / "dossier.json").write_text(json.dumps(DOSSIER))
+    (d / "script_variants.json").write_text(json.dumps({"video_id": "t", "language": "en", "hook_id": "h1", "variants": variants}), encoding="utf-8")
+    (d / "dossier.json").write_text(json.dumps(DOSSIER), encoding="utf-8")
     subprocess.run([PY, str(SCRIPT_SELECT), "select", "--variants", d / "script_variants.json", "--hook", hook_json, "--dossier",
                     d / "dossier.json", "--out", d / "script.json", "--result", d / "result.json", "--min-s", str(min_s), "--max-s", str(max_s)],
                    capture_output=True, text=True)
-    return {"result": json.loads((d / "result.json").read_text()),
-            "scored": json.loads((d / "script_variants.scored.json").read_text()) if (d / "script_variants.scored.json").exists() else {}}
+    return {"result": json.loads((d / "result.json").read_text(encoding="utf-8")),
+            "scored": json.loads((d / "script_variants.scored.json").read_text(encoding="utf-8")) if (d / "script_variants.scored.json").exists() else {}}
 
 
 def beat(i, role, text, claims, **k):
