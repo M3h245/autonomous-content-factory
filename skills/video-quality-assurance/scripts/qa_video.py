@@ -136,8 +136,9 @@ def cmd_check(a) -> int:
     sr.check("QA.DECODE_OK", not bad, "blocking", "; ".join(bad) or "every packet decodes", len(bad), 0,
              fix("SUBTITLES", "reburn"))
     sr.check("QA.FASTSTART", moov_first(video), "minor", "moov atom before mdat (fast start)")
-    sr.check("QA.PLATFORM_MAX", dur <= PLATFORM_MAX_S, "blocking", f"{dur:.1f}s ≤ {PLATFORM_MAX_S}s",
-             round(dur, 2), PLATFORM_MAX_S, fix("SCRIPT", "shorten", target_s=a.max_s))
+    platform_max = max(PLATFORM_MAX_S, float(a.max_s))   # a long-form brief (max_s up to 480) governs; shorts keep the 180 s default
+    sr.check("QA.PLATFORM_MAX", dur <= platform_max, "blocking", f"{dur:.1f}s ≤ {platform_max:g}s",
+             round(dur, 2), platform_max, fix("SCRIPT", "shorten", target_s=a.max_s))
     in_range = a.min_s <= dur <= a.max_s
     sr.check("QA.DURATION_TARGET", in_range, "major", f"{dur:.1f}s within [{a.min_s}, {a.max_s}]", round(dur, 2),
              [a.min_s, a.max_s], fix("SCRIPT", "shorten" if dur > a.max_s else "lengthen", target_s=a.max_s if dur > a.max_s else a.min_s))

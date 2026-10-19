@@ -1,5 +1,33 @@
 # Changelog — Autonomous Content Factory
 
+## v3.2.0 — 2026-10-20 · render speed + long-form foundation (in progress)
+Scope: `video-production/scripts/doodle_engine.py` (speed), `content-factory/scripts/factory.py` and
+`content-analytics/scripts/learning.py` (long-form split), `video-quality-assurance/scripts/qa_video.py`
+(duration ceiling). No gate, contract or output layout changed for shorts.
+### Performance — doodle renderer 37x faster (measured; see `docs/v3.2.0/PERFORMANCE.md`)
+- **`_surface()`** now builds surfaces with `skia.Surface.MakeRasterN32Premul(W, H)` instead of
+  `skia.Surface.MakeRaster(ImageInfo(...))`. Byte-identical pixels, ~50x faster to draw images into
+  (154 ms → 3 ms per 1080x1920 blit on skia-python 144.0.post2). This was the real bottleneck: the paper
+  grain overlay alone was 289 ms of a 300 ms frame.
+- **`raster_image()`** (new) builds numpy-derived images via `Surface.MakeRasterDirect` + snapshot instead of
+  `Image.fromarray` (150-300 ms → 3 ms per blit). N32Premul is BGRA, so the buffer is R/B-swapped first.
+  Verified pixel-identical with PIL; the paper overlay rounds by at most 3/255 afterwards (documented).
+- **`rough_effect()`** memoised with a bounded 8192-entry cache (built per glyph per frame; ~3 % here, more
+  on complex scenes).
+- Net: a fixed doodle scene renders at **120 fps, up from 3.2** — ~8 ms per frame instead of 300 ms.
+### Added — long-form foundation (P3)
+- `factory.py init` records `video_kind` (`"long"` when `--max-s > 180`, else `"short"`) in the brief, so the
+  analytics learning loop can split the two; `--min-s 180 --max-s 480` is accepted and threaded through every
+  stage (already was).
+- `learning.py attributes` records `video_kind` per video (from the brief, falling back to the brief's
+  `max_s` then the measured duration, so pre-v3.2 runs are classified too) and lists it in `missing`.
+- `qa_video.py` gates duration against `max(180, brief.max_s)` instead of a hard 180 s ceiling, so a long-form
+  brief is not rejected while shorts keep the default.
+- Docs: `docs/v3.2.0/ROADMAP.md`, `LONGFORM.md`, `PERFORMANCE.md`.
+### Tests
+- `test_visual_audit`, `test_bad_videos`, `test_phase35`, `test_phase2_hooks`, `test_phase4`, `test_phase3` green
+  after the renderer change.
+
 ## v3.1.1 — 2026-10-19 · Windows correctness patch (locale-independent text I/O)
 Scope: production scripts and tests only. No stage, gate, contract, output layout or decision changed — the same
 videos are produced, and the analytics/learning behaviour is identical.

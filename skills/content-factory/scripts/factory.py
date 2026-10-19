@@ -680,9 +680,14 @@ def cmd_init(a) -> int:
         k += 1
         run = runs / f"{rid}-{k}"
     db = None if a.no_db else Path(a.db or os.environ.get("CF_DB") or runs / "factory.db").resolve()
+    # v3.2.0: video_kind is the split key for the analytics learning loop. A long-form video's watch time
+    # matures slower than a short's, so the two must never be pooled in the same metric window (see
+    # docs/v3.2.0/LONGFORM.md §4). Default threshold matches the platform's own long-form boundary (3 min).
+    video_kind = "long" if a.max_s > 180 else "short"
     brief = {"run_id": run.name, "topic": a.topic, "count": a.count, "languages": a.languages.split(","),
              "platforms": a.platforms.split(","), "duration_s": {"min": a.min_s, "max": a.max_s}, "min_s": a.min_s,
-             "max_s": a.max_s, "voices": dict(x.split("=", 1) for x in a.voices.split(",") if "=" in x) if a.voices else {},
+             "max_s": a.max_s, "video_kind": video_kind,
+             "voices": dict(x.split("=", 1) for x in a.voices.split(",") if "=" in x) if a.voices else {},
              "music": a.music, "caption_style": a.caption_style, "visual_style": a.visual_style,
              "review_backend": a.review_backend, "hook_engine": "v2", "cta_engine": "v1", "package_engine": "v1",
              "audience": a.audience, "tone": a.tone,

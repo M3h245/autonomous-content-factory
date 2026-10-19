@@ -206,6 +206,15 @@ def video_attributes(run_dir: Path, run_id: str, vid: str, cats: dict) -> dict:
     pkg = J(f"videos/{vid}/package/package_selection.json") or {}
     sel = J("selection/selection.json") or {}
     a["topic"] = run.get("topic")
+    # v3.2.0: the long/short split for the learning loop. Prefer the brief's explicit video_kind; fall back to
+    # the brief's max_s, then to the measured narration duration, so pre-v3.2 runs are classified too.
+    _vk = run.get("video_kind")
+    if not _vk:
+        _ms = run.get("max_s")
+        if _ms is None:
+            _ms = (run.get("duration_s") or {}).get("max")
+        _vk = ("long" if (_ms or 0) > 180 else "short") if _ms is not None else None
+    a["video_kind"] = _vk
     spoken = hook.get("spoken_text")
     a["hook_text"] = spoken
     a["opening_form"] = LA.opening_form(spoken) if spoken else None
@@ -247,7 +256,7 @@ def video_attributes(run_dir: Path, run_id: str, vid: str, cats: dict) -> dict:
     a["experiment_arm"] = {"experiment": arm[0], "arm": arm[1]} if arm else None
     a["sources"] = src
     a["missing"] = sorted(k for k in ("opening_form", "curiosity_mechanism", "first_value_s", "duration_s", "scenes_n",
-                                      "title", "format", "category") if a.get(k) is None)
+                                      "title", "format", "category", "video_kind") if a.get(k) is None)
     return a
 
 
