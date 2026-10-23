@@ -31,6 +31,13 @@ from cf_common import (X264_THREADS, StageResult, decode_errors, emit, exit_for,
 
 W, H = 1080, 1920
 SAFE_L, SAFE_R = 90, 90           # keep clear of edges; right-side UI buttons sit outside the centered caption band
+
+
+def set_canvas(w: int, h: int) -> None:
+    """v3.3: switch the ASS coordinate space to the brief's aspect (16:9 long-form = 1920x1080)."""
+    global W, H
+    W, H = int(w), int(h)
+
 FONTS_DIR = Path(__file__).resolve().parents[1] / "assets" / "fonts"
 FONT_FILES = {"Anton": "Anton-Regular.ttf", "Archivo Black": "ArchivoBlack-Regular.ttf", "Vazirmatn": "Vazirmatn-Bold.ttf",
               "Permanent Marker": "PermanentMarker-Regular.ttf"}
@@ -120,7 +127,8 @@ def build_ass(tm: dict, a, overlays: list[dict]) -> tuple[str, list, dict]:
     font = a.font if a.font != "auto" else pick_font(lang, all_text, a.style)
     rtl = lang in RTL_LANGS or is_rtl_text(all_text)
     upper = (a.case == "upper") or (a.case == "auto" and not rtl and font in ("Anton", "Archivo Black") and a.style != "doodle")
-    size = int(STYLE_SIZES[a.style] * a.font_scale)
+    # v3.3: keep the caption's visual size proportional across aspects (style sizes are authored for 1920-tall portrait)
+    size = int(STYLE_SIZES[a.style] * a.font_scale * (H / 1920))
     disp = (lambda s: s.upper()) if upper else (lambda s: s)
     # v1 styles keep their original (conservative) measurement; doodle is calibrated to libass metrics + the 6 %
     # active-word scale and the ink outline
@@ -130,6 +138,8 @@ def build_ass(tm: dict, a, overlays: list[dict]) -> tuple[str, list, dict]:
     chunks = chunk_words(words, max_words, max_w * (2 if a.style == "clean" else 1), fitter, disp)
     spans = chunk_spans(chunks, tm["duration_s"])
     y = int(H * a.y)
+    # v3.3: keep side margins proportional across aspects (authored for 1080 wide)
+    safe_l, safe_r = round(SAFE_L * W / 1080), round(SAFE_R * W / 1080)
     bold = -1 if font == "Vazirmatn" else 0
     enc = -1 if rtl else 1  # -1 = auto base direction; required for correct RTL order/joining in libass
     head = (f"[Script Info]\nScriptType: v4.00+\nPlayResX: {W}\nPlayResY: {H}\nWrapStyle: 0\nScaledBorderAndShadow: yes\n\n"
@@ -137,14 +147,14 @@ def build_ass(tm: dict, a, overlays: list[dict]) -> tuple[str, list, dict]:
             "Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, "
             "MarginR, MarginV, Encoding\n"
             f"Style: Cap,{font},{size},&H00FFFFFF,&H00FFFFFF,&H00000000,&H78000000,{bold},0,0,0,100,100,1,0,1,"
-            f"{max(4, size // 13)},{max(2, size // 30)},5,{SAFE_L},{SAFE_R},0,{enc}\n"
+            f"{max(4, size // 13)},{max(2, size // 30)},5,{safe_l},{safe_r},0,{enc}\n"
             f"Style: Clean,{font},{size},&H00FFFFFF,&H00FFFFFF,&H00000000,&H96000000,{bold},0,0,0,100,100,0,0,3,"
-            f"14,0,2,{SAFE_L},{SAFE_R},{H - y},{enc}\n"
+            f"14,0,2,{safe_l},{safe_r},{H - y},{enc}\n"
             f"Style: Doodle,{font},{size},{INK},{INK},&H00FFFFFF,&H64000000,0,0,0,0,100,100,1,0,1,"
-            f"{max(5, size // 11)},{max(2, size // 34)},5,{SAFE_L},{SAFE_R},0,{enc}\n"
+            f"{max(5, size // 11)},{max(2, size // 34)},5,{safe_l},{safe_r},0,{enc}\n"
             f"Style: Marker,{font},{size},{MARKER},{MARKER},{MARKER},&HFF000000,0,0,0,0,100,100,1,0,1,"
             f"{max(10, size // 5)},0,5,{SAFE_L},{SAFE_R},0,{enc}\n"
-            f"Style: Title,{font},{int(104 * a.font_scale)},&H00FFFFFF,&H00FFFFFF,&H00000000,&H78000000,{bold},0,0,0,100,100,1,0,1,"
+            f"Style: Title,{font},{int(104 * a.font_scale * (H / 1920))},&H00FFFFFF,&H00FFFFFF,&H00000000,&H78000000,{bold},0,0,0,100,100,1,0,1,"
             f"8,3,8,{SAFE_L},{SAFE_R},300,{enc}\n\n"
             "[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n")
     ev = []
@@ -254,6 +264,16 @@ def cmd_run(a) -> int:
                             for s in read_json(a.overlays).get("shots", []))
         rtl_text = tm["language"].split("-")[0].lower() in RTL_LANGS or is_rtl_text(" ".join(w["w"] for w in tm["words"]))
         a.style = "doodle" if (requested == "doodle" or doodle_sb) and not rtl_text else "karaoke"
+    # v3.3: 16:9 long-form captions live at the frame's own ASS space and sit lower than a Short's (no Shorts
+    # UI band to clear). `--y auto` picks the band per aspect; an explicit --y still wins.
+    if a.aspect == "wide":
+        set_canvas(1920, 1080)
+        if a.y is None:
+            a.y = 0.86
+    else:
+        set_canvas(1080, 1920)
+        if a.y is None:
+            a.y = 0.63
     ass, chunks, meta = build_ass(tm, a, overlays)
     (out / "captions.ass").write_text(ass, encoding="utf-8")
     srt, vtt = build_srt_vtt(tm)
@@ -312,8 +332,10 @@ def main() -> int:
     r.add_argument("--font", default="auto", choices=["auto", *FONT_FILES])
     r.add_argument("--case", choices=["auto", "upper", "keep"], default="auto")
     r.add_argument("--max-words", type=int, default=3)
-    r.add_argument("--y", type=float, default=0.63, help="caption center as a fraction of height")
+    r.add_argument("--y", type=float, default=None, help="caption centre as a fraction of height (default: 0.63 portrait / 0.86 wide)")
     r.add_argument("--font-scale", type=float, default=1.0)
+    r.add_argument("--aspect", default="vertical", choices=["vertical", "wide"],
+                   help="ASS coordinate space: vertical = 1080x1920, wide (16:9 long-form) = 1920x1080")
     r.add_argument("--overlays", help="timed storyboard; shots with overlay.text become title cards")
     r.add_argument("--crf", type=int, default=19); r.add_argument("--preset", default="medium")
     r.add_argument("--attempt", type=int, default=1)

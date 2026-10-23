@@ -1,0 +1,42 @@
+{
+  "schema": "cf-experiment-registry/1",
+  "note": "Pre-registered hypotheses that have NO primary source behind them (docs/v3.3/RESEARCH-PACKAGING.md §10). They are recorded here, before any data exists, so that a result can be judged honestly and a new hypothesis never silently replaces one of these. They are NOT experiment-engine specs (they use different variables and mostly need 16:9 long-form, which can be A/B tested, or a retention curve), so they are kept separate from the paired `spec.json` experiments.",
+  "registered_at": "2026-10-20",
+  "source": "docs/v3.3/RESEARCH-PACKAGING.md §8.2, §3.3, §6",
+  "rule": "judged by WATCH TIME (YouTube's own A/B metric, support.google.com/youtube/answer/16391400), never by CTR; no threshold is adopted before the data exists",
+  "experiments": [
+    {
+      "experiment_id": "X-STICKER",
+      "hypothesis": "A coloured on-screen callout (\"sticker\") on the cover changes performance.",
+      "evidence_for": "owner observation, n=1 (2026-10)",
+      "status": "unverified",
+      "applies_to": "long_form",
+      "primary_metric": "watch_time_share",
+      "secondary_metrics": ["engaged_views", "average_view_percentage"],
+      "minimum": "16:9 long-form only; Shorts cannot be A/B tested natively and a before/after comparison confounds topic",
+      "decision_rule": "not set yet — record the pair of matched videos (sticker vs no sticker) and read the watch-time share once both have 14 days of data"
+    },
+    {
+      "experiment_id": "X-MIDCTA",
+      "hypothesis": "A mid-video visual CTA (no spoken words) at ~50 % costs more retention than it gains in conversions.",
+      "evidence_for": "none in either direction",
+      "status": "unverified",
+      "applies_to": "short_and_long",
+      "primary_metric": "retention_at_midpoint",
+      "secondary_metrics": ["average_view_percentage", "subscribers_gained"],
+      "minimum": "matched pairs, one arm with the on-screen CTA and one without, same narrator and structure",
+      "decision_rule": "not set yet — a drop in the retention curve at the CTA's timestamp decides it"
+    },
+    {
+      "experiment_id": "X-TITLECASE",
+      "hypothesis": "Sentence-case titles reach more viewers than title-case (or the reverse).",
+      "evidence_for": "none (craft opinion only)",
+      "status": "unverified",
+      "applies_to": "long_form",
+      "primary_metric": "watch_time_share",
+      "secondary_metrics": ["impressions", "average_view_duration"],
+      "minimum": "the same videos' 3 title variants through Studio Test & compare (only long-form is eligible)",
+      "decision_rule": "not set yet — Studio picks the winner by watch time over ~2 weeks"
+    }
+  ]
+}

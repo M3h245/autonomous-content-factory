@@ -535,6 +535,8 @@ ROUTES = {
     "ending_quality": ("SCRIPT", "revise_ending", {}),
     "title_coherence": ("SCRIPT", "revise_publish", {}),
     "thumbnail_coherence": ("VISUAL_PLAN", "redesign_scene", {"scene": "first", "for": "cover frame at 0.7 s"}),
+    # P6.2: cover taste is a packaging problem, not a rendering problem — redesign the cover, don't re-render the video.
+    "thumbnail_appeal": ("PACKAGE", "redesign_cover", {}),
 }
 
 
@@ -557,7 +559,12 @@ def route_for(d: str, info: dict) -> dict:
 OBJECTIVE_ROUTES = {"FIRST_FRAME.BLANK": ("VISUAL_PLAN", "redesign_scene", {"scene": "first"}),
                     "TITLE.FORMAT": ("SCRIPT", "revise_publish", {}),
                     "COVER.FORMAT": ("VISUAL_PLAN", "redesign_scene", {"scene": "first"}),
-                    "TIMING.BEYOND_VIDEO": ("VIDEO", "rerender", {})}
+                    "TIMING.BEYOND_VIDEO": ("VIDEO", "rerender", {}),
+                    # P6.2: a package that ships unjudged (or judged against a stale packet/without a cover score) goes
+                    # back to PACKAGE.
+                    "JUDGMENT.MISSING": ("PACKAGE", "judge_package", {}),
+                    "JUDGMENT.STALE": ("PACKAGE", "judge_package", {}),
+                    "JUDGMENT.UNJUDGED_COVER": ("PACKAGE", "redesign_cover", {})}
 
 
 def objective_route(o: dict) -> dict | None:
@@ -711,8 +718,12 @@ def score_hook_candidate(pk: Packet, pol: dict) -> dict:
     ev0 = m.get("first_visual_event_s")
     if (ev0 is None or ev0 > f0["first_event_max_s"]) and not m.get("idle_motion_at_t0"):
         obj.append({"id": "FRAME0.NO_EARLY_EVENT", "severity": "major", "evidence": f"first visual event at {ev0}"})
-    if dur > f0["hook_max_s"]:
-        obj.append({"id": "HOOK.TOO_LONG", "severity": "major", "evidence": f"{dur:.2f}s spoken (calibrated estimate)"})
+    # v3.3: the hook window follows the format. Shorts keep the 3.2 s heuristic; long-form uses YouTube's own
+    # 5-10 s creator guidance (docs/v3.3/RESEARCH-PACKAGING.md §2, youtube.com/creators/create/longform/).
+    hook_max = f0["hook_max_s_long"] if h.get("video_kind") == "long" else f0["hook_max_s"]
+    if dur > hook_max:
+        obj.append({"id": "HOOK.TOO_LONG", "severity": "major",
+                    "evidence": f"{dur:.2f}s spoken (calibrated estimate; limit {hook_max}s for {h.get('video_kind', 'short')})"})
     if not promised or not set(promised) <= ids:
         obj.append({"id": "HOOK.UNSUPPORTED_PROMISE", "severity": "blocking", "evidence": f"promised facts {promised} not all in the dossier"})
     generic = any(g in spoken.lower() for g in GENERIC_OPENERS)
@@ -800,7 +811,12 @@ def score_script_variant(pk: Packet, pol: dict) -> dict:
 
 # ============================================================================= Phase 4: package candidates
 PACKAGE_DIMS = ["title_strength", "curiosity", "accuracy", "thumbnail_readability", "complementarity", "hook_coherence",
-                "promise_payoff", "clickbait_risk", "cta_coherence"]
+                "promise_payoff", "clickbait_risk", "cta_coherence", "thumbnail_appeal"]
+# P6.2: the cover's *taste* is not measurable geometrically. A cover can pass every metric above and still be dull.
+# The heuristic returns a neutral 3 and says "not judged"; the external judge (fresh agent or human looking at the shelf
+# size and the full size) is AUTHORITATIVE here and may raise as well as lower it. This is the one deliberate exception
+# to the min-only merge, because a mechanical gate has no evidence to cap against.
+JUDGE_ONLY = {"thumbnail_appeal"}
 OPEN_LOOP = r"\?|\b(why|what|how|actually|really|isn't|not|vs|versus|myth|wrong|real|still|until|secret|inside)\b"
 VAGUE = {"this", "thing", "things", "stuff", "video", "something", "everything"}
 FUNC = {"what", "why", "how", "when", "where", "who", "which", "does", "doe", "did", "can", "will", "just", "really", "actually",
@@ -922,14 +938,31 @@ def score_package(pk: Packet, pol: dict) -> dict:
            ("caption CTA echoes the video's CTA", rel, f"'{ccta}' vs '{vc.get('spoken', '')}'"),
            ("no CTA on the thumbnail", not any(x["id"] == "THUMB.CTA" for x in checks), "checked")]
     cc = dim(ratio_score(sig, 5), sig, 5, critical=[(bool(cta_fail), 2, "conflicting call to action")])
+    # --- thumbnail appeal (P6.2, taste) ------------------------------------------
+    # Everything above is measurable. This one is not: a cover can pass every geometric gate and still be dull.
+    # The heuristic records only what it can see and returns a neutral 3 that says so. An agent (or human) looking at
+    # the shelf-size and the full-size cover is authoritative for this dimension and may raise as well as lower it.
+    sig = [("one clear focal subject", bool(m.get("main_subject")) and m.get("second_subject_ratio", 1) <= pp["second_subject_max_ratio"],
+            f"subject {m.get('main_subject')}, second-subject ratio {m.get('second_subject_ratio')}"),
+           ("cover text adds what the title does not say", not TW or bool(TW - W), f"{sorted(TW - W)}"),
+           ("cover text is short (≤3 words)", m.get("words", 0) <= 3, f"{m.get('words')}"),
+           ("the cover is not the title repeated", not rep, "repeats the title" if rep else "adds something")]
+    ta = dim(3, sig, 5, "not judged: taste needs a judge looking at the cover at shelf size and full size; the "
+                        "external judge's score for thumbnail_appeal is authoritative (it may raise or lower this)")
+    if not m.get("main_subject") and not texts:
+        ta = dim(2, sig, 5, "no depicted subject and no cover text: there is nothing here to win a click",
+                 critical=[(True, 2, "the cover has neither a subject nor text")])
     return {"objective": obj, "scores": {"title_strength": ts, "curiosity": cu, "accuracy": ac, "thumbnail_readability": tr_,
                                          "complementarity": co, "hook_coherence": hc, "promise_payoff": pp_, "clickbait_risk": cb,
-                                         "cta_coherence": cc}}
+                                         "cta_coherence": cc, "thumbnail_appeal": ta}}
 
 
 def merge_package_judgment(r: dict, j: dict | None, cid: str) -> dict:
     """An external judge (fresh agent or human who saw ONLY the packet) can lower a score, never raise it above the
-    heuristic's evidence-backed ceiling: final = min(heuristic, judge). Both are kept in the record."""
+    heuristic's evidence-backed ceiling: final = min(heuristic, judge). Both are kept in the record.
+
+    Exception (P6.2): `thumbnail_appeal` is judge-only. The heuristic returns a neutral placeholder with no evidence to
+    cap against, so the judge's score *replaces* it and can be higher as well as lower."""
     if not j:
         return r
     jc = (j.get("candidates") or {}).get(cid) or {}
@@ -939,10 +972,50 @@ def merge_package_judgment(r: dict, j: dict | None, cid: str) -> dict:
             h["heuristic_score"] = h["score"]
             h["judge_score"] = int(v)
             h["judge_note"] = (jc.get("notes") or {}).get(d, "")
-            if int(v) < h["score"]:
+            if d in JUDGE_ONLY:
+                h["score"], h["anchor"], h["judge"] = int(v), ANCHORS[int(v)], "external"
+                h["explanation"] = "" if int(v) >= 4 else f"external judge: {h['judge_note'] or 'cover appeal below strong'}"
+            elif int(v) < h["score"]:
                 h["score"], h["anchor"], h["judge"] = int(v), ANCHORS[int(v)], "external"
                 h["explanation"] = f"external judge: {h['judge_note'] or 'lower score'}"
     return r
+
+def _package_request_md(pkts: list, out: Path, context: dict | None) -> str:
+    """The request an agent (or human) reads to judge cover taste. It names only packet files, so the judge still
+    reads nothing the author wrote. The context brief (the channel's own covers) is separate and hashed."""
+    L = ["# Independent cover review request", "",
+         "You are a fresh reviewer. You did not make these covers and you have not seen the author's reasoning.",
+         "For each candidate open ONLY its packet:", "", "1. `frames/thumbnail.jpg` — the cover at full size",
+         "2. `frames/thumbnail_168.png` — the same cover exactly as it appears on a phone shelf",
+         "3. `text/package.json` — title, cover text and opening promise", "",
+         "Score `thumbnail_appeal` 1-5 for each candidate:", "",
+         "| score | meaning |", "|---|---|",
+         "| 5 | publish-ready: it would win a click next to the channel's current covers |",
+         "| 4 | strong: one clear focal subject, an emotional or curiosity hook in the picture, and the cover text adds "
+         "what the title does not say |",
+         "| 3 | acceptable but forgettable |",
+         "| 2 | weak: busy, vague, or the text repeats the title |",
+         "| 1 | unacceptable |", "",
+         "A cover can pass every geometric gate and still be dull — that is the only thing this dimension exists to catch.",
+         "You may also score any other dimension, but your score can only LOWER the existing score (the exception is "
+         "`thumbnail_appeal`, where your score is authoritative)."]
+    if context and context.get("covers"):
+        L += ["", "## Context brief (outside the packet)", "",
+              "These are the channel's existing covers. Judge whether each candidate would win a click next to them. "
+              "This brief is not part of the packet and its hash is recorded in the boundary log.", "",
+              "| video | title | cover |", "|---|---|---|"]
+        L += [f"| {c.get('video_id', '')} | {c.get('title', '')} | `{c.get('thumbnail', '')}` |" for c in context["covers"]]
+    L += ["", "## Candidates", "", "| id | title | cover text | opening promise | packet |", "|---|---|---|---|---|"]
+    L += [f"| {cid} | {t} | {tt} | {pr} | `{root}` |" for cid, root, t, tt, pr, _ in pkts]
+    L += ["", "## Write this JSON, then stop", "", f"`{out / 'package_judgment.json'}`", "", "```json",
+          json.dumps({"candidates": {_id: {"packet_manifest_sha256": sha, "scores": {"thumbnail_appeal": 4},
+                                           "notes": {"thumbnail_appeal": "what makes this cover work or fail"}}
+                                     for _id, _, _, _, _, sha in pkts}}, indent=1), "```", "",
+          "`packet_manifest_sha256` must be copied exactly from the table below, so a judgment made for an older "
+          "cover cannot be reused.", "", "| id | packet_manifest_sha256 |", "|---|---|"]
+    L += [f"| {_id} | {sha} |" for _id, _, _, _, _, sha in pkts]
+    return "\n".join(L) + "\n"
+
 
 def cmd_candidates(a, kind: str) -> int:
     pol = read_json(a.policy or DEFAULT_POLICY)
@@ -952,6 +1025,29 @@ def cmd_candidates(a, kind: str) -> int:
     loaded = sorted(m for m in AUTHOR_MODULES if m in sys.modules)
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
+    backend = getattr(a, "backend", "auto") or "auto"
+    if backend == "auto":
+        backend = "heuristic"           # package judging stays local unless an agent is explicitly asked for
+    context = read_json(a.context) if getattr(a, "context", None) else None
+    if kind == "package" and backend == "subagent" and judg is None:
+        rows, logs = [], []
+        for pdir in a.packets:
+            pk_ = Packet(Path(pdir))
+            cid_ = pk_.manifest.get("candidate_id") or Path(pdir).name
+            c_ = pk_.json("text/package.json")
+            pk_.path("frames/thumbnail.jpg"); pk_.path("frames/thumbnail_168.png")
+            rows.append((cid_, str(pk_.root.resolve()), c_["title"], c_.get("thumbnail_text", ""),
+                         c_["opening_promise"], pk_.manifest_sha))
+            logs.append(boundary_log(pk_, a, loaded, "subagent (awaiting)"))
+        req = out / "package_review_request.md"
+        req.write_text(_package_request_md(rows, out, context), encoding="utf-8")
+        write_json(out / "boundary_log.json", {"judge": "subagent (awaiting)", "packets": logs,
+                                               "context_sha256": sha256_file(Path(a.context)) if getattr(a, "context", None) else None,
+                                               "statement": "awaiting an independent judgment; no heuristic scores were "
+                                                            "shown to the judge"})
+        print(json.dumps({"kind": kind, "verdict": "AWAITING_JUDGMENT", "request": str(req),
+                          "judgment": str(out / "package_judgment.json")}))
+        return 3
     results = []
     for pdir in a.packets:
         pk = Packet(Path(pdir))
@@ -970,14 +1066,21 @@ def cmd_candidates(a, kind: str) -> int:
             elif jc.get("packet_manifest_sha256") and jc["packet_manifest_sha256"] != pk.manifest_sha:
                 cover.append({"id": "JUDGMENT.STALE", "evidence": f"judgment of {cid} was made for packet "
                               f"{jc['packet_manifest_sha256'][:12]}, current packet is {pk.manifest_sha[:12]}"})
+            elif "thumbnail_appeal" not in (jc.get("scores") or {}):
+                cover.append({"id": "JUDGMENT.UNJUDGED_COVER", "evidence": f"the external judgment of {cid} has no "
+                              "thumbnail_appeal score: cover taste must be judged once a judgment is in play"})
         if kind == "package" and not cover:
             r = merge_package_judgment(r, judg, cid)
-        fails = cover + [o for o in r["objective"] if o["severity"] in ("blocking", "major")]
-        low = [d for d, v in r["scores"].items() if v["score"] < pol.get("min_any_dimension", 3)]
+        cover = [{**c_, "fix_route": objective_route(c_)} for c_ in cover]
+        fails = cover + [{**o, "fix_route": objective_route(o)} for o in r["objective"] if o["severity"] in ("blocking", "major")]
+        low = [d for d, v in r["scores"].items() if v["score"] < pol.get("min_any_dimension", 3)
+               and not (d in JUDGE_ONLY and judg is None)]
         fails += [{"id": d, "score": r["scores"][d]["score"], "threshold": pol.get("min_any_dimension", 3),
-                   "evidence": "below min_any_dimension"} for d in low if d not in thr] if kind == "package" else []
-        fails += [{"id": d, "score": v["score"], "threshold": thr[d], "evidence": v["explanation"] or v["evidence"][:2]}
-                  for d, v in r["scores"].items() if v["score"] < thr[d]]
+                   "evidence": "below min_any_dimension", "fix_route": route_for(d, r["scores"][d])}
+                  for d in low if d not in thr] if kind == "package" else []
+        fails += [{"id": d, "score": v["score"], "threshold": thr[d], "evidence": v["explanation"] or v["evidence"][:2],
+                   "fix_route": route_for(d, v)}
+                  for d, v in r["scores"].items() if v["score"] < thr[d] and not (d in JUDGE_ONLY and judg is None)]
         judge = "heuristic+external" if kind == "package" and judg else "heuristic"
         results.append({"candidate": cid, "verdict": "PASS" if not fails else "FAIL", "judge": judge,
                         "scores": r["scores"], "objective": r["objective"], "failures": fails,
@@ -1002,6 +1105,10 @@ def main() -> int:
         c.add_argument("--packets", nargs="+", required=True); c.add_argument("--out", required=True); c.add_argument("--policy")
         if k == "review-package":
             c.add_argument("--judgment", help="external judge scores (fresh agent/human, packet-only): {candidates: {id: {scores, notes}}}")
+            c.add_argument("--backend", default="auto", choices=["auto", "heuristic", "subagent"],
+                           help="subagent: write package_review_request.md and exit 3 (AWAITING_JUDGMENT) until the "
+                                "judgment is written; P6.2")
+            c.add_argument("--context", help="optional context brief outside the packet (the channel's own covers); hashed")
     a = ap.parse_args()
     try:
         if a.cmd in ("review-hooks", "review-script", "review-package"):

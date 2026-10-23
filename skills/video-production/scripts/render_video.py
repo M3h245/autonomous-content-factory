@@ -28,12 +28,29 @@ import numpy as np
 import soundfile as sf
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from cf_common import (X264_THREADS, StageResult, decode_errors, emit, exit_for, ffmpeg_bin, ffprobe, fix,  # noqa: E402
+from cf_common import (FORMATS, X264_THREADS, StageResult, decode_errors, emit, exit_for, ffmpeg_bin, ffprobe, fix,  # noqa: E402
                        media_duration, read_json, run, stage_main, write_json)
 
 W, H = 1080, 1920
 XFADE = {"fade", "slideleft", "slideup", "wipeleft", "circleopen", "dissolve"}
 VIDEO_EXT = {".mp4", ".mov", ".webm", ".mkv"}
+
+
+def set_size(w: int, h: int) -> None:
+    """v3.3: switch the output size to the brief's aspect (16:9 long-form = 1920x1080)."""
+    global W, H, LONG
+    W, H = int(w), int(h)
+    LONG = h < w   # 16:9 marks the run long: pacing and ending rules follow the format (see below)
+
+
+LONG = False
+# v3.3 format-scaling of the gate thresholds. Shorts cadence (a visual event every ≤3 s, median ≤1.8 s, shots ≤5 s)
+# is a retention device for the 3-second swipe decision — it does NOT apply to long-form, where YouTube's own guidance
+# is about structure, not shot length. Long-form keeps the anti-dead-air rule (MOTION_GAP) but relaxes cadence.
+PACING = {"short": (3.0, 1.8), "long": (6.0, 3.5)}       # (max gap between events, median gap)
+SHOT_MAX_S = {"short": 5.0, "long": 12.0}
+END_SCREEN_TAIL_S = 5.0   # D2: the last 5 s must be visually calm and free for a Subscribe end screen (16:9 only)
+# (support.google.com/youtube/answer/6388789: end screens occupy the last 5-20 s of a video ≥25 s)
 
 
 def motion_expr(kind: str, strength: float, n: int) -> tuple[str, str, str]:
@@ -53,12 +70,13 @@ def motion_expr(kind: str, strength: float, n: int) -> tuple[str, str, str]:
 
 
 def render_shot(src: str, frames: int, motion: dict, fps: int, out: Path) -> None:
-    if Path(src).suffix.lower() in VIDEO_EXT:  # footage: cover-crop to 9:16, loop if short
+    if Path(src).suffix.lower() in VIDEO_EXT:  # footage: cover-crop to the output aspect, loop if short
         vf = f"scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},fps={fps},setsar=1,format=yuv420p"
         cmd = [ffmpeg_bin(), "-y", "-v", "error", "-stream_loop", "-1", "-i", src, "-an", "-vf", vf, "-frames:v", frames]
     else:
         z, x, y = motion_expr(motion.get("type", "zoom_in"), float(motion.get("strength", 0.12)), frames)
-        vf = (f"scale=2160:3840:force_original_aspect_ratio=increase,crop=2160:3840,"
+        sw, sh = W * 2, H * 2   # 2x headroom for pan/zoom; follows the output aspect (2160x3840 portrait, 3840x2160 wide)
+        vf = (f"scale={sw}:{sh}:force_original_aspect_ratio=increase,crop={sw}:{sh},"
               f"zoompan=z='{z}':x='{x}':y='{y}':d={frames}:s={W}x{H}:fps={fps},setsar=1,format=yuv420p")
         cmd = [ffmpeg_bin(), "-y", "-v", "error", "-i", src, "-vf", vf, "-frames:v", frames]
     run(cmd + ["-c:v", "libx264", "-preset", "veryfast", "-crf", "16", "-threads", X264_THREADS, "-r", fps, str(out)])
@@ -164,6 +182,7 @@ def is_doodle(shots: list[dict]) -> bool:
 
 def render_doodle(sb: dict, timing: dict, base: Path, video_only: Path, fps: int) -> tuple[object, int]:
     import doodle_engine as de  # local import: only the doodle path needs skia
+    de.set_canvas(W, H)   # v3.3: keep the engine canvas in step with this stage's output size
     tl = de.build_timeline(sb, timing, base)
     n = de.render_video(tl, video_only, fps=fps, ffmpeg=ffmpeg_bin())
     return tl, n
@@ -175,6 +194,13 @@ def main_cmd(a) -> int:
     out = Path(a.out_dir).resolve()
     work = out / "work"
     work.mkdir(parents=True, exist_ok=True)
+    # v3.3: the brief's aspect decides the output size. 16:9 long-form = 1920x1080; shorts stay 1080x1920. The
+    # storyboard carries the canvas it was authored for; --aspect overrides for legacy storyboards.
+    sc0 = (sb.get("style", {}) or {}).get("canvas") or sb.get("canvas")
+    if sc0:
+        set_size(int(sc0[0]), int(sc0[1]))
+    elif a.aspect:
+        set_size(*(formats[a.aspect]))
     sr = StageResult("VIDEO", "video-production", sb.get("video_id"), attempt=a.attempt)
     sr.input(a.storyboard, "storyboard_timed"); sr.input(a.voice, "voice_audio")
     shots = sb.get("shots")
@@ -364,9 +390,22 @@ def main_cmd(a) -> int:
                  fix("VISUAL_PLAN", "add_entrances", scene="first", window_s=1.5))
         evs = sorted(set([0.0] + [t for t in tl.visual_events() if 0 <= t < voice_dur] + [voice_dur]))
         gaps_ = [b - c for c, b in zip(evs, evs[1:])] or [voice_dur]
-        sr.check("VID.PACING_CADENCE", max(gaps_) <= 3.0 and float(np.median(gaps_)) <= 1.8, "major",
-                 f"longest gap {max(gaps_):.2f}s (≤3.0), median {float(np.median(gaps_)):.2f}s (≤1.8)", round(max(gaps_), 2), 3.0,
+        cad_max, cad_med = PACING["long" if LONG else "short"]
+        sr.check("VID.PACING_CADENCE", max(gaps_) <= cad_max and float(np.median(gaps_)) <= cad_med, "major",
+                 f"longest gap {max(gaps_):.2f}s (≤{cad_max}), median {float(np.median(gaps_)):.2f}s (≤{cad_med})",
+                 round(max(gaps_), 2), cad_max,
                  fix("VISUAL_PLAN", "add_entrances", at_s=round(evs[gaps_.index(max(gaps_))], 2)))
+        if LONG and voice_dur >= 25:
+            # D2 (v3.3): end screens occupy the last 5-20 s of a >=25 s video and must be readable, so the tail is
+            # deliberately calm — almost no new visual events and no camera punch-in over the end-screen zone.
+            # punch `at` values are scene-local, so the shot start is added to compare against global time.
+            tail = [t for t in tl.visual_events() if t >= voice_dur - END_SCREEN_TAIL_S]
+            punches = [sh["start"] + p["at"] for sh, sc in zip(tl.shots, tl.scenes)
+                       for p in (sc.camera or {}).get("punch", []) if sh["start"] + p["at"] >= voice_dur - END_SCREEN_TAIL_S]
+            sr.check("VID.END_SCREEN_TAIL", len(tail) <= 2 and not punches, "major",
+                     f"{len(tail)} visual event(s) and {len(punches)} punch-in(s) in the last {END_SCREEN_TAIL_S:g}s "
+                     f"(end-screen zone must stay calm)", len(tail), 2,
+                     fix("VISUAL_PLAN", "add_entrances", hint="quiet the last 5 s: no new entrances or punch-ins for the end screen"))
         if a.script and Path(a.script).exists():
             beats_ = read_json(a.script)["beats"]
             if beats_ and beats_[-1].get("role") == "loop":
@@ -395,8 +434,9 @@ def main_cmd(a) -> int:
         sr.metric("transitions", [k for k, _ in tl.trans[1:]])
     else:
         lens = [s["end"] - s["start"] for s in shots]
-        sr.check("VID.SHOT_PACING", max(lens) <= 5.0, "major", f"longest shot {max(lens):.2f}s", round(max(lens), 2), 5.0,
-                 fix("VISUAL_PLAN", "retime", max_shot=3.2))
+        shot_max = SHOT_MAX_S["long" if LONG else "short"]
+        sr.check("VID.SHOT_PACING", max(lens) <= shot_max, "major", f"longest shot {max(lens):.2f}s", round(max(lens), 2), shot_max,
+                 fix("VISUAL_PLAN", "retime", max_shot=min(3.2, shot_max)))
         sr.metric("engine", "kenburns"); sr.metric("transitions", sum(1 for t in trans if t))
     if a.script and Path(a.script).exists():       # Phase 3.5: CTA placement on the real timeline
         sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "short-form-script" / "scripts"))
@@ -433,8 +473,17 @@ def main_cmd(a) -> int:
              f"({below_n} of {mk['speech_frames']}) speech frames < 10 dB",
              mk["sir_p5_db"], 10, fix("VIDEO", "remix", music_carve_db=min(16.0, a.music_carve_db + 2)))
     en = mix_report["ending"]
-    sr.check("VID.CLEAN_ENDING", en["tail_30ms_dbfs"] <= -45 and (en["music_fade_db"] is None or en["music_fade_db"] >= 6), "major",
-             f"last 30 ms {en['tail_30ms_dbfs']} dBFS (≤ −45); music fade {en['music_fade_db']} dB (≥ 6)", en["tail_30ms_dbfs"], -45,
+    # v3.3 (D2): a long-form video keeps a calm music tail for the end screen, so it does not have to be silent —
+    # a music bed faded ≥6 dB and a tail quieter than −30 dBFS is accepted instead. Shorts keep the strict −45 dB rule.
+    if LONG:
+        end_ok = (en["tail_30ms_dbfs"] <= -45) or (en["music_fade_db"] is not None and en["music_fade_db"] >= 6
+                                                   and en["tail_30ms_dbfs"] <= -30)
+    else:
+        end_ok = en["tail_30ms_dbfs"] <= -45 and (en["music_fade_db"] is None or en["music_fade_db"] >= 6)
+    sr.check("VID.CLEAN_ENDING", end_ok,
+             "major",
+             f"last 30 ms {en['tail_30ms_dbfs']} dBFS (≤ −45, or ≤ −30 with a ≥6 dB music fade on long-form); "
+             f"music fade {en['music_fade_db']} dB", en["tail_30ms_dbfs"], -45,
              fix("VIDEO", "remix"))
     sr.output(work / "mix_report.json", "mix_report", "application/json")
     sr.metric("mix", {k: mix_report.get(k) for k in ("music_under_voice_db", "sfx_per_s", "sfx_near_voice_share")})
@@ -454,6 +503,8 @@ def main() -> int:
     ap.add_argument("--out-dir", required=True)
     ap.add_argument("--result", required=True)
     ap.add_argument("--engine", choices=["auto", "doodle", "kenburns"], default="auto")
+    ap.add_argument("--aspect", choices=["vertical", "wide"],
+                    help="output size when the storyboard carries no canvas: vertical=1080x1920, wide=1920x1080")
     ap.add_argument("--music", default="procedural", help="procedural (playful bed) | pad (v1 drone) | none | path to a licensed track")
     ap.add_argument("--music-license", help="license string for a provided track (required for provenance)")
     ap.add_argument("--music-gain-db", type=float, default=-19.0)

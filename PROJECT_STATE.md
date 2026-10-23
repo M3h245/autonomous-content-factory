@@ -1,5 +1,17 @@
-# PROJECT STATE — Autonomous Content Factory · v3.1.1 (Windows correctness patch over v3.1.0) · 2026-10-19
+# PROJECT STATE — Autonomous Content Factory · v3.3.0 (unreleased, awaiting owner approval) · 2026-10-22
 
+This is the single source of truth. `skills/content-factory/PROJECT_STATE.md` is now only a pointer here (P5.2).
+
+## v3.3.0 (2026-10-20/22) — real 16:9 long-form, sourced packaging, cover judge
+Aspect-aware formats (`--aspect auto|vertical|wide`, `video_kind`, `FORMATS` in `cf_common`), sourced packaging and
+monetisation rules with every threshold citing a primary source, pre-registered experiments, and the P6.2 cover judge:
+`thumbnail_appeal` is a judge-only package dimension, `review-package --backend subagent` awaits a fresh judgment,
+`package_engine select` builds a hashed channel-covers context brief, and a low score routes to `PACKAGE` /
+`redesign_cover`. Hygiene in the same release: `memory/dump.json` out of git (shipped `memory/snapshot.json`, P5.1),
+one PROJECT_STATE (P5.2) and a Windows CI job (P5.3). Full detail: `skills/content-factory/CHANGELOG.md`.
+
+## v3.2.0 (2026-10-20) — render speed + long-form foundation
+Doodle renderer ~37× faster (`docs/v3.2.0/PERFORMANCE.md`); long-form skeleton and canvas plumbing.
 
 ## v3.1.1 (2026-10-19) — Windows correctness patch
 Locale-independent text I/O (UTF-8) in the production scripts and tests, and a real dead-process lock check on
@@ -13,7 +25,8 @@ were **applied to the production database** on 2026-10-18/19: runs 36, publicati
 `data/learning/latest.json` in place, `memory/dump.json` re-exported from the 36-run database.
 
 ## Status
-**The production system is v3.1.0** (Idea Engine 1.0 above V3.0.1; the analytics/learning layer added in v3.1.0).
+**The production system is v3.3.0, uncommitted until the owner approves the release** (v3.2.0 and v3.3.0 are in the
+working tree; the last tagged release is v3.1.1). Tags v3.2.0 / v3.3.0 are created only after that approval (P5.4).
 v3.0.0 is frozen (tag `v3.0.0`); v3.0.1 and Idea Engine 1.0 were post-freeze additions by owner decision (CHANGELOG):
 - **v3.0.1**: final-media metadata only.
 - **Idea Engine 1.0**: a batch layer above V3.0.1 (`content-factory/scripts/idea_engine.py`). It takes an ideas file,
@@ -21,9 +34,8 @@ v3.0.0 is frozen (tag `v3.0.0`); v3.0.1 and Idea Engine 1.0 were post-freeze add
   them to N V3.0.1 runs, which are packaged and
   copied to the output folder. No LLM API is needed, and the production engine is unchanged.
 
-**The production system is V3.0.1 + Idea Engine 1.0.** Phases 0–5 are complete. Only operation remains: making
-videos (one topic with `factory.py`, or several from an ideas file with `idea_engine.py`; both make 2 by default,
-`--count N` for another number), uploading by hand, and
+Phases 0–5 are complete. Only operation remains: making videos (one topic with `factory.py`, or several from an ideas
+file with `idea_engine.py`; both make 2 by default, `--count N` for another number), uploading by hand, and
 logging analytics. Any further change is a new decision by the owner.
 
 ## Where things are

@@ -405,9 +405,9 @@ class ContentMemory(unittest.TestCase):
         shutil.rmtree(runs, ignore_errors=True)
 
     def test_shipped_memory_knows_every_earlier_topic(self):
-        dump = REPO / "memory" / "dump.json"
-        if not dump.exists():
-            self.skipTest(f"no {dump}")
+        dump = next((p for p in (REPO / "memory" / "dump.json", REPO / "memory" / "snapshot.json") if p.exists()), None)
+        if dump is None:
+            self.skipTest("no memory/dump.json and no memory/snapshot.json")
         d = tmpdir("seedmem")
         p = subprocess.run([PY, str(CFDB), "import", "--db", str(d / "f.db"), "--in", str(dump)], capture_output=True, text=True)
         self.assertEqual(p.returncode, 0, p.stderr)

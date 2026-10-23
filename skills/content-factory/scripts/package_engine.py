@@ -37,6 +37,30 @@ sys.path.append(str(ROOT / "video-production" / "scripts"))          # doodle_en
 sys.path.append(str(ROOT / "video-quality-assurance" / "scripts"))   # review_packet.write_packet, text utilities
 POLICY = ROOT / "video-quality-assurance" / "references" / "review-policy.json"
 
+
+def channel_covers(db: Path | None, runs_dir: Path | None, limit: int = 12) -> dict:
+    """P6.2 context brief: the channel's own recent covers, kept OUTSIDE the review packet (P4.2). The judge may use
+    them to answer "would this win a click next to what the channel already publishes"; the brief is hashed in the
+    boundary log so the packet itself stays free of creative state. Best-effort: no database, no brief."""
+    if not db or not Path(db).exists():
+        return {"covers": []}
+    import sqlite3
+    try:
+        con = sqlite3.connect(f"file:{Path(db).as_posix()}?mode=ro", uri=True)
+        rows = con.execute("SELECT run_id, video_id, COALESCE(title, '') FROM videos "
+                           "ORDER BY created_at DESC LIMIT ?", (limit,)).fetchall()
+        con.close()
+    except Exception:
+        return {"covers": []}
+    covers = []
+    for rid, vid, title in rows:
+        thumb = ""
+        if runs_dir:
+            hits = sorted(Path(runs_dir).glob(f"{rid}/videos/{vid}/*/thumbnail.jpg"))
+            thumb = str(hits[0].resolve()) if hits else ""
+        covers.append({"video_id": vid, "title": title, "thumbnail": thumb})
+    return {"covers": covers, "source": "content memory titles + local package covers", "db": str(db)}
+
 CLICKBAIT = ["you won't believe", "you wont believe", "doctors hate", "shocking", "gone wrong", "insane", "mind-blowing",
              "mind blowing", "will blow your mind", "nobody tells you", "nobody is talking", "they don't want you to know",
              "this one trick", "one weird trick", "unbelievable", "crazy", "must see", "must-see", "guaranteed", "100%"]
@@ -128,15 +152,17 @@ def cta_kinds(text: str) -> set[str]:
 
 
 # ----------------------------------------------------------------------------- thumbnail render + measurement
-def render_thumb(svg_path: Path, palette: list[str], out: Path, pol: dict) -> dict:
+def render_thumb(svg_path: Path, palette: list[str], out: Path, pol: dict, canvas: list | None = None) -> dict:
     import doodle_engine as de
     import numpy as np
     import skia
     from PIL import Image
+    if canvas:                       # v3.3: 16:9 long-form thumbnail renders at the run canvas (1920x1080)
+        de.set_canvas(int(canvas[0]), int(canvas[1]))
     svg = svg_path.read_text(encoding="utf-8")
     sc = de.DoodleScene(svg, palette, [], 4.0, {"wobble": 2.6}, scene_id="thumb", camera={"drift": "none"})
     t = 3.95
-    surf = skia.Surface.MakeRaster(skia.ImageInfo.Make(de.W, de.H, skia.kRGBA_8888_ColorType, skia.kPremul_AlphaType))
+    surf = skia.Surface.MakeRasterN32Premul(de.W, de.H)   # v3.2 speed fix: same pixels as MakeRaster(ImageInfo), ~50x faster
     sc.draw(surf.getCanvas(), t, de.Paper(), camera=False)
     png = out / "thumbnail.png"
     surf.makeImageSnapshot().save(str(png), skia.kPNG)
@@ -343,10 +369,24 @@ def diversity(cands: list[dict], meas: dict, pol: dict) -> tuple[list, dict]:
 
 
 # ----------------------------------------------------------------------------- command
+def _aspect_policy(pol: dict, aspect: str) -> dict:
+    """v3.3: a 16:9 long-form thumbnail has its own size and safe area (the 9:16 core-square rule only protects
+    vertical covers from mobile crops). Returns a shallow copy; the base policy is not mutated."""
+    p = dict(pol)
+    if aspect == "wide":
+        p["thumb_size"] = pol.get("thumb_size_wide", [1920, 1080])
+        p["core_safe"] = pol.get("core_safe_wide", [160, 60, 1760, 1020])
+        p["yt_band"] = pol.get("yt_band_wide", p.get("yt_band"))
+    return p
+
+
 def cmd_select(a) -> int:
     from review_packet import write_packet
     pol_all = read_json(a.policy or POLICY)
     pol = pol_all["packaging"]
+    aspect = getattr(a, "aspect", "vertical")
+    pol = _aspect_policy(pol, aspect)
+    canvas = [1920, 1080] if aspect == "wide" else [1080, 1920]
     out = Path(a.out_dir)
     out.mkdir(parents=True, exist_ok=True)
     cpath = Path(a.candidates)
@@ -385,7 +425,7 @@ def cmd_select(a) -> int:
             checks[c["id"]] = [{"id": "THUMB.MISSING", "severity": "blocking", "where": "thumbnail", "evidence": str(c["thumbnail"]["svg"])}]
             meas[c["id"]] = {"dhash": "0" * 64, "texts": [], "words": 0}
             continue
-        meas[c["id"]] = render_thumb(svg, palette, cdir, pol)
+        meas[c["id"]] = render_thumb(svg, palette, cdir, pol, canvas)
         checks[c["id"]] = thumb_checks(c, meas[c["id"]], pol, cited, ids, set(words_of(tr["text"] + " " + on_screen))) + \
             copy_checks(c, pol, cited, ids, tr, video_cta)
         write_json(cdir / "checks.json", {"candidate": c["id"], "measurements": meas[c["id"]], "checks": checks[c["id"]]})
@@ -437,7 +477,32 @@ def cmd_select(a) -> int:
     rv = out / "review"
     cmd = [sys.executable, str(ROOT / "video-quality-assurance" / "scripts" / "reviewer.py"), "review-package", "--packets",
            *packets, "--out", str(rv)] + (["--policy", a.policy] if a.policy else []) + (["--judgment", a.judgment] if a.judgment else [])
+    backend = getattr(a, "review_backend", "auto") or "auto"
+    if backend != "auto":
+        cmd += ["--backend", backend]
+    ctx = Path(a.context) if getattr(a, "context", None) else None
+    if ctx is None and getattr(a, "db", None):
+        cov = channel_covers(Path(a.db), Path(a.runs_dir) if getattr(a, "runs_dir", None) else None)
+        if cov["covers"]:
+            ctx = out / "channel_covers.json"
+            write_json(ctx, cov)
+    if ctx is not None and ctx.exists():
+        cmd += ["--context", str(ctx)]
     p = subprocess.run(cmd, capture_output=True, text=True)
+    if p.returncode == 3:                    # P6.2: the reviewer is waiting for an independent judgment
+        req = rv / "package_review_request.md"
+        set_checks.append({"id": "PKG.AWAITING_JUDGMENT", "severity": "blocking",
+                           "evidence": f"awaiting an independent cover judgment: give ONLY the packet folders to a fresh "
+                                       f"reviewer (request: {req.relative_to(out).as_posix()}), write "
+                                       "package_judgment.json, then re-run"})
+        res = {"version": 1, "status": "awaiting_judgment", "candidates_file": cpath.name, "set_checks": set_checks,
+               "diversity": div, "viable": viable, "table": [], "selected": None, "rejected": [],
+               "review": {"file": None, "judges": ["awaiting"], "request": req.relative_to(out).as_posix()}}
+        write_json(sel_path, res)
+        (out / "package_report.md").write_text(report_md(res), encoding="utf-8")
+        print(json.dumps({"status": "awaiting_judgment", "request": str(req),
+                          "judgment": str(out / "package_judgment.json")}))
+        return 3
     if p.returncode != 0 or not (rv / "package_reviews.json").exists():
         set_checks.append({"id": "PKG.REVIEWER_ERROR", "severity": "blocking", "evidence": (p.stderr or p.stdout)[-400:]})
         reviews = {}
@@ -509,6 +574,14 @@ def main() -> int:
     for k in ("candidates", "script", "timing", "final", "out_dir"):
         s.add_argument("--" + k.replace("_", "-"), required=True)
     s.add_argument("--dossier"); s.add_argument("--palette"); s.add_argument("--policy"); s.add_argument("--judgment")
+    s.add_argument("--review-backend", default="auto", choices=["auto", "heuristic", "subagent"],
+                   help="subagent (P6.2): the reviewer writes package_review_request.md and exits 3 until a fresh "
+                        "agent/human writes package_judgment.json; auto/heuristic judge locally")
+    s.add_argument("--context", help="context brief outside the packet (the channel's own covers)")
+    s.add_argument("--db", help="content memory: build a channel-covers context brief from recent videos")
+    s.add_argument("--runs-dir", help="runs directory (used with --db to locate existing covers)")
+    s.add_argument("--aspect", default="vertical", choices=["vertical", "wide"],
+                   help="vertical = 9:16 thumbnail 1080x1920; wide = 16:9 long-form thumbnail 1920x1080")
     a = ap.parse_args()
     return cmd_select(a)
 

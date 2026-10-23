@@ -79,10 +79,10 @@ Start with (A); revisit (B) if long-form (A) earns watch time.
 ### P5 — Cleanup, speed, and release hygiene
 | id | work item | acceptance |
 |---|---|---|
-| P5.1 | `memory/dump.json` is 5 MB and re-exported every run; move the *working* copy out of git (keep a small shipped snapshot) and document where the live DB lives. | tests still find a memory file; the repo no longer grows 5 MB per commit |
-| P5.2 | One `PROJECT_STATE.md` (root or skill, not both nearly identical); the other becomes a pointer. | a single source of truth |
-| P5.3 | Windows tests in CI (GitHub Actions `windows-latest`), so the locale/lock class of bug can never return unnoticed. | a green Windows job |
-| P5.4 | Tag and release: `v3.1.1` now, `v3.2.0` at the end, each with the skills zip in `checkpoints/`. | tags exist; GitHub releases created |
+| P5.1 | `memory/dump.json` is 5 MB and re-exported every run; move the *working* copy out of git (keep a small shipped snapshot) and document where the live DB lives. | tests still find a memory file; the repo no longer grows 5 MB per commit. **DONE in v3.3** — `memory/dump.json` is git-ignored and `memory/snapshot.json` (195 KB, all runs/ideas/videos/assets) ships; `memory/README.md` documents the live DB (`$CF_DB` / `$CF_RUNS_DIR/factory.db`); `idea_engine` seeds from dump then snapshot; `tools/make_memory_snapshot.py` refreshes it. |
+| P5.2 | One `PROJECT_STATE.md` (root or skill, not both nearly identical); the other becomes a pointer. | a single source of truth. **DONE in v3.3** — the root file is canonical and updated; `skills/content-factory/PROJECT_STATE.md` is a 5-line pointer. |
+| P5.3 | Windows tests in CI (GitHub Actions `windows-latest`), so the locale/lock class of bug can never return unnoticed. | a green Windows job. **DONE in v3.3** — `.github/workflows/windows-tests.yml` runs the whole suite on `windows-latest` with `tools/run_tests_isolated.py` (which now exits non-zero on any failure/timeout). |
+| P5.4 | Tag and release: `v3.1.1` now, `v3.2.0` at the end, each with the skills zip in `checkpoints/`. | tags exist; GitHub releases created. **v3.1.1 is tagged; v3.2.0/v3.3.0 wait for owner approval of the v3.3.0 commit.** |
 
 ---
 
@@ -114,6 +114,39 @@ P5.1 P5.2 P5.3                                            (alongside, no depende
 The v3.1.0 pre-registered rule stands: primary metric = engaged-view share at D3; a directive needs n≥3 per side, an
 80 % interval excluding 0, and the avg-view-% guardrail no worse than 5 pp. Long-form gets its **own** metric window
 (D7 primary, because 5–8 min videos accumulate slower) — fixed before the first long-form is measured, not after.
+
+## P6. Thumbnail taste (found while producing the first long-form, 2026-10-20)
+
+Raised by the owner after looking at the live channel: *"some of the thumbnails are really weak — is that checked by
+anything, or made at random?"* Answer, from reading the code: **not random, but also not judged.**
+
+- `package_engine.py` builds **3 candidate packages** (P1/P2/P3, different cover strategies) and selects one by score;
+  the cover is rendered from a doodle SVG. So it is deterministic and gated — 18 checks: `THUMB.SIZE`,
+  `THUMB.HEADLINE_SIZE`, `THUMB.CONTRAST` (measured at the real 168-px shelf size), `THUMB.TEXT_CORE_SAFE`,
+  `THUMB.SUBJECT`, `THUMB.SINGLE_SUBJECT`, `THUMB.TEXT_OVERLAP`, `THUMB.WORDS`, `THUMB.NOT_IN_VIDEO`,
+  `THUMB.DEPICTS_KNOWN`, `THUMB.CTA`, plus `CLAIM.*` / `CLICKBAIT.*`.
+- **But every one of those is mechanical/geometric.** Not one of them asks *"is this cover interesting?"* A cover can
+  pass all 18 and still be dull. That is exactly the gap the owner saw. `reviewer.py::score_package` has a
+  `thumbnail_readability` dimension and a `thumbnail_coherence` dimension, but both score geometric signal, not taste
+  (the reviewer even labels the latter *"a designed cover is a Phase 4 deliverable"*).
+
+- **P6.1 — leftover slow path (bug, do first, small). — DONE in v3.3.** `package_engine.py::render_thumb` used
+  `skia.Surface.MakeRaster(ImageInfo...)`, the exact call identified in PERFORMANCE.md as making blits ~50× slower
+  than `Surface.MakeRasterN32Premul`. Fixed in v3.3 across all three remaining sites (`package_engine.py`,
+  `hook_engine.py`, `doodle_engine.render_still`); `render_frames_png.py` is a throwaway debug harness and stays as
+  it is. The rendered covers are byte-equal apart from the documented ±1–3/255 grain rounding.
+- **P6.2 — a real cover judge.** Extend the agent judge (P4) to the package stage: render the cover, show it to the
+  agent at shelf size **and** full size alongside the title and the video's promise, and score *taste* — one clear
+  focal subject, an emotional or curiosity hook in the picture, the text adding what the title does not say, and
+  whether it would win a click next to the channel's existing covers. Route a failure back to `PACKAGE` /
+  `redesign_cover`. **DONE in v3.3** — `thumbnail_appeal` is a judge-only package dimension (the heuristic returns a
+  neutral 3 and says "not judged"; the external judge is authoritative and may raise as well as lower), the package
+  review has a `--backend subagent` await flow (`package_review_request.md` → exit 3 → `package_judgment.json`),
+  `package_engine select` builds a hashed channel-covers context brief from `factory.db` (`PKG.AWAITING_JUDGMENT`
+  blocks selection until the judgment exists), and a low score routes to `PACKAGE` / `redesign_cover`.
+
+Sequencing: P6.1 can go with P5 hygiene now; P6.2 rides on P4 (the agent judge), because it is the same machinery
+pointed at a different artifact.
 
 ## Exclusions
 - No automatic publishing or uploading, ever.

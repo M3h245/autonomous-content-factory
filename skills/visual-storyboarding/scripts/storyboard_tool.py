@@ -41,6 +41,16 @@ from cf_common import (StageResult, emit, exit_for, fix, log, read_json, run, st
 
 W, H = 1080, 1920
 RW, RH = 2160, 3840  # rendered at 2x for zoom/pan headroom
+CANVAS = [W, H]      # v3.3: the canvas this run is authored for (16:9 long-form = [1920, 1080])
+
+
+def set_canvas(w: int, h: int) -> None:
+    """v3.3: switch the storyboard canvas (16:9 long-form = 1920x1080). Scene SVGs declare their own viewBox,
+    so the render width/height and the viewBox guard both follow this."""
+    global W, H, RW, RH, CANVAS
+    W, H = int(w), int(h)
+    RW, RH = W * 2, H * 2
+    CANVAS = [W, H]
 MOTIONS = ["zoom_in", "pan_left", "zoom_out", "pan_up", "pan_right", "pan_down"]
 FRAMING = os.environ.get("CF_SD_FRAMING", "wide shot, full body, environment visible")
 NEGATIVE = ("text, watermark, logo, signature, letters, extreme close-up, cropped, blurry, lowres, deformed, "
@@ -80,8 +90,8 @@ def procedural(palette: list[str], seed: int) -> Image.Image:
 
 
 def render_svg(svg_text: str, out_png: Path) -> None:
-    if not re.search(r'viewBox="0 0 1080 1920"', svg_text):
-        raise ValueError('SVG must declare viewBox="0 0 1080 1920"')
+    if not re.search(rf'viewBox="0 0 {W} {H}"', svg_text):
+        raise ValueError(f'SVG must declare viewBox="0 0 {W} {H}"')
     src = out_png.with_suffix(".svg")
     src.write_text(svg_text, encoding="utf-8")
     if shutil.which("rsvg-convert"):
@@ -285,6 +295,20 @@ def cmd_render(a) -> int:
         sr.fail("VIS.SCHEMA", "; ".join(errs[:6]), fix=fix("VISUAL_PLAN", "repair_schema"), retryable=True)
         return exit_for(sr.finalize(a.result))
     style, base = sb["style"], Path(a.storyboard).resolve().parent
+    # v3.3: honour the canvas the brief declared. The storyboard's own `style.canvas` wins (a retimed/re-rendered
+    # 16:9 storyboard round-trips it); --aspect sets it for a first render; default stays 9:16.
+    cv = style.get("canvas") or sb.get("canvas") or CANVAS
+    if a.aspect == "wide":
+        cv = [1920, 1080]
+    elif a.aspect == "vertical":
+        cv = [1080, 1920]
+    set_canvas(int(cv[0]), int(cv[1]))
+    try:
+        _doodle_engine().set_canvas(int(cv[0]), int(cv[1]))
+    except Exception:
+        pass
+    style["canvas"] = CANVAS
+    sr.metric("canvas", CANVAS)
     for scene in sb["scenes"]:  # relative asset paths are relative to the storyboard file
         for key in ("svg_path", "path"):
             if scene["visual"].get(key) and not Path(scene["visual"][key]).is_absolute():
@@ -450,6 +474,8 @@ def main() -> int:
     r.add_argument("--auto-fallback", action="store_true", help="append 'procedural' as last-resort fallback")
     r.add_argument("--timing", help="AUDIO timing.json: plan word cues against the real narration (factory passes it)")
     r.add_argument("--opening", help="HOOK opening_brief.json: the first scene must realise this frame 0")
+    r.add_argument("--aspect", default="auto", choices=["auto", "vertical", "wide"],
+                   help="canvas override: auto = the storyboard's own style.canvas (or 9:16); wide = 1920x1080")
     t = sub.add_parser("retime")
     t.add_argument("--storyboard", required=True); t.add_argument("--timing", required=True)
     t.add_argument("--out", required=True); t.add_argument("--max-shot", type=float, default=3.6)

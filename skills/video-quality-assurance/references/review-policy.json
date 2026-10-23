@@ -31,6 +31,7 @@
   "text_min_px": 60,
   "first_event_max_s": 0.5,
   "hook_max_s": 3.2,
+  "hook_max_s_long": 8.0,
   "explanation_by_s": 8.0
  },
  "cta_thresholds": {
@@ -83,7 +84,19 @@
   "title_jaccard_max": 0.5,
   "thumb_text_jaccard_max": 0.5,
   "promise_jaccard_max": 0.6,
-  "thumb_dhash_min": 12
+  "thumb_dhash_min": 12,
+  "thumb_size_wide": [
+   1920,
+   1080
+  ],
+  "core_safe_wide": [
+   160,
+   60,
+   1760,
+   1020
+  ],
+  "thumb_size_wide_note": "16:9 watch-page thumbnail rendered at the run canvas (1920x1080); YouTube recommends 1280x720, min 640px wide (support.google.com/youtube/answer/72431)",
+  "core_safe_wide_note": "safe area for a 16:9 thumbnail: keep text/subject inside so the end-screen and duration badge do not cover them"
  },
  "package_thresholds": {
   "title_strength": 4,
@@ -94,6 +107,7 @@
   "hook_coherence": 4,
   "promise_payoff": 4,
   "clickbait_risk": 4,
-  "cta_coherence": 4
+  "cta_coherence": 4,
+  "thumbnail_appeal": 4
  }
 }

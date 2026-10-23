@@ -42,6 +42,27 @@ the heuristic judge: only an LLM/human judge may award 5 there.
 | overall_publishability | objective blocking → 1, major → 2; else min(mean, weakest + 1) | — | 4 |
 Visual events: the engine's audit list for doodle videos; otherwise ffmpeg scene detection on the final video.
 
+## Long-form variant (v3.2.0, extended in v3.3)
+
+The rubric is format-neutral: `pacing_retention`'s "duration in window" and the `TITLE.FORMAT` limits already read the
+run's own window from the packet, so a long run (`video_kind: "long"`, 16:9 1920×1080 in v3.3) is judged by the same
+dimensions and thresholds. Format-specific additions for long runs only:
+
+- **Duration window** comes from `max(180, brief.max_s)` (see `qa_video.py`), not a fixed 180 s. A long video inside its
+  own window is not penalised for being longer than a short.
+- **Hook window is 8 s, not 3.2 s**: the reviewer picks `frame0.hook_max_s_long` when the hook packet declares
+  `video_kind: "long"` — YouTube's own long-form guidance is to hook in the first 5–10 s
+  (`docs/v3.3/RESEARCH-PACKAGING.md` §2).
+- **`message_clarity` / `pacing_retention` are not relaxed.** A long script must still average ≤16 words per sentence,
+  keep every sentence ≤24 words, and carry a punchy line — measured at SCRIPT and re-measured at VIDEO. Length is not
+  an excuse for long sentences (this failed the first long-form SCRIPT pass and was fixed, not waived).
+- **End-screen tail** (`VID.END_SCREEN_TAIL`): the last 5 s must stay visually calm so the human can place a Subscribe
+  end screen — at most 2 new visual events and no camera punch-in there (`answer/6388789`).
+- **Pre-registered measurement** (owner decision): long videos are grouped by `video_kind` in analytics and judged at
+  **D7** on engaged-view share against the channel's short-form median for the same maturity class, not at D3. See
+  `docs/v3.2.0/LONGFORM.md`.
+
+
 ## Judges
 `heuristic` (default without a key) · `anthropic` (fresh Messages-API context, only packet content, `ANTHROPIC_API_KEY`,
 model `CF_REVIEW_MODEL`) · `subagent` (writes `review_request.md` for a fresh Claude Code agent; merges `judgment.json`)

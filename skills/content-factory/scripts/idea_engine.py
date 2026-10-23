@@ -194,12 +194,12 @@ def resolve_db(arg: str | None) -> Path:
 
 
 def ensure_memory(db: Path, allow_empty: bool) -> dict:
-    """Never filter against a silently empty memory: an absent database is seeded from ./memory/dump.json (the
-    templates' rule); with neither, stop unless --allow-empty-memory."""
+    """Never filter against a silently empty memory: an absent database is seeded from ./memory/dump.json, then from
+    the shipped ./memory/snapshot.json (the templates' rule); with neither, stop unless --allow-empty-memory."""
     if db.exists():
         return {"db": str(db), "seeded_from": None}
-    seed = Path("memory/dump.json")
-    if seed.exists():
+    seed = next((p for p in (Path("memory/dump.json"), Path("memory/snapshot.json")) if p.exists()), None)
+    if seed is not None:
         db.parent.mkdir(parents=True, exist_ok=True)
         p = subprocess.run([sys.executable, str(SKILLS / "content-database" / "scripts" / "cfdb.py"), "import", "--db", str(db),
                             "--in", str(seed)], capture_output=True, text=True)
@@ -207,9 +207,9 @@ def ensure_memory(db: Path, allow_empty: bool) -> dict:
             raise SystemExit(json.dumps({"error": "MEMORY_FAILED", "db": str(db), "stderr": (p.stderr or p.stdout)[-400:]}))
         return {"db": str(db), "seeded_from": str(seed.resolve())}
     if not allow_empty:
-        raise EnvironmentError(f"no content memory at {db} and no memory/dump.json to seed it — without memory the engine "
-                               "cannot refuse repeated topics. Point --db (or CF_DB) at the factory database, or pass "
-                               "--allow-empty-memory for a deliberately fresh channel")
+        raise EnvironmentError(f"no content memory at {db} and no memory/dump.json or memory/snapshot.json to seed it — "
+                               "without memory the engine cannot refuse repeated topics. Point --db (or CF_DB) at the "
+                               "factory database, or pass --allow-empty-memory for a deliberately fresh channel")
     db.parent.mkdir(parents=True, exist_ok=True)
     return {"db": str(db), "seeded_from": None, "empty": True}
 

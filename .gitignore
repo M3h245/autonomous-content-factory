@@ -76,5 +76,7 @@ desktop.ini
 /.claude/
 /.agents/
 /memory/backup-*/
+# P5.1: the live memory export is a working file, re-written after every run; the repo ships memory/snapshot.json
+/memory/dump.json
 /data/
 /tools/youtube_sync/data/

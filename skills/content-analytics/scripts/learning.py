@@ -492,12 +492,18 @@ def find_experiment(exp_dir: str | None, attr: str) -> dict | None:
 
 def registered(exp_dir: str | None) -> list[dict]:
     """Experiments the owner already designed (experiments/*/spec.json): listed so a new hypothesis never silently
-    replaces a pre-registered one."""
+    replaces a pre-registered one. v3.3 also reads experiments/registry.json — the pre-registered hypotheses that
+    have no primary source behind them (X-STICKER, X-MIDCTA, X-TITLECASE)."""
     out = []
     for spec in sorted(Path(exp_dir).glob("*/spec.json")) if exp_dir and Path(exp_dir).is_dir() else []:
         s = jload(spec) or {}
         out.append({"experiment_id": s.get("experiment_id"), "status": s.get("status"), "variable": s.get("variable"),
                     "primary_metric": s.get("primary_metric"), "spec": str(spec)})
+    reg = Path(exp_dir) / "registry.json" if exp_dir else None
+    if reg is not None and reg.exists():
+        for e in (jload(reg) or {}).get("experiments", []):
+            out.append({"experiment_id": e.get("experiment_id"), "status": e.get("status"), "variable": e.get("hypothesis"),
+                        "primary_metric": e.get("primary_metric"), "spec": str(reg), "pre_registered": True})
     return out
 
 

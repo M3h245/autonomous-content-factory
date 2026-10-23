@@ -1,5 +1,94 @@
 # Changelog — Autonomous Content Factory
 
+## v3.3.0 — 2026-10-20 · real 16:9 long-form + sourced packaging rules
+Research: `docs/v3.3/RESEARCH-PACKAGING.md` (13 sections, 21 sources) and the companion reports in `research/`
+(`youtube-shorts-packaging-2026.md`, `youtube-longform-strategy-2026.md`). Every rule added here cites a primary
+source; anything without one is a **pre-registered experiment judged by watch time**, never an adopted threshold.
+### Changed — the format is now aspect-aware, not just duration-aware
+- **`cf_common.py`** (canonical, synced byte-identical to all 15 copies) gains `FORMATS`
+  (short `1080x1920` / long `1920x1080`, viewbox + aspect), `SHORT_MAX_S = 180.0`, `HOOK_WINDOW_S`
+  (`short 3.2 s` / `long 8.0 s`, from YouTube's long-form creator guidance for the 5–10 s hook; the widely-repeated
+  "3 seconds" has no YouTube source) and `video_kind(aspect, max_s)` / `format_of(kind)`. The brief schema now has
+  `video_kind` and `aspect` enums.
+- **The single biggest finding:** any **square or vertical upload ≤ 3:00 is a Short** by YouTube's definition — it is
+  served in the Shorts feed, is monetised from a separate Creator Pool (10 M views / 90 d), and its watch time does
+  **not** count toward the 4,000 watch-hour YPP threshold. Only **16:9** is A/B-testable and earns watch-page hours.
+  The v3.2 portrait 184 s video is therefore a Short; v3.3 renders real 16:9.
+- `factory.py init` takes `--aspect auto|vertical|wide` (auto = wide when `--max-s > 180`), records `video_kind`,
+  `aspect`, `length_choice` (ad-surface bands from `answer/2467968`) and `end_screen` (long only: zone 5–20 s,
+  video ≥ 25 s, Subscribe element, `answer/6388789`). It threads `--aspect` down to VISUAL_PLAN, VIDEO, SUBTITLES
+  and QA.
+- **Canvas plumbed through every renderer:** `doodle_engine.set_canvas(w, h)` recomputes `W,H`, `CENTER` and
+  `CAPTION_BAND`; `render_video.set_size`, `storyboard_tool.CANVAS`, `subtitles.set_canvas` (caption band y = 0.86
+  wide / 0.63 vertical, font and margins scaled by canvas) and `qa_video.set_canvas` (container spec 1920x1080) all
+  follow the brief. Portrait values are unchanged, so existing Shorts render identically.
+### Added — sourced packaging and monetisation rules
+- **`PKG.PACKAGING_VARIATION`** (major): fails when the title shape, thumbnail text or opening promise is a
+  near-duplicate (> 0.6 Jaccard) of an earlier video in the run or in `factory.db` `videos`. The inauthentic-content
+  policy (renamed from "repetitious" on 2025-07-15) refuses monetisation to templated, interchangeable videos — the
+  exact profile of a template factory (`answer/1311392`).
+- **End screens** (16:9 long-form only): a calm 5 s tail is enforced (`VID.END_SCREEN_TAIL`: ≤ 2 new visual events and
+  no camera punch-in in the last 5 s) and `metadata.human_must_set` instructs the owner to add the Subscribe end
+  screen in Studio. `VID.CLEAN_ENDING` accepts a ≥ 6 dB music fade ending at ≤ −30 dBFS for long-form instead of
+  requiring −45 dBFS silence.
+- **Title/thumbnail A/B test** (16:9 long-form only): PACKAGE emits `ab_test` (decision metric **watch time**, ~14
+  days, 3 variants, `answer/16391400`) and a `title_variants` block in `publishing_package.json` +
+  `PUBLISHING_PACKAGE.md`. Not available on Shorts.
+- **Hashtags:** gate message now cites the rule — up to ~3 description hashtags are promoted; > 60 ⇒ all ignored and
+  over-tagging can remove the video from search (`answer/6390658`). New `SCRIPT.NO_HASH_IN_TITLE` (major).
+- **Related video on a Short** is offered for every Short when the channel has a long-form sibling (the official
+  Shorts→long-form funnel, `answer/14075157`), not only for `part_2`.
+- **Long-form thumbnail:** `review-policy.json` gains `thumb_size_wide` (1920x1080) + `core_safe_wide`;
+  `package_engine.py select --aspect wide` renders and measures the 16:9 thumbnail; `crops_preview` writes a single
+  16:9 band instead of the five mobile cover crops.
+### Added — the cover judge (P6.2, thumbnail taste)
+- **`reviewer.py` gains a judge-only `thumbnail_appeal` dimension** (`PACKAGE_DIMS`, `JUDGE_ONLY`, threshold 4). Every
+  other package dimension is geometric; a cover can pass them all and still be dull. The heuristic returns a neutral
+  3 with an explicit "not judged" note and **does not fail a package on it** (heuristic-only runs behave exactly as
+  before). An external judge (fresh agent or human) is authoritative for this dimension: `merge_package_judgment`
+  lets it raise as well as lower (the one deliberate exception to min-only), and its scores for all other dimensions
+  still only lower.
+- **The judge sees the cover the way a viewer does:** `review-package` builds packets that already carry
+  `frames/thumbnail.jpg` (full size) and `frames/thumbnail_168.png` (phone shelf) plus the title and opening promise.
+  `--backend subagent` writes `package_review_request.md` (score anchors, absolute packet paths, the exact
+  `packet_manifest_sha256` to echo back) and exits **3 / `AWAITING_JUDGMENT`**; the second run merges
+  `package_judgment.json`. A judgment that omits `thumbnail_appeal`, or was made for an older packet, is blocking
+  (`JUDGMENT.UNJUDGED_COVER` / `JUDGMENT.STALE`).
+- **`package_engine.py select --review-backend auto|heuristic|subagent`** passes the backend through, writes
+  `status: awaiting_judgment` + `PKG.AWAITING_JUDGMENT` (nothing is selected) on exit 3, and can build a **hashed
+  context brief** of the channel's own recent covers from `factory.db` (`--db` / `--runs-dir`, written to
+  `review/channel_covers.json`, outside the packet, hash recorded in the boundary log — P4.2).
+  `package_run.py` honours the brief's `review_backend`, passes `--db`, and stops on an awaited judgment.
+- **Routing:** a low `thumbnail_appeal` (or an unjudged/stale cover) returns `PACKAGE` / `redesign_cover` — taste is a
+  packaging problem, not a rendering one.
+- **Tests:** `video-quality-assurance/tests/test_thumbnail_appeal.py` (6 tests) pins the neutral heuristic, the
+  judge-authoritative merge, the `redesign_cover` route, the missing-cover check and the full await flow through
+  both `reviewer.py` and `package_engine.py`.
+
+### Changed — release hygiene (P5.1–P5.3)
+- **P5.1 — memory stops growing the repo.** `memory/dump.json` (5.16 MB, re-exported after every run) is no longer
+  tracked and is git-ignored; the repository ships `memory/snapshot.json` (195 KB — every run, idea, video, asset and
+  publication, without the bulky `yt_*` analytics and per-stage rows) and `memory/README.md`, which documents that
+  the live memory is the SQLite factory database (`--db` / `$CF_DB` / `$CF_RUNS_DIR/factory.db`), not the JSON dump.
+  `idea_engine.ensure_memory` seeds a missing database from `memory/dump.json` first, then the shipped snapshot;
+  `tools/make_memory_snapshot.py` refreshes the snapshot deliberately before a release. `test_phase5` and
+  `test_experiment` accept either file, so a fresh clone still refuses repeated topics.
+- **P5.2 — one PROJECT_STATE.** The root `PROJECT_STATE.md` is the single source of truth (now describing v3.3.0);
+  `skills/content-factory/PROJECT_STATE.md` is a pointer to it, so the two can never drift again.
+- **P5.3 — Windows CI.** `.github/workflows/windows-tests.yml` installs the four native dependencies on
+  `windows-latest` and runs every unittest file in its own subprocess (`tools/run_tests_isolated.py`, now exiting
+  non-zero on any FAIL/TIMEOUT). The locale and dead-lock class of bug from v3.1.1 can no longer return unnoticed.
+
+### Added — pre-registered experiments (no source; judged by watch time)
+- `input/experiments/registry.json` (`cf-experiment-registry/1`) records X-STICKER, X-MIDCTA and X-TITLECASE before any
+  data exists, with the rule that they are decided by **watch time**, and `learning.registered()` surfaces them
+  alongside paired `spec.json` experiments so a new hypothesis never silently replaces a pre-registered one.
+### Performance
+- Remaining `skia.Surface.MakeRaster(ImageInfo...)` slow paths replaced with `MakeRasterN32Premul` in
+  `package_engine.py`, `hook_engine.py` and `doodle_engine.render_still` (~50x faster per surface; same pixels).
+### Tests
+- `test_cf_common_identity` (15 byte-identical copies), the long-form format tests and the full suite run green.
+
 ## v3.2.0 — 2026-10-20 · render speed + long-form foundation (in progress)
 Scope: `video-production/scripts/doodle_engine.py` (speed), `content-factory/scripts/factory.py` and
 `content-analytics/scripts/learning.py` (long-form split), `video-quality-assurance/scripts/qa_video.py`

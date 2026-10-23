@@ -1,0 +1,48 @@
+name: Windows tests
+
+# P5.3: the locale/UTF-8 and file-lock class of bug that v3.1.1 fixed was invisible on Linux. Every push and PR now
+# runs the whole unittest suite on windows-latest, one file per subprocess so one slow render cannot hide a failure.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    runs-on: windows-latest
+    timeout-minutes: 150
+    env:
+      PYTHONIOENCODING: utf-8
+      PYTHONUTF8: "1"
+      CF_CACHE: ${{ github.workspace }}\.cache
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy pillow svgelements skia-python
+
+      - name: Tool check (ffmpeg must be on PATH)
+        run: |
+          python -V
+          ffmpeg -version | Select-Object -First 1
+
+      - name: Run the suite (one subprocess per test file)
+        run: python tools/run_tests_isolated.py --timeout 900
+
+      - name: Upload failure logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-test-failure
+          path: |
+            **/.tmp_*.err
+            **/.tmp_*.out
+          if-no-files-found: ignore

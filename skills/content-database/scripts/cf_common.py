@@ -95,6 +95,36 @@ def slug(text: str, maxlen: int = 48) -> str:
     return (s or "x")[:maxlen]
 
 
+# ----------------------------------------------------------------------------- format model (cf/1.2)
+# v3.3: what YouTube actually calls the upload decides which feed serves it, how it is monetised and whether it
+# counts toward the YPP watch-hour threshold — and that depends on BOTH aspect ratio and duration, not duration
+# alone (docs/v3.3/RESEARCH-PACKAGING.md §1.2, §9.1). Facts below are YouTube's own:
+#   * "square or vertical aspect ratio up to three minutes" ⇒ Short (support.google.com/youtube/answer/15424877)
+#   * "use a wider aspect ratio such as 16:9" to stay long-form (same page)
+#   * Shorts-Feed watch hours do NOT count toward the 4,000 watch-hour threshold (answer/72851)
+# Encodings: 16:9 long-form renders 1920x1080; 9:16 shorts render 1080x1920 (answer/6375112).
+FORMATS: dict[str, dict] = {
+    "short": {"width": 1080, "height": 1920, "viewbox": "0 0 1080 1920", "aspect": "9:16"},
+    "long": {"width": 1920, "height": 1080, "viewbox": "0 0 1920 1080", "aspect": "16:9"},
+}
+SHORT_MAX_S = 180.0   # the 3-minute Shorts boundary; only meaningful together with a square/vertical aspect ratio
+# Hook window per format. Shorts keep the factory's tighter 3.2 s. Long-form uses YouTube's own creator guidance:
+# "Hook viewers in the first 5-10 seconds to keep them watching." (youtube.com/creators/create/longform/, graded
+# strong, not certain). The widely-repeated "3 seconds" figure has NO YouTube source and stays a Shorts heuristic
+# only — docs/v3.3/RESEARCH-PACKAGING.md §2.
+HOOK_WINDOW_S = {"short": 3.2, "long": 8.0}
+
+
+def video_kind(aspect: str, max_s: float) -> str:
+    """YouTube's own classification. A square/vertical upload of ≤180 s is a Short; anything 16:9, or any
+    vertical video that runs longer than 3 minutes, is long-form (served on the Watch Page)."""
+    return "short" if aspect == "vertical" and float(max_s) <= SHORT_MAX_S else "long"
+
+
+def format_of(kind: str) -> dict:
+    return FORMATS.get(kind, FORMATS["short"])
+
+
 def skills_root() -> Path:
     """Directory that holds the sibling factory skills (…/skills/<name>/scripts/this_file)."""
     env = os.environ.get("CF_SKILLS_ROOT")
@@ -234,6 +264,8 @@ SCHEMAS: dict[str, dict] = {
         "run_id": NES, "topic": NES, "count": {"type": "integer", "minimum": 1, "maximum": 50},
         "languages": {"type": "array", "minItems": 1, "items": NES}, "platforms": {"type": "array", "minItems": 1, "items": NES},
         "duration_s": {"type": "object", "properties": {"min": N, "max": N, "target": N}},
+        "video_kind": {"type": "string", "enum": ["short", "long"]},
+        "aspect": {"type": "string", "enum": ["vertical", "wide"]},
         "audience": S, "tone": S, "style": S, "constraints": STRS}},
     "research_dossier": {"type": "object", "required": ["topic", "sources", "facts"], "properties": {
         "topic": NES,

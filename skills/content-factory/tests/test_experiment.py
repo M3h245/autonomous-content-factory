@@ -100,7 +100,9 @@ class ExperimentTests(unittest.TestCase):
         self.spec_path = self.tmp / "spec.json"; self.spec_path.write_text(json.dumps(self.spec), encoding="utf-8")
         self.batches = self.tmp / "batches"
         self.db = self.tmp / "factory.db"
-        subprocess.run([sys.executable, str(CFDB), "import", "--db", str(self.db), "--in", str(REPO / "memory" / "dump.json")],
+        mem = next((p for p in (REPO / "memory" / "dump.json", REPO / "memory" / "snapshot.json") if p.exists()),
+                   REPO / "memory" / "snapshot.json")
+        subprocess.run([sys.executable, str(CFDB), "import", "--db", str(self.db), "--in", str(mem)],
                        check=True, capture_output=True)
         stub = self.tmp / "stub_claude.py"; stub.write_text(STUB, encoding="utf-8")
         self.stub_log = self.tmp / "claude_calls.jsonl"

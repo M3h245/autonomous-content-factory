@@ -31,6 +31,12 @@ from cf_common import (StageResult, decode_errors, emit, exit_for, ffmpeg_bin, f
                        run, stage_main, write_json)
 
 W, H, PLATFORM_MAX_S = 1080, 1920, 180.0
+# v3.3: the expected container spec depends on the brief's aspect. 9:16 shorts are 1080x1920; 16:9 long-form is
+# 1920x1080 (docs/v3.3/RESEARCH-PACKAGING.md §1.2). --aspect switches the pair QA compares against.
+
+def set_canvas(w: int, h: int) -> None:
+    global W, H
+    W, H = int(w), int(h)
 TESS_LANG = {"en": "eng", "it": "ita", "es": "spa", "fr": "fra", "pt": "por", "de": "deu", "fa": "fas", "ar": "ara"}
 REVIEW_ITEMS = [
     ("V.CAPTIONS_READABLE", "Are captions legible against every background in the contact sheet?", "blocking",
@@ -119,6 +125,8 @@ def cmd_check(a) -> int:
     out.mkdir(parents=True, exist_ok=True)
     tm = read_json(a.timing)
     video = Path(a.video)
+    if a.aspect == "wide":
+        set_canvas(1920, 1080)
     sr = StageResult("QA", "video-quality-assurance", tm.get("video_id"), attempt=a.attempt)
     sr.input(video, "final_video"); sr.input(a.timing, "voice_timing"); sr.input(a.captions, "captions_ass")
     info = ffprobe(video)
@@ -299,6 +307,8 @@ def main() -> int:
     c.add_argument("--result", required=True); c.add_argument("--nosubs")
     c.add_argument("--min-s", type=float, default=15); c.add_argument("--max-s", type=float, default=60)
     c.add_argument("--lufs", type=float, default=-14.0); c.add_argument("--ocr", choices=["auto", "on", "off"], default="auto")
+    c.add_argument("--aspect", default="vertical", choices=["vertical", "wide"],
+                   help="expected container spec: vertical = 1080x1920 (short), wide = 1920x1080 (16:9 long-form)")
     c.add_argument("--attempt", type=int, default=1)
     f = sub.add_parser("finalize")
     f.add_argument("--out-dir", required=True); f.add_argument("--result", required=True)

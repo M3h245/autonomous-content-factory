@@ -2,8 +2,8 @@
 """content-factory orchestrator — run state, stage routing, gate bookkeeping and regeneration.
 
   factory.py init    --topic "..." [--count N] [--languages en,it] [--platforms youtube_shorts,tiktok,instagram_reels]
-                     [--min-s 20 --max-s 45] [--voices en=af_heart,it=if_sara] [--music procedural]
-                     [--caption-style karaoke] [--db factory.db] [--runs-dir DIR]
+                     [--min-s 20 --max-s 45] [--aspect auto|vertical|wide] [--voices en=af_heart,it=if_sara]
+                     [--music procedural] [--caption-style karaoke] [--db factory.db] [--runs-dir DIR]
   factory.py next    --run RUN               # the single next action: stage, video, skill to load, files to write, gate
   factory.py record  --run RUN --result PATH # register a stage envelope → proceed | review | rerun(+params) | escalate
   factory.py media   --run RUN --video v01   # AUDIO→VIDEO→SUBTITLES→QA(check) with automatic regeneration
@@ -34,8 +34,8 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from cf_common import (GLOBAL_STAGES, SCHEMAS, STAGE_OWNER, STAGES, VIDEO_STAGES, StageResult, fix, now_iso,  # noqa: E402
-                       read_json, skill_script, skills_root, slug, validate, write_json)
+from cf_common import (GLOBAL_STAGES, HOOK_WINDOW_S, SCHEMAS, STAGE_OWNER, STAGES, VIDEO_STAGES, StageResult, fix,  # noqa: E402
+                       now_iso, read_json, skill_script, skills_root, slug, validate, video_kind as video_kind_of, write_json)
 
 PY = sys.executable
 PASSED = {"passed", "passed_with_warnings"}
@@ -229,7 +229,8 @@ def gate_cmd(run: Path, st: dict, stage: str, vid: str | None) -> list:
     att = str(entry(st, stage, vid).get("attempt", 1))
     if stage == "HOOK" and v2:
         return [PY, S("hook-engineering", "hook_engine.py"), "select", "--hooks", p["hooks"], "--dossier", r / "research" / "dossier.json",
-                "--out-dir", p["dir"] / "hook", "--result", p["result"]["HOOK"], "--voice", voice, "--attempt", att] + \
+                "--out-dir", p["dir"] / "hook", "--result", p["result"]["HOOK"], "--voice", voice, "--attempt", att,
+                "--video-kind", b.get("video_kind", "short")] + \
             (["--history", r / "history.json"] if (r / "history.json").exists() else []) + \
             (["--learning", r / "learning.json"] if (r / "learning.json").exists() else [])   # v3.1.0: evidence re-ranks passing hooks
     if stage == "SCRIPT" and v2:
@@ -239,7 +240,8 @@ def gate_cmd(run: Path, st: dict, stage: str, vid: str | None) -> list:
             (["--require-cta-decision"] if b.get("cta_engine") else []) + \
             cta_history_args(r, vid)
     if stage == "HOOK":
-        cmd = [PY, S("hook-engineering", "hook_lint.py"), "--hooks", p["hooks"], "--result", p["result"]["HOOK"]]
+        cmd = [PY, S("hook-engineering", "hook_lint.py"), "--hooks", p["hooks"], "--result", p["result"]["HOOK"],
+               "--max-s", str(HOOK_WINDOW_S["long" if b.get("video_kind") == "long" else "short"])]
         return cmd + (["--weights", r / "weights.json"] if (r / "weights.json").exists() else [])
     if stage == "SCRIPT":
         return [PY, S("short-form-script", "script_lint.py"), "--script", p["script"], "--dossier", r / "research" / "dossier.json",
@@ -249,7 +251,8 @@ def gate_cmd(run: Path, st: dict, stage: str, vid: str | None) -> list:
                 "--caps", r / "capabilities.json", "--min-s", b["min_s"], "--max-s", b["max_s"], "--result", p["result"]["LOCALIZE"]]
     if stage == "VISUAL_PLAN":
         cmd = [PY, S("visual-storyboarding", "storyboard_tool.py"), "render", "--storyboard", p["storyboard"], "--script",
-               p["script"], "--out-dir", p["visual"], "--result", p["result"]["VISUAL_PLAN"], "--auto-fallback"]
+               p["script"], "--out-dir", p["visual"], "--result", p["result"]["VISUAL_PLAN"], "--auto-fallback",
+               "--aspect", b.get("aspect", "vertical")]
         ob = p["dir"] / "hook" / "opening_brief.json"
         return cmd + (["--timing", p["timing"]] if p["timing"].exists() else []) + (["--opening", ob] if ob.exists() else [])
     if stage == "PACKAGE":
@@ -513,26 +516,32 @@ def media_cmds(run: Path, st: dict, stage: str, vid: str) -> list[list]:
         return [cmd]
     if stage == "VIDEO":
         rendered = p["rendered"] if p["rendered"].exists() else vp(run, v["source"])["rendered"]
+        # v3.3: density_events fills motion gaps deterministically (binds small entrances to narration words) using the
+        # real AUDIO timing, so VID.MOTION_GAP / VID.PACING_CADENCE stop being hand-fixes. `max_shot` from the fix route
+        # also raises the gap it fills to, so a retime that lengthens shots cannot immediately re-open a gap.
+        gap = fp.get("max_gap", fp.get("max_shot", 3.5))
         return [[PY, S("visual-storyboarding", "storyboard_tool.py"), "retime", "--storyboard", rendered, "--timing", p["timing"],
                  "--out", p["timed"], "--max-shot", fp.get("max_shot", 3.6)],
+                [PY, S("visual-storyboarding", "density_events.py"), "--storyboard", p["timed"], "--timing", p["timing"],
+                 "--max-gap", gap],
                 [PY, S("video-production", "render_video.py"), "--storyboard", p["timed"], "--voice", p["voice"], "--script", p["script"],
                  *cta_history_args(run, vid),
                  "--timing", p["timing"], "--out-dir", p["video"], "--result", p["result"]["VIDEO"], "--music", b.get("music", "procedural"),
-                 "--lufs", fp.get("lufs", -14), "--attempt", att]
+                 "--lufs", fp.get("lufs", -14), "--attempt", att, "--aspect", b.get("aspect", "vertical")]
                 + [x for k, flag in (("music_under_voice_db", "--music-under-voice-db"), ("music_carve_db", "--music-carve-db"),
                                      ("sfx_max_rate", "--sfx-max-rate"), ("music_gain_db", "--music-gain-db")) if k in fp
                    for x in (flag, fp[k])]]   # fix-route audio parameters reach the renderer
     if stage == "SUBTITLES":
         cmd = [PY, S("subtitle-production", "subtitles.py"), "run", "--timing", p["timing"], "--video", p["nosubs"], "--out-dir",
                p["subs"], "--result", p["result"]["SUBTITLES"], "--overlays", p["timed"], "--style",
-               b.get("caption_style", "auto"), "--attempt", att]
+               b.get("caption_style", "auto"), "--attempt", att, "--aspect", b.get("aspect", "vertical")]
         for k, flag in (("font_scale", "--font-scale"), ("max_words", "--max-words"), ("font", "--font"), ("y", "--y")):
             if k in fp:
                 cmd += [flag, fp[k]]
         return [cmd]
     return [[PY, S("video-quality-assurance", "qa_video.py"), "check", "--video", p["final"], "--timing", p["timing"],
              "--captions", p["ass"], "--nosubs", p["nosubs"], "--out-dir", p["qa"], "--result", p["result"]["QA"],
-             "--min-s", b["min_s"], "--max-s", b["max_s"], "--attempt", att]]
+             "--min-s", b["min_s"], "--max-s", b["max_s"], "--attempt", att, "--aspect", b.get("aspect", "vertical")]]
 
 
 def review_backend(st: dict) -> str:
@@ -657,6 +666,26 @@ def cmd_media(a) -> int:
 
 
 # ----------------------------------------------------------------------------- commands
+def length_choice(max_s: float) -> dict:
+    """v3.3: length is a sourced revenue + retention choice, not an arbitrary target (RESEARCH-PACKAGING.md §3.5).
+
+    YouTube's own ad surfaces (support.google.com/youtube/answer/2467968):
+      * < 2 min  — no mid-rolls, no Watch-While
+      * 2–8 min  — Watch-While ads serve
+      * >= 5 min — ad pods (two back-to-back ads) can occur
+      * > 8 min  — mid-roll ads can be turned on
+    Returns the band this brief lands in and what it implies, so the plan is deliberate and cited.
+    """
+    if max_s < 120:
+        band, note = "under_2min", "no mid-rolls and no Watch-While: monetise on reach/Shorts path only"
+    elif max_s <= 480:
+        band, note = "watch_while", "2–8 min: Watch-While ads serve; ad pods need ≥5 min (max_s >= 300)"
+    else:
+        band, note = "mid_rolls", ">8 min: mid-roll ads can be turned on (the strongest per-view ad surface)"
+    return {"band": band, "max_s": max_s, "ad_pods": max_s >= 300, "mid_rolls": max_s > 480,
+            "source": "support.google.com/youtube/answer/2467968", "note": note}
+
+
 def missing_capabilities(caps: dict, brief: dict) -> list[dict]:
     """What this machine must be able to do for the brief (Phase 5: a machine without skia rendered doodle scenes with
     the procedural fallback and setup still exited 0)."""
@@ -680,18 +709,28 @@ def cmd_init(a) -> int:
         k += 1
         run = runs / f"{rid}-{k}"
     db = None if a.no_db else Path(a.db or os.environ.get("CF_DB") or runs / "factory.db").resolve()
-    # v3.2.0: video_kind is the split key for the analytics learning loop. A long-form video's watch time
-    # matures slower than a short's, so the two must never be pooled in the same metric window (see
-    # docs/v3.2.0/LONGFORM.md §4). Default threshold matches the platform's own long-form boundary (3 min).
-    video_kind = "long" if a.max_s > 180 else "short"
+    # v3.3: video_kind is decided by YouTube's own classification — aspect ratio AND duration, not duration alone
+    # (docs/v3.3/RESEARCH-PACKAGING.md §1.2). A 9:16 upload of ≤3 min is a Short regardless of --max-s; only 16:9
+    # (or a >3 min vertical) is long-form. `aspect=wide` renders 1920x1080; `aspect=vertical` renders 1080x1920.
+    aspect = a.aspect
+    if aspect == "auto":
+        aspect = "wide" if a.max_s > 180 else "vertical"
+    video_kind = video_kind_of(aspect, a.max_s)
     brief = {"run_id": run.name, "topic": a.topic, "count": a.count, "languages": a.languages.split(","),
              "platforms": a.platforms.split(","), "duration_s": {"min": a.min_s, "max": a.max_s}, "min_s": a.min_s,
-             "max_s": a.max_s, "video_kind": video_kind,
+             "max_s": a.max_s, "video_kind": video_kind, "aspect": aspect,
              "voices": dict(x.split("=", 1) for x in a.voices.split(",") if "=" in x) if a.voices else {},
              "music": a.music, "caption_style": a.caption_style, "visual_style": a.visual_style,
              "review_backend": a.review_backend, "hook_engine": "v2", "cta_engine": "v1", "package_engine": "v1",
              "audience": a.audience, "tone": a.tone,
              "constraints": a.constraint or [], "created_at": now_iso(), "memory": {"db": str(db) if db else None}}
+    # v3.3: record the sourced length band and the end-screen rule up front (D2). End screens need the last 5–20 s
+    # free and a video ≥25 s, so they apply to long-form (16:9) only — the owner ruled them out for Shorts.
+    brief["length_choice"] = length_choice(a.max_s)
+    brief["end_screen"] = {"applies": video_kind == "long", "zone_s": [5, 20], "min_video_s": 25,
+                           "element": "Subscribe", "source": "support.google.com/youtube/answer/6388789",
+                           "note": "leave the last 5–20 s visually calm and free; the human adds the end screen in Studio"
+                           + ("" if video_kind == "long" else " (not used on Shorts)")}
     learning = None
     if a.learning:                       # v3.1.0: evidence from published videos (content-analytics learning.py)
         try:
@@ -849,6 +888,9 @@ def main() -> int:
                                                      help=f"number of videos (default {DEFAULT_VIDEO_COUNT}; 1-{MAX_VIDEO_COUNT})")
     i.add_argument("--languages", default="en"); i.add_argument("--platforms", default="youtube_shorts,tiktok,instagram_reels")
     i.add_argument("--min-s", type=float, default=20); i.add_argument("--max-s", type=float, default=45)
+    i.add_argument("--aspect", default="auto", choices=["auto", "vertical", "wide"],
+                   help="auto = wide (16:9, 1920x1080) when --max-s > 180, else vertical (9:16, 1080x1920); "
+                        "YouTube treats any square/vertical upload <=180s as a Short (docs/v3.3/RESEARCH-PACKAGING.md)")
     i.add_argument("--voices"); i.add_argument("--music", default="procedural")
     i.add_argument("--caption-style", default="auto", choices=["auto", "doodle", "karaoke", "word", "clean"],
                    help="auto = doodle captions for doodle storyboards, karaoke otherwise")

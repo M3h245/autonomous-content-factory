@@ -69,7 +69,14 @@ def main_cmd(a) -> int:
     sr.check("SCRIPT.TITLE_LENGTH", all(len(t) <= 100 for t in titles), "major", "titles ≤ 100 characters",
              fix=fix("SCRIPT", "retitle", max_chars=100))
     tags = s["publish"]["hashtags"]
-    sr.check("SCRIPT.HASHTAGS", 1 <= len(tags) <= 8 and all(t.startswith("#") for t in tags), "minor", f"{len(tags)} hashtags")
+    # v3.3: cap kept far below YouTube's own limit — "more than 60 hashtags, we'll ignore each hashtag"; over-tagging
+    # "may result in the removal of your video … from search" (support.google.com/youtube/answer/6390658). Only the
+    # first ~3 description hashtags are shown next to the title, so relevance, not count, is the goal.
+    sr.check("SCRIPT.HASHTAGS", 1 <= len(tags) <= 8 and all(t.startswith("#") for t in tags), "minor",
+             f"{len(tags)} hashtags (relevant only; YouTube shows ~3, ignores all past 60 and can remove over-tagged videos)")
+    sr.check("SCRIPT.NO_HASH_IN_TITLE", not any("#" in t for t in titles), "major",
+             "no # in the title (hashtags belong in the description; a title hashtag is not promoted)",
+             fix=fix("SCRIPT", "retitle", max_chars=100))
     sr.check("SCRIPT.ON_SCREEN", all(len(b.get("on_screen", "")) <= 34 for b in beats), "minor", "on-screen text ≤ 34 chars")
     sr.metric("est_duration_s", round(total, 1)); sr.metric("beats", len(beats))
     sr.metric("words", sum(len(b["text"].split()) for b in beats))

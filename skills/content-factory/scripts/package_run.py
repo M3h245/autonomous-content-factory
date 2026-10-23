@@ -35,15 +35,52 @@ COVER_STEPS = {
     "tiktok": "Cover: desktop web upload → Edit cover → upload thumbnail.jpg (TikTok crops covers to 3:4; nothing important is outside "
               "the central square).",
     "instagram": "Reels cover: Edit cover → Add from camera roll → thumbnail.jpg (profile grid crops to the centre)."}
+# v3.3: a 16:9 long-form upload is a normal watch-page video — the thumbnail is chosen in Studio directly, and no
+# mobile 9:16 cover crops apply. It also gets an end screen and can enter Test & compare.
+COVER_STEPS_WIDE = {
+    "youtube": "Watch-page thumbnail: upload a 16:9 image (1280×720 recommended, ≥640 px wide, ≤2 MB) in YouTube Studio → "
+               "Details → Thumbnail → upload. A 16:9 thumbnail is normal on a 16:9 video (the 4:5 replacement only happens "
+               "on vertical videos).",
+    "tiktok": "Not applicable: this is a 16:9 long-form upload for the YouTube watch page.",
+    "instagram": "Not applicable: this is a 16:9 long-form upload for the YouTube watch page."}
 
 
-def crops_preview(src: Path, dst: Path) -> None:
-    """One strip showing how each platform crops the 9:16 thumbnail: 9:16 | 4:5 | 3:4 | 1:1 | ≈3:2 band."""
+STOP_WORDS = {"the", "a", "an", "of", "to", "in", "is", "are", "why", "how", "does", "do", "you", "your", "it", "and",
+              "that", "this", "for", "on", "at", "with", "what", "when", "be", "can", "we", "i"}
+
+
+def _tokens(text: str) -> set:
+    """Content words of a title/promise: lowercased, punctuation stripped, stop-words dropped (v3.3 variation check)."""
+    return {w for w in re.findall(r"[a-z0-9']+", text.lower()) if w not in STOP_WORDS and len(w) > 1}
+
+
+def _jac(a: set, b: set) -> float:
+    return len(a & b) / max(1, len(a | b))
+
+
+def _shape(text: str) -> str:
+    """The *template* of a title/promise: every word in order, but content words collapsed to their slot (v3.3).
+
+    The inauthentic-content policy (support.google.com/youtube/answer/1311392) targets packaging that reads as "generic
+    or unoriginal templates … interchangeable from video to video" — i.e. the same word-pattern reused, not merely a
+    shared topic word. So the signature keeps function words verbatim (they carry the pattern) and replaces each content
+    word with a bare slot marker, so two genuinely different titles that happen to share one word never collapse onto
+    each other, while "What actually happens when you X the Y?" reused twice does."""
+    out = []
+    for w in re.findall(r"[a-z0-9']+", text.lower()):
+        out.append(w if w in STOP_WORDS or len(w) <= 1 else "\u00a7")
+    return " ".join(out)
+
+
+def crops_preview(src: Path, dst: Path, aspect: str = "vertical") -> None:
+    """How each platform crops the thumbnail: 9:16 | 4:5 | 3:4 | 1:1 | ≈3:2 band (vertical covers). For a 16:9
+    long-form thumbnail there is no mobile cover crop — one band showing the full 16:9 frame is written instead."""
     from PIL import Image
     im = Image.open(src).convert("RGB")
     w, h = im.size
+    ars = (16 / 9,) if aspect == "wide" else (9 / 16, 4 / 5, 3 / 4, 1.0, 3 / 2)
     strips = []
-    for ar in (9 / 16, 4 / 5, 3 / 4, 1.0, 3 / 2):
+    for ar in ars:
         ch = min(h, round(w / ar))
         top = (h - ch) // 2
         c = im.crop((0, top, w, top + ch)).resize((round(480 * w / ch), 480), Image.LANCZOS)
@@ -71,16 +108,33 @@ def run_packaging(run: Path, vid: str, p: dict, sr: StageResult) -> dict | None:
     sb = p["storyboard"]
     if sb.exists():
         pal = ",".join(read_json(sb).get("style", {}).get("palette", [])) or None
+    brief = read_json(run / "run.json") if (run / "run.json").exists() else {}
+    aspect = brief.get("aspect", "vertical")
     cmd = [sys.executable, str(Path(__file__).with_name("package_engine.py")), "select", "--candidates", cand, "--script", p["script"],
            "--timing", p["timing"], "--final", p["final"], "--dossier", run / "research" / "dossier.json",
-           "--out-dir", p["dir"] / "package"] + (["--palette", pal] if pal else [])
+           "--out-dir", p["dir"] / "package", "--aspect", aspect] + (["--palette", pal] if pal else [])
     judg = p["dir"] / "package" / "package_judgment.json"
     if judg.exists():
         cmd += ["--judgment", judg]
+    backend = brief.get("review_backend", "auto")
+    backend = "subagent" if backend == "human" else backend
+    if backend not in ("auto", "heuristic", "subagent"):
+        backend = "auto"
+    if backend != "auto":
+        cmd += ["--review-backend", backend]
+    mem = (brief.get("memory") or {}).get("db")
+    if mem and Path(mem).exists():
+        cmd += ["--db", mem, "--runs-dir", run.parent]
     pr = subprocess.run([str(c) for c in cmd], capture_output=True, text=True)
     selp = p["dir"] / "package" / "package_selection.json"
     sel = read_json(selp) if selp.exists() else {"status": "failed", "set_checks": [{"id": "PKG.ENGINE_ERROR", "evidence": pr.stderr[-300:]}],
                                                   "table": [], "selected": None}
+    if sel.get("status") == "awaiting_judgment":
+        req = (sel.get("review") or {}).get("request") or "review/package_review_request.md"
+        sr.check("PKG.JUDGMENT", False, "blocking",
+                 f"cover judgment awaited: give ONLY the packet folders to a fresh reviewer ({req}), write "
+                 f"{judg.relative_to(run)} and re-run packaging", fix=fix("PACKAGE", "judge_package"))
+        return {}
     probs = [f"{s['id']}: {s['evidence'][:160]}" for s in sel.get("set_checks", [])] + \
             [f"{r['id']}: {'; '.join(r['reasons'][:2])[:200]}" for r in sel.get("table", []) if not r["passed"]]
     sr.check("PKG.PACKAGING", sel.get("status") == "passed", "blocking",
@@ -97,6 +151,8 @@ def package_video(run: Path, vid: str, attempt: int) -> dict:
         shutil.rmtree(out)      # attempt's final.mp4 / PUBLISHING_PACKAGE.md looking ready to upload
     out.mkdir(parents=True, exist_ok=True)
     sr = StageResult("PACKAGE", "content-factory", vid, attempt=attempt)
+    brief = read_json(run / "run.json") if (run / "run.json").exists() else {}
+    aspect = brief.get("aspect", "vertical")
     qa = read_json(p["result"]["QA"]) if p["result"]["QA"].exists() else {"status": "missing"}
     sel = None
     if qa["status"] in PASSED:
@@ -127,7 +183,7 @@ def package_video(run: Path, vid: str, attempt: int) -> dict:
                 s_ = sel["selected"]
                 shutil.copy2(p["dir"] / "package" / s_["thumbnail_jpg"], out / "thumbnail.jpg")
                 shutil.copy2(out / "thumbnail.jpg", out / "cover.jpg")
-                crops_preview(out / "thumbnail.jpg", out / "thumbnail_crops.jpg")
+                crops_preview(out / "thumbnail.jpg", out / "thumbnail_crops.jpg", aspect)
             else:
                 sh([ffmpeg_bin(), "-y", "-v", "error", "-ss", "0.7", "-i", out / "final.mp4", "-frames:v", "1", "-q:v", "2", out / "cover.jpg"])
             from media_clean import DENY_RE, audit as media_audit, clean as media_clean
@@ -161,16 +217,42 @@ def package_video(run: Path, vid: str, attempt: int) -> dict:
                     "hashtags": pub["hashtags"], "hashtags_copy_ready": tags_plain, "sources": prov.get("sources", []),
                     "human_must_set": ["YouTube audience setting (made for kids: yes/no)", "confirm AI-label toggles",
                                        "publish time / schedule"]}
+            kind = brief.get("video_kind", "short")   # `brief` read at the top of package_video; `aspect` likewise
+            if kind == "long":
+                # v3.3 (D2): end screens are the official subscribe surface and exist on 16:9 long-form only — the
+                # last 5–20 s must be left calm and free for them (support.google.com/youtube/answer/6388789).
+                es = brief.get("end_screen") or {}
+                meta["end_screen"] = {"zone_s": es.get("zone_s", [5, 20]), "element": "Subscribe",
+                                      "instruction": "YouTube Studio → Editor → End screen: add an element in the last "
+                                                     "5–20 s (Subscribe + one related video). The tail is left visually calm "
+                                                     "for exactly this."}
+                meta["human_must_set"].append("YouTube Studio → End screen: add Subscribe (+ related video) in the last 5–20 s")
+                # v3.3: title/thumbnail A/B test is decided by WATCH TIME over ~2 weeks and needs a 16:9 watch page
+                # (support.google.com/youtube/answer/16391400). Only the owner can start it.
+                meta["ab_test"] = {"decision_metric": "watch time", "duration_days": 14,
+                                   "variants": 3, "source": "support.google.com/youtube/answer/16391400",
+                                   "instruction": "Studio → this video → Test & compare: test the 3 title variants below; "
+                                                  "the winner is chosen by watch time, not CTR"}
+                meta["human_must_set"].append("Optionally start Studio → Test & compare with the 3 title variants (decided by watch time)")
+                meta["human_must_set"].insert(0, "upload a 16:9 (1920×1080) thumbnail as the custom thumbnail")
+            elif sel:
+                meta["human_must_set"].insert(0, "upload thumbnail.jpg (9:16) as the cover on each platform (see covers)")
             cta = script.get("cta") or {}
             if cta.get("needed"):
                 meta["cta"] = {k: cta.get(k) for k in ("type", "placement", "modality", "spoken", "on_screen")}
-                if cta.get("type") == "part_2":
-                    meta["human_must_set"].append("YouTube Studio → this Short → Related video: link part 2 "
-                                                  "(advanced features; shown below the channel handle)")
+            # v3.3: on a Short the related-video link is the official Shorts→long-form funnel (a clickable link below the
+            # channel handle, support.google.com/youtube/answer/14075157). Offer it whenever the channel has a long-form
+            # video to point at, not only for a part_2 — the funnel is how a Short earns its watch hours' worth of reach.
+            if kind != "long" and (cta.get("type") == "part_2" or (run.parent / "longform_index.json").exists()):
+                meta["human_must_set"].append("YouTube Studio → this Short → Related video: link the long-form video "
+                                              "(advanced features; shown below the channel handle)")
             if sel:
                 meta["thumbnail"] = "thumbnail.jpg"
-                meta["covers"] = COVER_STEPS
-                meta["human_must_set"].insert(0, "upload thumbnail.jpg as the cover on each platform (see covers)")
+                meta["thumbnail_text"] = sel["selected"]["thumbnail"]["text"]
+                meta["opening_promise"] = sel["selected"].get("opening_promise", "")
+                meta["covers"] = COVER_STEPS_WIDE if kind == "long" else COVER_STEPS
+                if kind != "long":
+                    meta["human_must_set"].insert(0, "upload thumbnail.jpg as the cover on each platform (see covers)")
                 if ccta:
                     meta.setdefault("cta", {})["caption"] = ccta
             write_json(out / "metadata.json", meta)
@@ -181,6 +263,61 @@ def package_video(run: Path, vid: str, attempt: int) -> dict:
                                {m_.group() for m_ in re.finditer(INTERNAL_TEXT, public, re.I)})
                 sr.check("PKG.PUBLIC_COPY_CLEAN", not leaks, "blocking", f"internal terms in public copy: {leaks}" if leaks else
                          "title/description/captions carry no internal or pipeline text", fix=fix("PACKAGE", "repackage"))
+                # v3.3: the inauthentic-content policy (renamed from "repetitious" on 2025-07-15) refuses monetisation to
+                # "generic or unoriginal templates … channels where content feels interchangeable from video to video"
+                # (support.google.com/youtube/answer/1311392). A template factory is exactly the profile it targets, so
+                # the package is compared against its siblings and the recent history: near-duplicate title shape,
+                # thumbnail text or opening promise is treated as a monetisation risk, not a style choice.
+                sib = [read_json(run / "package" / v2 / "publishing_package.json") for v2 in sorted((run / "package").iterdir())
+                       if v2.is_dir() and v2.name != vid and (v2 / "publishing_package.json").exists()]
+                hist = []                                  # past videos the channel already made (factory.db `videos`)
+                dbp = brief.get("memory", {}).get("db")
+                if dbp and Path(dbp).exists():
+                    try:
+                        import sqlite3
+                        with sqlite3.connect(dbp) as con:
+                            rows = con.execute(
+                                "SELECT run_id, title, hook, final_sha256 FROM videos WHERE title IS NOT NULL").fetchall()
+                    except Exception:                      # noqa: BLE001 — the check is advisory; never fail packaging on the DB
+                        rows = []
+                    own = brief.get("run_id") or run.name
+                    own_sha = (prov.get("final") or {}).get("sha256")
+                    own_title = meta["title"].strip().lower()
+                    seen = set()
+                    for rid, t, h, sha in rows:
+                        # dedupe to distinct videos: the same title re-packaged inside one run is one video, not a
+                        # fresh interchangeable one, so the run's own earlier ingest (same id, same final bytes, or the
+                        # same title) must not judge itself. Re-publishing a video is caught by SELECTION's novelty rule,
+                        # not here — this check is about *different* videos that read as one template.
+                        key = (t, sha or h or "")
+                        if rid != own and not (own_sha and sha == own_sha) and (t or "").strip().lower() != own_title \
+                                and key not in seen:
+                            seen.add(key)
+                            hist.append({"title": t, "opening_promise": h})
+                tt = _tokens(meta["title"])
+                pt = _tokens(pub.get("description", "")[:120])
+                ts = _shape(meta["title"])
+                ps = _shape(pub.get("description", "")[:120])
+                clashes = []
+                for prev in hist[-30:] + sib:
+                    if not isinstance(prev, dict):
+                        continue
+                    # a *template* clash: the same word-pattern reused, or near-identical wording. A shared topic word
+                    # (e.g. both titles containing "time") is expected and is NOT a clash.
+                    if prev.get("title") and (_shape(prev["title"]) == ts or _jac(tt, _tokens(prev["title"])) >= 0.85):
+                        clashes.append(f"title shape repeats “{prev.get('title', '?')[:50]}”")
+                    if prev.get("thumbnail_text") and (
+                            _shape(prev["thumbnail_text"]) == _shape(meta.get("thumbnail_text", ""))
+                            or _jac(_tokens(meta.get("thumbnail_text", "")), _tokens(prev["thumbnail_text"])) >= 0.85):
+                        clashes.append("thumbnail text repeats an earlier video")
+                    if prev.get("opening_promise") and (
+                            _shape(prev["opening_promise"]) == ps or _jac(pt, _tokens(prev["opening_promise"])) >= 0.85):
+                        clashes.append("opening promise repeats an earlier video")
+                clashes = sorted(set(clashes))
+                sr.check("PKG.PACKAGING_VARIATION", not clashes, "major",
+                         f"packaging looks interchangeable with earlier videos (inauthentic-content risk): {clashes[:3]}"
+                         if clashes else f"packaging differs from {len(hist[-30:]) + len(sib)} earlier videos",
+                         fix=fix("PACKAGE", "vary_packaging", clashes=clashes[:3]))
                 from PIL import Image
                 try:
                     with Image.open(out / "thumbnail.jpg") as im_:
@@ -188,7 +325,9 @@ def package_video(run: Path, vid: str, attempt: int) -> dict:
                         tsize = list(im_.size)
                 except Exception as exc:  # noqa: BLE001
                     tsize = f"does not decode: {exc}"
-                sr.check("PKG.THUMBNAIL_DECODES", tsize == [1080, 1920], "blocking", f"thumbnail.jpg {tsize}", fix=fix("PACKAGE", "retry"))
+                want = [1920, 1080] if aspect == "wide" else [1080, 1920]
+                sr.check("PKG.THUMBNAIL_DECODES", tsize == want, "blocking", f"thumbnail.jpg {tsize} (needs {want})",
+                         fix=fix("PACKAGE", "retry"))
                 write_publishing_package(run, vid, out, meta, sel, prov, script)
             sr.check("PKG.TITLE_LENGTH", len(meta["title"]) <= YT_TITLE, "major", f"title {len(meta['title'])} chars",
                      fix=fix("SCRIPT", "retitle", max_chars=YT_TITLE))
@@ -252,15 +391,18 @@ def write_publishing_package(run: Path, vid: str, out: Path, meta: dict, sel: di
                                                      "instagram_ai_info": meta["instagram"]["ai_info"]}},
            "video": {"file": "final.mp4", "sha256": prov["final"]["sha256"]},
            "covers": COVER_STEPS, "human_must_set": meta["human_must_set"],
+           "ab_test": meta.get("ab_test"), "end_screen": meta.get("end_screen"),
+           "title_variants": meta.get("title_alternatives", []) if meta.get("ab_test") else [],
            "internal": {"selected_candidate": s_["id"], "strategy": s_["strategy"], "thumbnail_concept": s_["thumbnail"]["concept"],
                         "opening_promise": s_["opening_promise"], "review_scores": rv, "review_total": s_["total"],
                         "review_judges": sel["review"]["judges"], "claim_ids": s_["claim_ids"], "thumbnail_depicts": s_["thumbnail"]["depicts"],
                         "research": "research/dossier.json", "selection": f"videos/{vid}/package/package_selection.json",
                         "reviews": f"videos/{vid}/package/review/package_reviews.json", "rejected": rej}}
     write_json(out / "publishing_package.json", pkg)
+    crop_label = ("16:9 frame" if meta.get("ab_test") else "9:16 · 4:5 · 3:4 · 1:1 · ≈3:2")
     L = [f"# Publishing package — {vid}", "", "Nothing is published automatically. Upload by hand; set the AI labels below.", "",
          "## Public copy", "", f"**Title:** {meta['title']}", "", f"**Thumbnail:** `thumbnail.jpg` (text: “{s_['thumbnail']['text']}”) — "
-         "crop preview in `thumbnail_crops.jpg` (9:16 · 4:5 · 3:4 · 1:1 · ≈3:2)", "", "**YouTube description:**", "", "```",
+         f"crop preview in `thumbnail_crops.jpg` ({crop_label})", "", "**YouTube description:**", "", "```",
          meta["youtube"]["description"], "```", "", "**TikTok / Instagram caption:**", "", "```", meta["tiktok"]["caption"], "```", "",
          "**Hashtags (copy-ready):**", "", "```", meta["hashtags_copy_ready"], "```", "",
          f"**CTA:** in video — {(meta.get('cta') or {}).get('spoken') or 'none'}; caption — {s_.get('caption_cta') or 'none'}", "",
@@ -268,6 +410,12 @@ def write_publishing_package(run: Path, vid: str, out: Path, meta: dict, sel: di
          f"{meta['tiktok']['ai_generated_label']}, Instagram AI info = {meta['instagram']['ai_info']}", "",
          f"**Video:** `final.mp4` (sha256 {prov['final']['sha256'][:16]}…)", "", "## Covers", ""] + \
         [f"- **{k}:** {v}" for k, v in COVER_STEPS.items()] + ["", "## Before upload", ""] + [f"- {x}" for x in meta["human_must_set"]] + \
+        (["", "## A/B test (long-form only)", "",
+          f"Studio → this video → **Test & compare**. YouTube picks the winner by **{meta['ab_test']['decision_metric']}** "
+          f"over ~{meta['ab_test']['duration_days']} days, not by click-through rate "
+          f"({meta['ab_test']['source']}). Test up to 3 title variants:", ""] +
+         [f"- {t}" for t in [meta["title"]] + meta.get("title_alternatives", [])[:2]] +
+         ["", "or upload alternative 16:9 thumbnails (1280×720 recommended).", ""] if meta.get("ab_test") else []) + \
         ["", "## Why this package (internal)", "", f"Selected **{s_['id']}** ({s_['strategy']}), review total {s_['total']}/"
          f"{5 * len(rv)}: " + ", ".join(f"{k.replace('_', ' ')} {v}" for k, v in rv.items()), "",
          f"Opening promise (caption first line): {s_['opening_promise']}", f"Thumbnail concept: {s_['thumbnail']['concept']}",

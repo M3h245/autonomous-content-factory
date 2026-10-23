@@ -378,8 +378,10 @@ class PackageReviewer(unittest.TestCase):
 
     def test_external_judgment_can_lower_but_not_raise(self):
         j = self.tmp / "judgment.json"
-        j.write_text(json.dumps({"candidates": {"P1": {"scores": {"curiosity": 2, "accuracy": 5}, "notes": {"curiosity": "flat"}},
-                                                "P2": {"scores": {"curiosity": 5}}}}), encoding="utf-8")
+        j.write_text(json.dumps({"candidates": {
+            "P1": {"scores": {"curiosity": 2, "accuracy": 5, "thumbnail_appeal": 4}, "notes": {"curiosity": "flat"}},
+            "P2": {"scores": {"curiosity": 5, "thumbnail_appeal": 4}},
+            "P3": {"scores": {"thumbnail_appeal": 4}}}}), encoding="utf-8")
         out = self.tmp / "rv2"
         pk = [str(self.fx["out"] / "review" / "packets" / c) for c in ("P1", "P2", "P3")]
         subprocess.run([sys.executable, str(ROOT / "video-quality-assurance" / "scripts" / "reviewer.py"), "review-package",
