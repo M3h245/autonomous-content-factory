@@ -102,3 +102,12 @@ title_strength, curiosity (open loop the video closes), accuracy (an unsupported
 thumbnail_readability, complementarity (thumbnail text repeating the title caps at 2), hook_coherence, promise_payoff
 (the title's focus must get ≥20 % airtime; <10 % caps at 3), clickbait_risk (5 = safe), cta_coherence.
 `--judgment` merges an external judge (fresh agent or human, packet-only): final score = min(heuristic, judge).
+
+## drawing_quality (v3.3.1, judge-only, threshold 4)
+Would an adult viewer immediately recognise every drawn subject — a foot reads as a foot, a plane as a plane — with
+nothing that looks scribbled, childish, accidental, overlapping or misleading?
+5 every frame looks deliberately illustrated · 4 clear throughout, minor roughness · 3 mostly clear but at least one
+drawing is crude or ambiguous · 2 several crude or ambiguous drawings · 1 the drawings confuse the message.
+Name the frame and the drawing for any score below 4. The heuristic judge cannot see this: without an LLM/human/subagent
+judge the dimension is reported "not judged" and gates nothing. Repair route: VISUAL_PLAN / redraw_scene (use the
+`doodle_parts` library).

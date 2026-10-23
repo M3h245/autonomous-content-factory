@@ -96,6 +96,10 @@ def word_times(text: str, voice: str, speed: float, lead: float = 0.08) -> list[
 def render(svg_text: str, words: list[dict], palette: list[str], frames: dict[str, float], out_dir: Path) -> tuple[dict, list]:
     import doodle_engine as de
     import skia
+    # v3.3.1: frame 0 is measured on the canvas the SVG was authored for (16:9 long-form hooks were measured on the
+    # 1080x1920 portrait canvas, so every wide title read as cropped and every subject as too small).
+    vb = re.search(r'viewBox="\s*[-\d.]+[\s,]+[-\d.]+[\s,]+([\d.]+)[\s,]+([\d.]+)', svg_text)
+    de.set_canvas(*(int(float(x)) for x in vb.groups()) if vb else (1080, 1920))
     sc = de.DoodleScene(svg_text, palette, words, max(3.5, (words[-1]["end"] if words else 3) + 0.6), {"wobble": 2.6},
                         scene_id="hook", camera={"drift": "none"})
     paper = de.Paper()
@@ -121,6 +125,17 @@ def opening_brief(c: dict, stats: dict, svg_rel: str, review: dict) -> dict:
                              "safe_margin": {"x_ratio": 0.05, "y_ratio": 0.05, "text_min_px": 60},
                              "frame0_svg": svg_rel, "hook_exception": c.get("hook_exception") or stats.get("hook_exception"),
                              "review_scores": {d: v["score"] for d, v in review["scores"].items()}}}
+
+
+def idea_fact_ids(selection: str | None, ideas: str | None, video_id: str | None) -> set:
+    """fact_ids of the idea SELECTION assigned to this video (empty when unknown: the check is then skipped)."""
+    try:
+        sel, ide = read_json(selection), read_json(ideas)
+    except (TypeError, OSError, ValueError):
+        return set()
+    pick = next((x for x in sel.get("selected", []) if x.get("video_id") == video_id), None)
+    idea = next((i for i in ide.get("ideas", []) if pick and i.get("id") == pick.get("idea_id")), None)
+    return set(idea.get("fact_ids") or []) if idea else set()
 
 
 def cmd_select(a) -> int:
@@ -158,6 +173,18 @@ def cmd_select(a) -> int:
     if repeated_past:
         sr.check("HOOK.NOT_REPEATED", False, "minor", f"candidates repeating an earlier video's hook (not selectable): "
                  f"{repeated_past}", fix=fix("HOOK", "regenerate", strategy="change", repeated_past=repeated_past))
+    # ---- v3.3.1: a hook must promise what the SELECTED idea is about (2026-10-22: the idea was the leftover fur reflex,
+    # the chosen hook asked about music, and 60 % of the script answered a question the hook never asked)
+    idea_facts = idea_fact_ids(getattr(a, "selection", None), getattr(a, "ideas", None), d.get("video_id"))
+    off_idea = {}
+    if idea_facts:
+        for c in cands:
+            if not set(c.get("fact_ids") or []) & idea_facts:
+                off_idea[c["hook_id"]] = sorted(c.get("fact_ids") or [])
+        sr.check("HOOK.IDEA_MATCH", len(off_idea) < len(cands), "blocking" if len(off_idea) == len(cands) else "minor",
+                 f"candidates promising none of the selected idea's facts {sorted(idea_facts)} (not selectable): {off_idea}"
+                 if off_idea else f"every candidate promises a fact of the selected idea {sorted(idea_facts)}",
+                 fix=fix("HOOK", "regenerate", strategy="change", idea_fact_ids=sorted(idea_facts)) if off_idea else None)
     # ---- render + measure + packet per candidate
     import estimate as E
     from review_packet import write_packet
@@ -189,6 +216,11 @@ def cmd_select(a) -> int:
                        f"{hist['failed'][fp]['attempt']}: {hist['failed'][fp]['reasons'][:3]}")
             rows.append(row)
             continue
+        if cid in off_idea:
+            row.update(status="off_idea", reason=f"promises {off_idea[cid]}, none of the selected idea's facts "
+                       f"{sorted(idea_facts)}: the video would answer a different question than the hook asks")
+            rows.append(row)
+            continue
         if cid in repeated_past:
             row.update(status="repeated_past", reason=f"repeats an earlier video's hook ({repeated_past[cid]['similarity']}): "
                        f"{repeated_past[cid]['past_hook'][:80]!r}")
@@ -217,7 +249,7 @@ def cmd_select(a) -> int:
         packets.append(str(pk))
         rows.append(row)
     rendered = [r for r in rows if r["status"] == "rendered"]
-    repeated = [r for r in rows if r["status"] in ("repeated_failed", "repeated_past")]
+    repeated = [r for r in rows if r["status"] in ("repeated_failed", "repeated_past", "off_idea")]
     sr.check("HOOK.FRAME0_RENDERED", all(r["status"] != "error" for r in rows), "blocking",
              "; ".join(f"{r['hook_id']}: {r['reason']}" for r in rows if r["status"] == "error") or "all frame-0 SVGs render",
              fix=fix("HOOK", "repair_frames"))
@@ -324,6 +356,8 @@ def main() -> int:
     s.add_argument("--attempt", type=int, default=1)
     s.add_argument("--history", help="content memory export (cfdb.py history): candidates repeating a past hook are not selectable")
     s.add_argument("--learning", help="learning summary (cf-learning/1): bounded bonus for passing candidates, recorded")
+    s.add_argument("--selection", help="selection/selection.json: with --ideas, the selected idea's fact_ids (HOOK.IDEA_MATCH)")
+    s.add_argument("--ideas", help="ideation/ideas.json")
     s.add_argument("--video-kind", default="short", choices=["short", "long"],
                    help="hook window: short = 3.2 s (Shorts heuristic), long = 8.0 s (YouTube's 5-10 s long-form guidance)")
     a = ap.parse_args()

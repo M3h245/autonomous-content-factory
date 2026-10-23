@@ -1,5 +1,50 @@
 # Changelog — Autonomous Content Factory
 
+## v3.3.1 — 2026-10-23 · fixes from the goosebumps review and the first channel-CTA videos
+### Fixed
+- **HOOK.IDEA_MATCH (new, hook_engine.py):** a hook that promises none of the SELECTED idea's facts is not selectable.
+  On 2026-10-22 the idea was "goosebumps are a leftover fur reflex" (F1/F2/F3/F5) but the chosen hook asked about
+  music (F6/F7), so most of the script answered a question the hook never asked. `factory.py` now passes
+  `--selection` and `--ideas` to the HOOK gate; without them the check is skipped (older runs unchanged).
+- **16:9 hook frame 0 (hook_engine.py):** frame 0 of a long-form hook was measured on the 1080x1920 portrait canvas,
+  so every wide title read as cropped/outside the safe area and every subject as too small (all five candidates of
+  the first long-form run scored frame 0 = 2). The canvas now follows the SVG viewBox. Regression test added.
+- **Duration estimate for the default voice (voice_calibration.json):** the default English voice `af_heart` had no
+  calibration, so every estimate used `am_michael`'s slower coefficients: the first long-form script was estimated at
+  528 s but spoke in 457 s and failed AUDIO.DURATION_IN_RANGE after a 6-minute TTS run. `af_heart` is now fitted on 177
+  real production sentences (this run + the two 2026-10-23 Shorts); replayed estimates are within 0.5 s (456.4 vs
+  456.9 s; 22.9 vs 22.6 s).
+- **Script speech-rate check (reviewer.py):** measured over the whole estimated runtime with the final review's band
+  (2.0-3.4 w/s). It used speech-only time with a 3.3 cap tuned on `am_michael`; with `af_heart` calibrated, real
+  delivered Shorts measure 3.3-3.5 w/s between pauses, so every correct estimate failed message_clarity.
+- **Channel follow line (cta.py, reviewer.py):** `CHANNEL_CTA` = "Follow for a daily mystery." / "FOLLOW BRAIN
+  ACADEMY". It is meant to be identical in every video, so `CTA.RELEVANCE` and `CTA.NOT_REPEATED` no longer reject it
+  and the naturalness brevity cap is 2.8 s for it (the CTA.DURATION cap). Every other CTA keeps the old rules. The
+  per-video rules had forced unnatural lines such as "Follow: your foot is weirder."
+- **Title airtime (reviewer.py, package_engine.py):** a title that restates the run's own topic question is about the
+  whole video; word counting had called "Why does your foot fall asleep?" a side note (8 %) because the narration
+  says "a sleeping foot". The package packet now carries the dossier topic. Replay on the foot run: P1 (the
+  question title with the foot cover) is now selected, as a human would choose.
+- **THUMB.TEXT_MATCHES:** HTML entities in the declared cover text (`&amp;`) are decoded before comparing with the
+  rendered text.
+### Added — a quality floor for drawings
+- **`video-production/scripts/doodle_parts.py`**: 16 carefully drawn, reusable parts (`leg`, `ear`, `head`, `hand`,
+  `eye`, `plane`, `thermometer`, `metal_block`, `wood_block`, `ice_cube`, `mug`, `pan`, `flame`, `weight`, `hose`,
+  `molecule`), registered in `doodle_lib.COMPONENTS`. Scenes had redrawn body parts from boxes per video (a foot as an
+  "L", a plane that read as an arrow through an ear).
+- **`drawing_quality`** (reviewer.py, judge-only, threshold 4): would an adult recognise every drawn subject at a
+  glance? Without a judge it is reported "not judged" and gates nothing; with one it routes to VISUAL_PLAN/redraw_scene.
+- **Production runs are judged by a fresh agent:** `idea_engine.py --review-backend` defaults to `subagent`, so QA
+  (including drawing_quality) and the cover judgment (`thumbnail_appeal`, which the heuristic always scored 3) are made
+  by an independent agent looking at the frames. `--review-backend heuristic` keeps the old behaviour.
+- `doodle-scene-guide.md` "Drawing quality floor" and `review-rubric.md` drawing_quality anchors.
+- **Copy-ready upload files:** `package/<vid>/copy/youtube_title.txt`, `youtube_description.txt`,
+  `tiktok_instagram_caption.txt`, `hashtags.txt`. Copying from PUBLISHING_PACKAGE.md once pasted the next markdown
+  heading into a published YouTube description.
+### Tests
+- `content-factory/tests/test_v331_fixes.py` (channel CTA exempt/other CTAs still checked, selected-idea facts,
+  every drawing part renders, drawing_quality gates only when judged).
+
 ## v3.3.0 — 2026-10-20 · real 16:9 long-form + sourced packaging rules
 Research: `docs/v3.3/RESEARCH-PACKAGING.md` (13 sections, 21 sources) and the companion reports in `research/`
 (`youtube-shorts-packaging-2026.md`, `youtube-longform-strategy-2026.md`). Every rule added here cites a primary

@@ -86,6 +86,24 @@ Punch on the 1–2 most important words of the scene; shake for impacts/surprise
 Use `cut` for fast punchlines, `whip` for "meanwhile/but", `paper` for a new topic, `flash` for a reveal. Don't repeat
 the same transition three times in a row.
 
+## Drawing quality floor (v3.3.1) — read before drawing anything
+The channel's drawings must look *deliberately illustrated*, never like a toddler's sketch. Rules:
+- **Use a library part whenever the subject has one** (`data-lib`, catalogue in `video-production/scripts/doodle_parts.py`):
+  `leg`, `ear`, `head` (profile), `hand`, `eye`, `plane`, `thermometer`, `metal_block`, `wood_block`, `ice_cube`, `mug`,
+  `pan`, `flame`, `weight`, `hose` (`data-state="kinked|straight"`), `molecule`, `spoon` (`data-fill` metal or wood), `bowl`
+  (`data-fill` = water colour), `bench`, `slide`, `heat_sink`, `jacket`, `cup`, `water`, `rug`, `skin_layers`, `piggy_bank`,
+  `finger`, `puddle`, plus the older props and the `dude`.
+  Parts are centred on (0,0); place with `transform="translate(x y) scale(s)"`. Never redraw a body part from boxes.
+- **A new subject the library lacks:** draw it with real anatomy/shape cues (a foot has a heel, arch and toes; a plane has
+  a fuselage, wings, tail and windows), check it at full size, and add it to `doodle_parts.py` so the next video reuses it.
+- **One clear subject per scene**, big (≥25 % of the frame height), nothing overlapping it by accident; labels never sit
+  on top of the subject; no shape that can be misread (a plane that looks like an arrow piercing an ear).
+- **Scene titles are present from the scene's first frame** (`data-at="0"`): a title that writes itself in at the last
+  word leaves the top of the frame empty for seconds.
+- **Ending card:** the channel follow card says exactly `FOLLOW BRAIN ACADEMY` and must fit inside its card.
+- The independent video review scores **drawing_quality** (judge-only, threshold 4): every drawn subject must be
+  recognisable at a glance. Production runs use `--review-backend subagent` so a fresh agent looks at the frames.
+
 ## Component library (`data-lib`)
 - `dude` — the channel mascot. `data-pose`: stand, wave, arms-up, point, point-left, shrug, think, hips, facepalm,
   run, tickle-self, reach, sit, fall. `data-face`: happy, sad, shock, meh, smug, angry, laugh, think, ko, nervous,

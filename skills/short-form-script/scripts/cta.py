@@ -34,6 +34,16 @@ CTA_MARKERS = r"\b(subscribe|follow (me|us|for)|like (this|the) video|comment (b
               r"save (this|it) for|share (this|it) with|send (this|it) to|part 2|part two|link in (my )?(bio|profile))\b"
 STOP = set("a an the and or but so of to in on at for with is are was were be it its this that you your we they i as by from "
            "do does did can will just me my more what which who".split())
+# v3.3.1: the channel's fixed follow line. It is the same in every video on purpose (brand recognition), so the
+# per-video relevance and no-repeat rules do not apply to it. Keep identical to reviewer.py CHANNEL_CTA.
+CHANNEL_CTA = {"spoken": "Follow for a daily mystery.", "on_screen": "FOLLOW BRAIN ACADEMY"}
+
+
+def is_channel_cta(cta: dict | None) -> bool:
+    return bool(cta) and norm(cta.get("spoken", "")) == norm(CHANNEL_CTA["spoken"]) and \
+        norm(cta.get("on_screen", "")) == norm(CHANNEL_CTA["on_screen"])
+
+
 LIMITS = {"hook_window_s": 3.2, "max_spoken_s": 2.8, "max_share_of_runtime": 0.12, "on_screen_min_s": 1.2,
           "on_screen_max_s": 3.5, "max_tail_after_cta_s": 1.2, "short_video_s": 20.0, "repeat_similarity": 0.6}
 
@@ -191,11 +201,15 @@ def check(script: dict, sentences: list[dict], duration_s: float, *, labels: lis
     generic = [g for g in GENERIC if g in text.lower()]
     body = " ".join(b["text"] for b in beats if b["id"] != cta["beat_id"]) + " " + topic + " " + title
     overlap = sorted(words(text) & words(body))
+    channel = is_channel_cta(cta)
+    metrics["channel_cta"] = channel
+    if channel:
+        overlap = overlap or ["(channel line)"]
     c("CTA.RELEVANCE", bool(overlap) and not generic, "major",
       f"shares {overlap[:5]} with the video" + (f"; generic phrases {generic}" if generic else "") if overlap or generic
       else "no word in common with the video (generic outro)")
     sims = [(h, round(jaccard(text, h), 2)) for h in history or []]
-    rep = [s for s in sims if s[1] >= LIMITS["repeat_similarity"]]
+    rep = [] if channel else [s for s in sims if s[1] >= LIMITS["repeat_similarity"]]
     c("CTA.NOT_REPEATED", not rep, "major", f"too close to earlier CTAs: {rep[:2]}" if rep else f"checked against {len(sims)} earlier CTAs")
     # 6 on-screen CTA must really be on screen during its window (VIDEO only — needs the visual audit labels)
     if labels is not None and cta.get("modality") in ("on_screen", "both"):

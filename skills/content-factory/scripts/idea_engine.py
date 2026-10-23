@@ -485,7 +485,8 @@ def top_reasons(r: dict) -> list[str]:
 
 
 def init_defaults(args) -> dict:
-    return {"count": 1, "languages": args.languages, "min_s": args.min_s, "max_s": args.max_s}
+    return {"count": 1, "languages": args.languages, "min_s": args.min_s, "max_s": args.max_s,
+            "review_backend": getattr(args, "review_backend", "subagent")}
 
 
 # ----------------------------------------------------------------------------- handoff to V3.0.1
@@ -503,6 +504,8 @@ def prepare_runs(batch: Path, m: dict, db: str) -> list[dict]:
         cmd = [sys.executable, str(HERE / "factory.py"), "init", "--topic", w["topic"], "--count", str(ini["count"]),
                "--languages", ini["languages"], "--min-s", str(ini["min_s"]), "--max-s", str(ini["max_s"]),
                "--runs-dir", str(runs_dir), "--db", db]
+        if ini.get("review_backend"):
+            cmd += ["--review-backend", ini["review_backend"]]
         lr = m["production"].get("learning")
         if lr and lr.get("path") and Path(lr["path"]).is_file():
             if LA.sha256_file(lr["path"]) != lr.get("sha256"):
@@ -916,6 +919,8 @@ def main() -> int:
         s.add_argument("--allow-reused-input", action="store_true", help="accept an ideas file an earlier batch already used")
         s.add_argument("--languages", default="en"); s.add_argument("--min-s", type=float, default=20)
         s.add_argument("--max-s", type=float, default=45)
+        s.add_argument("--review-backend", default="subagent", choices=["auto", "heuristic", "anthropic", "subagent", "human"],
+                       help="v3.3.1: production runs are judged by a fresh agent (QA incl. drawing_quality, covers)")
         s.add_argument("--learning", help="learning summary (cf-learning/1); default $CF_LEARNING, else "
                                           "data/learning/latest.json when it exists")
         s.add_argument("--no-learning", action="store_true", help="ignore any learning summary (old behaviour)")

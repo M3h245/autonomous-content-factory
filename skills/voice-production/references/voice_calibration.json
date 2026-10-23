@@ -17,5 +17,24 @@
   "mae_s": 0.163,
   "samples": 40,
   "source": "corpus calibration_corpus.txt"
+ },
+ "af_heart": {
+  "coef": [
+   0.13724,
+   0.08885,
+   0.27605,
+   -0.02317,
+   0.07572
+  ],
+  "features": [
+   "syllables",
+   "words",
+   "commas",
+   "question",
+   "bias"
+  ],
+  "mae_s": 0.174,
+  "samples": 177,
+  "source": "timing files"
  }
 }

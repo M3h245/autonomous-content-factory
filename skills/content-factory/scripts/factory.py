@@ -231,6 +231,8 @@ def gate_cmd(run: Path, st: dict, stage: str, vid: str | None) -> list:
         return [PY, S("hook-engineering", "hook_engine.py"), "select", "--hooks", p["hooks"], "--dossier", r / "research" / "dossier.json",
                 "--out-dir", p["dir"] / "hook", "--result", p["result"]["HOOK"], "--voice", voice, "--attempt", att,
                 "--video-kind", b.get("video_kind", "short")] + \
+            (["--selection", r / "selection" / "selection.json", "--ideas", r / "ideation" / "ideas.json"]
+             if (r / "selection" / "selection.json").exists() and (r / "ideation" / "ideas.json").exists() else []) + \
             (["--history", r / "history.json"] if (r / "history.json").exists() else []) + \
             (["--learning", r / "learning.json"] if (r / "learning.json").exists() else [])   # v3.1.0: evidence re-ranks passing hooks
     if stage == "SCRIPT" and v2:

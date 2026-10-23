@@ -416,7 +416,8 @@ class Selection(unittest.TestCase):
         self.assertEqual(m["ideas_file"]["sha256"], hashlib.sha256(self.ideas.read_bytes()).hexdigest())
         self.assertEqual(m["memory"]["db"], str(self.db.resolve()))
         self.assertEqual(m["factory_version"], (ROOT / "content-factory" / "VERSION").read_text(encoding="utf-8").strip())
-        self.assertEqual(m["production"]["init"], {"count": 1, "languages": "en", "min_s": 20.0, "max_s": 45.0})
+        self.assertEqual(m["production"]["init"], {"count": 1, "languages": "en", "min_s": 20.0, "max_s": 45.0,
+                                                 "review_backend": "subagent"})
         self.assertEqual(m["manifest_sha256"], IE.sha256_bytes(IE.canonical(IE.manifest_core(m)).encode()))
         sel = {w["id"] for w in self.j("selected.json")["winners"]}
         self.assertEqual({s["id"] for s in m["selected"]}, sel)
@@ -508,7 +509,7 @@ class Production(unittest.TestCase):
         (cls.tmp / "memory").mkdir()                         # a project folder: memory/dump.json is exported after production
         env = clean_env(CF_RUNS_DIR=str(cls.other_runs))
         cls.prep = engine("run", "--ideas-file", cls.ideas, "--batches-dir", cls.tmp / "batches", "--db", cls.db,
-                          "--count", 5, "--produce", "none", cwd=cls.tmp, env=env)
+                          "--count", 5, "--produce", "none", "--review-backend", "heuristic", cwd=cls.tmp, env=env)
         cls.batch = Path(cls.prep[1]["batch"])
         cls.slots0 = json.loads((cls.batch / "slots.json").read_text(encoding="utf-8"))["slots"]
         cls.states0 = [json.loads((Path(x["run_dir"]) / "state.json").read_text(encoding="utf-8")) for x in cls.slots0 if x["run_dir"]]

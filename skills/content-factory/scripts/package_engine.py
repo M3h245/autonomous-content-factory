@@ -23,6 +23,7 @@ Exit 0 when a package is selected, 2 otherwise.
 from __future__ import annotations
 
 import argparse
+import html
 import json
 import re
 import subprocess
@@ -256,7 +257,7 @@ def thumb_checks(c: dict, m: dict, pol: dict, cited: list[dict], ids: set, spoke
     W, H = pol["thumb_size"]
     chk("THUMB.SIZE", m["size"] == [W, H], "blocking", f"{m['size']} (needs {W}x{H})")
     chk("THUMB.SETTLED", not m["unsettled"], "major", f"elements still animating at capture: {m['unsettled']}")
-    declared = th.get("text", "").strip()
+    declared = html.unescape(th.get("text", "")).strip()   # v3.3.1: "&amp;" in the JSON is "&" in the image
     chk("THUMB.TEXT_MATCHES", [w.lower() for w in re.findall(r"[\w'?]+", declared)] ==
         [w.lower() for w in re.findall(r"[\w'?]+", m["text_words"])], "major",
         f"declared '{declared}' but the image says '{m['text_words']}'")
@@ -461,7 +462,8 @@ def cmd_select(a) -> int:
         m = {k: v for k, v in meas[c["id"]].items() if k not in ("dhash", "warnings")}
         files = {"text/package.json": {"title": c["title"], "thumbnail_text": c["thumbnail"]["text"],
                                         "opening_promise": c["opening_promise"], "description": c["description"],
-                                        "hashtags": c["hashtags"], "caption_cta": c.get("caption_cta", "")},
+                                        "hashtags": c["hashtags"], "caption_cta": c.get("caption_cta", ""),
+                                        "topic": dossier.get("topic", "")},
                  "frames/thumbnail.jpg": cdir / "thumbnail.jpg", "frames/thumbnail_168.png": cdir / "thumbnail_168.png",
                  "frames/video_first_frame.png": first,
                  "text/transcript.json": tr,

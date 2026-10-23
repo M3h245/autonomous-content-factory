@@ -423,6 +423,13 @@ def write_publishing_package(run: Path, vid: str, out: Path, meta: dict, sel: di
          "## Rejected alternatives", ""] + \
         [f"- **{r['id']}** “{r['title']}” / “{r['thumbnail_text']}” — " + "; ".join(r["reasons"][:3]) for r in rej]
     (out / "PUBLISHING_PACKAGE.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    # v3.3.1: one plain file per upload field. Copying from the markdown above once pasted the next heading
+    # ("TikTok / Instagram caption") into a published YouTube description (2026-10-22, lightning).
+    cp = out / "copy"
+    cp.mkdir(exist_ok=True)
+    for name, text in (("youtube_title.txt", meta["title"]), ("youtube_description.txt", meta["youtube"]["description"]),
+                       ("tiktok_instagram_caption.txt", meta["tiktok"]["caption"]), ("hashtags.txt", meta["hashtags_copy_ready"])):
+        (cp / name).write_text(str(text).strip() + "\n", encoding="utf-8")
 
 
 @stage_main("PACKAGE", "content-factory")

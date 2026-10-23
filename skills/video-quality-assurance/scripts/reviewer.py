@@ -44,9 +44,12 @@ AUTHOR_MODULES = ("doodle_engine", "doodle_lib", "storyboard_tool", "render_vide
                   "package_engine", "package_run")
 DIMS = ["hook_strength", "first_frame_clarity", "message_clarity", "visual_verbal_sync", "pacing_retention",
         "audio_balance", "subtitle_readability", "ending_quality", "title_coherence", "thumbnail_coherence",
-        "overall_publishability"]
+        "drawing_quality", "overall_publishability"]
 TASTE = {"hook_strength", "message_clarity", "pacing_retention", "ending_quality", "title_coherence",
-         "thumbnail_coherence", "overall_publishability"}
+         "thumbnail_coherence", "drawing_quality", "overall_publishability"}
+# v3.3.1: drawing_quality is judge-only (a person or a fresh agent looking at the frames). The heuristic cannot see
+# whether a foot looks like a foot, so without a judge the dimension is reported as not judged and gates nothing.
+VIDEO_JUDGE_ONLY = {"drawing_quality"}
 # Phase 3.5: CTA dimensions — scored only when the video carries a CTA (otherwise reported as not applicable)
 CTA_DIMS = ["cta_quality", "cta_naturalness", "cta_relevance", "cta_retention_risk"]
 CTA_VERB = {"follow": r"\bfollow", "subscribe": r"\bsubscrib", "like": r"\blike\b", "save": r"\bsave\b", "share": r"\b(share|send)\b",
@@ -408,6 +411,14 @@ def heuristic(g: dict) -> dict:
     return out
 
 
+CHANNEL_CTA = {"spoken": "Follow for a daily mystery.", "on_screen": "FOLLOW BRAIN ACADEMY"}  # = cta.py
+
+
+def _is_channel_cta(pub: dict) -> bool:
+    n = lambda t: re.sub(r"\s+", " ", re.sub(r"[^a-z0-9' ]", " ", (t or "").lower())).strip()  # noqa: E731
+    return n(pub.get("spoken")) == n(CHANNEL_CTA["spoken"]) and n(pub.get("on_screen")) == n(CHANNEL_CTA["on_screen"])
+
+
 def cta_scores(pub: dict, checks: list, transcript: str, duration: float, title: str = "") -> dict:
     """Heuristic CTA judgement (taste capped at 4); deterministic placement gates live in `objective` (CTA.*)."""
     if not pub or not pub.get("present"):
@@ -424,6 +435,9 @@ def cta_scores(pub: dict, checks: list, transcript: str, duration: float, title:
     body = transcript.lower().replace(pub.get("spoken", "").lower(), " ")
     overlap = sorted(set(words_of(text)) & set(words_of(body)))
     win = pub.get("window_s") or [0, 0]
+    channel = _is_channel_cta(pub)
+    if channel:  # the fixed brand line is about the channel, not this video; it is meant to repeat
+        overlap = overlap or ["(channel line)"]
     out = {}
     sig = [("single ask (one action verb)", asks <= 1, f"{asks} ask verbs"), ("action matches the CTA type", bool(re.search(CTA_VERB.get(t, r"$^"), low)),
             f"type {t}"), ("short (≤12 words)", n_words <= 12, f"{n_words} words"), ("no stock outro phrase", not generic, f"{generic or 'none'}"),
@@ -432,9 +446,9 @@ def cta_scores(pub: dict, checks: list, transcript: str, duration: float, title:
     pushy = [x for x in PUSHY if x in low]
     sig = [("integrated into the content or a question", pub.get("placement") == "integrated" or "?" in text, f"placement {pub.get('placement')}"),
            ("tied to the content words", len(overlap) >= 1, f"{overlap[:4]}"), ("no pushy phrasing", not pushy, f"{pushy or 'none'}"),
-           ("brief when spoken (≤2.2 s)", (win[1] - win[0]) <= 2.2 or pub.get("modality") == "on_screen", f"{win[1] - win[0]:.2f}s")]
+           ("brief when spoken (≤2.2 s; channel line ≤2.8 s)", (win[1] - win[0]) <= (2.8 if channel else 2.2) or pub.get("modality") == "on_screen", f"{win[1] - win[0]:.2f}s")]
     out["cta_naturalness"] = dim(ratio_score(sig, 4), sig, 4, critical=[(bool(pushy) and not overlap, 2, "pushy and generic")])
-    subject = sorted(set(words_of(text)) & set(words_of(title))) if title else overlap
+    subject = (sorted(set(words_of(text)) & set(words_of(title))) if title else overlap) or (["(channel line)"] if channel else [])
     sig = [("points at the video's subject (title words)", bool(subject), f"{subject[:4]}"),
            ("≥1 content word shared with the body", len(overlap) >= 1, f"{overlap[:3]}"), ("not a stock phrase", not generic, f"{generic or 'none'}")]
     out["cta_relevance"] = dim(ratio_score(sig, 4), sig, 4, critical=[(not overlap, 1, "nothing in the CTA refers to this video")])
@@ -448,14 +462,14 @@ def cta_scores(pub: dict, checks: list, transcript: str, duration: float, title:
 
 
 def overall(scores: dict, objective_fails: list) -> dict:
-    vals = [scores[d]["score"] for d in DIMS if d != "overall_publishability"]
+    vals = [scores[d]["score"] for d in DIMS if d != "overall_publishability" and not scores[d].get("not_judged")]
     if any(o["severity"] == "blocking" for o in objective_fails):
         sc, why = 1, "objective blocking failure(s): " + ", ".join(o["id"] for o in objective_fails if o["severity"] == "blocking")
     elif objective_fails:
         sc, why = 2, "objective major failure(s): " + ", ".join(o["id"] for o in objective_fails)
     else:
         sc = min(math.floor(np.mean(vals) + 0.5), min(vals) + 1, 4)
-        why = f"mean {np.mean(vals):.2f}, weakest {min(vals)} ({', '.join(d for d in DIMS[:-1] if scores[d]['score'] == min(vals))})"
+        why = f"mean {np.mean(vals):.2f}, weakest {min(vals)} ({', '.join(d for d in DIMS[:-1] if scores[d]['score'] == min(vals) and not scores[d].get('not_judged'))})"
     return {"score": int(max(1, sc)), "anchor": ANCHORS[int(max(1, sc))], "evidence": [why], "judge": "heuristic", "cap": 4,
             "explanation": "" if sc >= 4 else why}
 
@@ -466,7 +480,11 @@ RUBRIC_TEXT = ("Score each dimension 1-5 (1 unacceptable, 2 weak, 3 acceptable, 
                "evidence from the packet; for every score below 4 give an explanation of what fails and what would fix it. "
                "Judge only what is in the packet. Return ONLY JSON: {\"<dimension>\": {\"score\": int, \"evidence\": str, "
                "\"explanation\": str}, ...}. If hook_strength is below 4, you may add \"fix_stage\": \"HOOK\" to it when the "
-               "spoken hook line fails, or \"VISUAL_PLAN\" when only the opening picture fails.")
+               "spoken hook line fails, or \"VISUAL_PLAN\" when only the opening picture fails. drawing_quality: would an adult "
+               "viewer immediately recognise every drawn subject (a foot reads as a foot, a plane as a plane), with nothing "
+               "that looks scribbled, childish, accidental, overlapping or misleading? 5 = every frame looks deliberately "
+               "illustrated; 3 = mostly clear but at least one drawing is crude or ambiguous; 1 = drawings confuse the "
+               "message. Name the frame and the drawing for any score below 4.")
 
 
 def packet_text(pk: Packet, g: dict, obj: list) -> str:
@@ -535,6 +553,7 @@ ROUTES = {
     "ending_quality": ("SCRIPT", "revise_ending", {}),
     "title_coherence": ("SCRIPT", "revise_publish", {}),
     "thumbnail_coherence": ("VISUAL_PLAN", "redesign_scene", {"scene": "first", "for": "cover frame at 0.7 s"}),
+    "drawing_quality": ("VISUAL_PLAN", "redraw_scene", {"hint": "use the anatomy/object library parts; one clear subject per scene"}),
     # P6.2: cover taste is a packaging problem, not a rendering problem — redesign the cover, don't re-render the video.
     "thumbnail_appeal": ("PACKAGE", "redesign_cover", {}),
 }
@@ -585,12 +604,14 @@ def decide(scores: dict, obj: list, policy: dict) -> tuple[str, list]:
             route = objective_route(o)
             fails.append({"kind": "objective", "id": o["id"], "severity": o["severity"], "evidence": o["evidence"], "fix_route": route})
     for d in DIMS:
+        if scores[d].get("not_judged"):
+            continue
         s = scores[d]["score"]
         need = max(policy["thresholds"].get(d, 0), policy["min_any_dimension"])
         if s < need:
             fails.append({"kind": "quality", "id": d, "score": s, "threshold": need, "evidence": scores[d]["explanation"] or scores[d]["evidence"][:2],
-                          "fix_route": route_for(d if d != "overall_publishability" else min(DIMS[:-1], key=lambda x: scores[x]["score"]),
-                                                 scores[d if d != "overall_publishability" else min(DIMS[:-1], key=lambda x: scores[x]["score"])])})
+                          "fix_route": route_for(d if d != "overall_publishability" else min([x for x in DIMS[:-1] if not scores[x].get("not_judged")], key=lambda x: scores[x]["score"]),
+                                                 scores[d if d != "overall_publishability" else min([x for x in DIMS[:-1] if not scores[x].get("not_judged")], key=lambda x: scores[x]["score"])])})
     for d in CTA_DIMS:                 # only present when the video has a CTA
         if d in scores and scores[d]["score"] < policy.get("cta_thresholds", {}).get(d, 4):
             fails.append({"kind": "quality", "id": d, "score": scores[d]["score"], "threshold": policy.get("cta_thresholds", {}).get(d, 4),
@@ -626,6 +647,11 @@ def cmd_review(a) -> int:
     g = gather(pk)
     obj = objective(g)
     heur = heuristic(g)
+    heur["drawing_quality"] = {"score": 3, "anchor": ANCHORS[3], "judge": "heuristic", "cap": 3, "not_judged": True,
+                               "evidence": ["not judged: only a person or a fresh agent looking at the frames can tell "
+                                            "whether a drawing reads as what it is meant to be"],
+                               "explanation": "not judged by the heuristic; it gates nothing until an LLM, human or "
+                                              "subagent judge scores it"}
     heur["overall_publishability"] = overall(heur, obj)
     backend = a.backend
     if backend == "auto":
@@ -765,14 +791,17 @@ def score_script_variant(pk: Packet, pol: dict) -> dict:
     dur = tr["estimated_duration_s"]
     lo, hi = pub.get("target_duration_s", [15, 60])
     lens = [len(s["text"].split()) for s in sents] or [0]
-    wps = len(words) / max(sum(s["end"] - s["start"] for s in sents), 1e-6)
+    # v3.3.1: words per second over the whole estimated runtime (pauses included), the same measure and band as the
+    # final video review (2.0-3.4). Speech-only time with a 3.3 cap was tuned on am_michael; the default af_heart voice
+    # speaks 3.3-3.5 w/s between pauses, so every correctly calibrated script failed clarity.
+    wps = len(words) / max(float(dur), 1e-6)
     ids = {f["id"] for f in cl.get("facts", [])}
     used, promised = set(cl.get("script_fact_ids", [])), set(cl.get("promised_fact_ids", []))
     opening, closing = sents[0]["text"] if sents else "", " ".join(s["text"] for s in sents[-2:])
     callback = len(set(words_of(closing)) & (set(words_of(hk["spoken_text"])) | set(words_of(hk.get("on_screen_text", ""))))) >= 1
     obj = [{"id": c["id"], "severity": c["severity"], "evidence": c["evidence"]} for c in chk.get("checks", []) if not c["passed"]
            and c["severity"] in ("blocking", "major")]
-    sig = [("speech rate 2.3-3.3 w/s (calibrated)", 2.3 <= wps <= 3.3, f"{wps:.2f}"), ("avg sentence ≤16 words", np.mean(lens) <= 16, f"{np.mean(lens):.1f}"),
+    sig = [("speech rate 2.0-3.4 w/s (calibrated, pauses included)", 2.0 <= wps <= 3.4, f"{wps:.2f}"), ("avg sentence ≤16 words", np.mean(lens) <= 16, f"{np.mean(lens):.1f}"),
            ("no sentence >24 words", max(lens) <= 24, f"max {max(lens)}"), ("claims mapped to the dossier (≥3)", len(used) >= 3 and used <= ids,
             f"{sorted(used)}"), ("ending returns to the hook", callback, "callback" if callback else "none")]
     clar = dim(ratio_score(sig, 4), sig, 4, critical=[(max(lens) > 30, 2, f"{max(lens)}-word sentence")])
@@ -919,7 +948,14 @@ def score_package(pk: Packet, pol: dict) -> dict:
             if s["text"].strip().endswith("?") and i + 1 < len(sents):
                 hit.add(i + 1)                 # a spoken question is answered by the next line
     air = 1.0 if not focus else sum(sents[i]["end"] - sents[i]["start"] for i in hit) / dur_
-    sig.append(("the title's focus gets real airtime (≥20 %)", air >= 0.20, f"{sorted(focus)}: {air:.0%} of the video"))
+    # v3.3.1: a title that restates the run's own topic question ("Why does your foot fall asleep?") is about the whole
+    # video, even when the narration words it differently ("a sleeping foot"); counting words alone called it a side note.
+    topic_w = set(words_of(c.get("topic", ""))) - FUNC
+    on_topic = bool(focus) and bool(topic_w) and focus <= topic_w
+    if on_topic:
+        air = 1.0
+    sig.append(("the title's focus gets real airtime (≥20 %)", air >= 0.20,
+                f"{sorted(focus)}: " + ("the run topic itself — the whole video answers it" if on_topic else f"{air:.0%} of the video")))
     pp_ = dim(ratio_score(sig, 5), sig, 5, critical=[(not (W & T), 1, "title is not about this video"),
                                                     (air < 0.10, 3, f"title focus {sorted(focus)} is a side note ({air:.0%})"),
                                                     (bool(claim_fail), 2, "promise rests on an unsupported claim")])

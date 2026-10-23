@@ -49,6 +49,8 @@ undeclared asks), CTA.NOT_IN_HOOK, CTA.AFTER_PAYOFF, CTA.DURATION (spoken ≤ mi
 (no separate spoken CTA beat under 20 s), CTA.ENDING (a spoken CTA never after the loop line; ≤1.2 s tail when the CTA
 closes), CTA.STANDALONE_ENDING (the video still ends on a payoff/loop if the CTA is removed), CTA.RELEVANCE (shares the
 video's words; no stock outro), CTA.NOT_REPEATED (vs earlier packaged CTAs, cta_history.json), CTA.ON_SCREEN_SHOWN.
+v3.3.1: the channel's fixed follow line (`cta.CHANNEL_CTA`: "Follow for a daily mystery." / "FOLLOW BRAIN ACADEMY") is exempt from
+CTA.RELEVANCE and CTA.NOT_REPEATED — it is the same in every video on purpose. Prefer it for follow CTAs.
 Platform note (verified 2026-10-07): Shorts link onward with a "related video" set in YouTube Studio, not end screens —
 a part_2 CTA adds that manual step to metadata.json.
 

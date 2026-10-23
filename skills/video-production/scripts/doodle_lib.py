@@ -286,6 +286,11 @@ def brain(a: dict) -> str:
 
 
 COMPONENTS = {"dude": dude, "brain": brain, "bubble": bubble, "thought": thought, "arrow": arrow, "burst": burst, "star": star, **SIMPLE}
+try:  # v3.3.1: carefully drawn anatomy/object parts (doodle_parts.py), reviewed once and reused by every video
+    from doodle_parts import PARTS as _PARTS
+except ImportError:  # pragma: no cover - the module ships beside this one
+    _PARTS = {}
+COMPONENTS.update(_PARTS)
 
 
 def expand(name: str, attrs: dict) -> str:
