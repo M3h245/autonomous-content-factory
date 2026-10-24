@@ -2,6 +2,16 @@
 
 ## v3.3.1 — 2026-10-23 · fixes from the goosebumps review and the first channel-CTA videos
 ### Fixed
+- **Package judgment always stale (reviewer.py):** the packet hash was the hash of `manifest.json`, which carries a
+  `built_at` clock stamp, so every PACKAGE re-run rebuilt identical packets with a new hash and the cover judgment
+  for exactly those files failed JUDGMENT.STALE — the documented "judge, then re-run packaging" flow could never
+  pass. The hash is now taken over the manifest without `built_at`; any changed file still changes it.
+  Regression test `PacketHashIgnoresBuildTime`; test_thumbnail_appeal uses the same canonical hash.
+- **Caption phrase breaks (subtitles.py):** a word-count break no longer leaves a function word at the end of a
+  caption chunk ("A metal spoon and a" / "Your skin is now the" in the long-form review #13); trailing words such as
+  a/the/and/of/in are carried into the next chunk. Regression test `CaptionPhraseBreaks`.
+- **plastic_block colours (doodle_parts.py):** `data-top` / `data-side` recolour the whole block, so the narration's
+  "two black blocks" can show a black plastic block beside black aluminium.
 - **HOOK.IDEA_MATCH (new, hook_engine.py):** a hook that promises none of the SELECTED idea's facts is not selectable.
   On 2026-10-22 the idea was "goosebumps are a leftover fur reflex" (F1/F2/F3/F5) but the chosen hook asked about
   music (F6/F7), so most of the script answered a question the hook never asked. `factory.py` now passes

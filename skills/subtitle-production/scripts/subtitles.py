@@ -89,6 +89,14 @@ class Fitter:
         return self.f.getlength(text)
 
 
+WEAK_END = {"a", "an", "the", "of", "in", "on", "to", "and", "or", "but", "is", "are", "was", "your", "my", "its", "it's",
+            "their", "our", "at", "for", "with", "from", "by", "as", "that", "this", "into", "than", "so", "if"}
+
+
+def _norm(t: str) -> str:
+    return re.sub(r"[^a-z']", "", t.lower().replace("’", "'"))
+
+
 def chunk_words(words: list[dict], max_words: int, max_w: float, fitter: Fitter, disp) -> list[list[dict]]:
     chunks: list[list[dict]] = []
     cur: list[dict] = []
@@ -102,8 +110,15 @@ def chunk_words(words: list[dict], max_words: int, max_w: float, fitter: Fitter,
             brk = (len(cur) >= max_words or too_wide or (re.search(r"[.!?;:,…]$", prev["w"]) and not comma_only)
                    or w["start"] - prev["end"] > 0.35 or w["sentence"] != prev["sentence"])
             if brk:
+                carry: list[dict] = []
+                # v3.3.1: a word-count break never strands a function word at a chunk end
+                # ("A metal spoon and a" / "Your skin is now the") — carry it into the next chunk
+                soft = len(cur) >= max_words and not too_wide and not re.search(r"[.!?;:,…]$", prev["w"]) \
+                    and w["start"] - prev["end"] <= 0.35 and w["sentence"] == prev["sentence"]
+                while soft and len(cur) > 2 and _norm(cur[-1]["w"]) in WEAK_END:
+                    carry.insert(0, cur.pop())
                 chunks.append(cur)
-                cur = []
+                cur = carry
         cur.append(w)
     if cur:
         chunks.append(cur)

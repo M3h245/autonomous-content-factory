@@ -58,7 +58,11 @@ class ThumbnailAppeal(unittest.TestCase):
         if not (cls.out / "review" / "packets" / "P1").exists():
             raise AssertionError(f"package_engine failed: {(r.stderr or r.stdout)[-800:]}")
         cls.packets = sorted(str(x) for x in (cls.out / "review" / "packets").iterdir())
-        cls.sha = {Path(p).name: hashlib.sha256((Path(p) / "manifest.json").read_bytes()).hexdigest() for p in cls.packets}
+        # v3.3.1: the packet hash is the reviewer's own (canonical manifest without `built_at`)
+        def _sha(p):
+            m = json.loads((Path(p) / "manifest.json").read_text(encoding="utf-8")); m.pop("built_at", None)
+            return hashlib.sha256(json.dumps(m, sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest()
+        cls.sha = {Path(p).name: _sha(p) for p in cls.packets}
 
     @classmethod
     def tearDownClass(cls):

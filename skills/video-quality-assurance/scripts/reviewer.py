@@ -24,7 +24,7 @@ from __future__ import annotations
 
 import argparse
 import base64
-import json
+import hashlib, json
 import math
 import os
 import re
@@ -76,7 +76,10 @@ class Packet:
         if not mf.exists():
             raise BoundaryError(f"no manifest in {self.root}")
         self.manifest = read_json(mf)
-        self.manifest_sha = sha256_file(mf)
+        # v3.3.1: the hash ignores `built_at` — rebuilding an identical packet (every PACKAGE re-run does) must not
+        # turn a judgment of the very same files into JUDGMENT.STALE; any changed file still changes the hash
+        canon = {k: v for k, v in self.manifest.items() if k != "built_at"}
+        self.manifest_sha = hashlib.sha256(json.dumps(canon, sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest()
         self.read, self.refused = [], []
         leaks = [f for f in self.manifest["files"] if forbidden(f)]
         if leaks:

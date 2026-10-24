@@ -172,5 +172,36 @@ class WideBurnProbe(unittest.TestCase):
                 SUB.set_canvas(1080, 1920)
 
 
+class CaptionPhraseBreaks(unittest.TestCase):
+    def test_word_count_break_never_ends_on_a_function_word(self):
+        sys.path.insert(0, str(SK / "subtitle-production/scripts"))
+        import subtitles as SUB
+
+        class W:
+            def width(self, t):
+                return len(t) * 20
+        txt = "A metal spoon and a wooden spoon sat in a drawer all night".split()
+        ws = [{"w": t, "start": i * 0.3, "end": i * 0.3 + 0.25, "sentence": 0} for i, t in enumerate(txt)]
+        chunks = SUB.chunk_words(ws, 5, 10000, W(), lambda x: x)
+        self.assertEqual(sum(len(c) for c in chunks), len(txt))
+        for c in chunks[:-1]:
+            self.assertNotIn(SUB._norm(c[-1]["w"]), SUB.WEAK_END)
+
+
+class PacketHashIgnoresBuildTime(unittest.TestCase):
+    def test_rebuilt_identical_packet_keeps_its_hash(self):
+        import reviewer as RV
+        with tempfile.TemporaryDirectory() as d:
+            m = {"packet_version": 1, "built_at": "2026-10-24T13:44:23+00:00", "files": {"a.txt": {"sha256": "x", "bytes": 1}}}
+            (Path(d) / "manifest.json").write_text(json.dumps(m), encoding="utf-8")
+            h1 = RV.Packet(Path(d)).manifest_sha
+            m["built_at"] = "2026-10-24T13:44:35+00:00"
+            (Path(d) / "manifest.json").write_text(json.dumps(m), encoding="utf-8")
+            self.assertEqual(RV.Packet(Path(d)).manifest_sha, h1)
+            m["files"]["a.txt"]["sha256"] = "y"
+            (Path(d) / "manifest.json").write_text(json.dumps(m), encoding="utf-8")
+            self.assertNotEqual(RV.Packet(Path(d)).manifest_sha, h1)
+
+
 if __name__ == "__main__":
     unittest.main()
