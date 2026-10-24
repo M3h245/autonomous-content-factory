@@ -44,6 +44,10 @@
   9-minute 48 kHz mix that took several GB per call and the render was killed (exit -9) twice. Inputs longer than
   22 s are now filtered in 20 s blocks with 1 s of context (0.5 % RMS difference on a 90 s noise test); Shorts keep
   the single-FFT path, so their mixes are unchanged.
+- **Long-form captions (subtitles.py):** 16:9 videos default to 5 words per caption chunk (Shorts stay at 3); the
+  review found 2-3-word flashes broke phrases on an 8-minute video ("ONE OF THE", "FOLLOW FOR A").
+- **`finger` part redrawn** (fist with knuckles, extended index finger, thumb, cuff): the first version read as a
+  paddle. Scene guide: text `y` is the vertical centre; long-form labels pop instead of being hand-written.
 - **Channel follow line (cta.py, reviewer.py):** `CHANNEL_CTA` = "Follow for a daily mystery." / "FOLLOW BRAIN
   ACADEMY". It is meant to be identical in every video, so `CTA.RELEVANCE` and `CTA.NOT_REPEATED` no longer reject it
   and the naturalness brevity cap is 2.8 s for it (the CTA.DURATION cap). Every other CTA keeps the old rules. The

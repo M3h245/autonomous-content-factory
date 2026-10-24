@@ -274,10 +274,14 @@ def cmd_run(a) -> int:
         set_canvas(1920, 1080)
         if a.y is None:
             a.y = 0.86
+        if a.max_words is None:      # v3.3.1: 2-3-word flashes broke phrases on 8-minute videos ("ONE OF THE")
+            a.max_words = 5
     else:
         set_canvas(1080, 1920)
         if a.y is None:
             a.y = 0.63
+    if a.max_words is None:
+        a.max_words = 3
     ass, chunks, meta = build_ass(tm, a, overlays)
     (out / "captions.ass").write_text(ass, encoding="utf-8")
     srt, vtt = build_srt_vtt(tm)
@@ -335,7 +339,8 @@ def main() -> int:
     r.add_argument("--style", choices=["auto", "doodle", "karaoke", "word", "clean"], default="auto")
     r.add_argument("--font", default="auto", choices=["auto", *FONT_FILES])
     r.add_argument("--case", choices=["auto", "upper", "keep"], default="auto")
-    r.add_argument("--max-words", type=int, default=3)
+    r.add_argument("--max-words", type=int, default=None,
+                   help="words per caption chunk (default: 3 on 9:16 Shorts, 5 on 16:9 long-form)")
     r.add_argument("--y", type=float, default=None, help="caption centre as a fraction of height (default: 0.63 portrait / 0.86 wide)")
     r.add_argument("--font-scale", type=float, default=1.0)
     r.add_argument("--aspect", default="vertical", choices=["vertical", "wide"],

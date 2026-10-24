@@ -98,6 +98,10 @@ The channel's drawings must look *deliberately illustrated*, never like a toddle
   a fuselage, wings, tail and windows), check it at full size, and add it to `doodle_parts.py` so the next video reuses it.
 - **One clear subject per scene**, big (≥25 % of the frame height), nothing overlapping it by accident; labels never sit
   on top of the subject; no shape that can be misread (a plane that looks like an arrow piercing an ear).
+- **Text `y` is the vertical centre** (the engine defaults to `dominant-baseline: middle`): a label inside a box
+  uses the box's centre as its `y`, or the text sits on the box's bottom edge.
+- **Long-form labels pop, they are not hand-written letter by letter:** a "write" entrance on a 16:9 label is often
+  caught half-written ("concret", "su", "HIGHWAy") by any frame a viewer pauses on.
 - **No "≈" in marker text:** Permanent Marker draws "≈" like a "1" ("COPPER ≈ 100×" reads "COPPER 1 100×"). Write
   "COPPER: 100× WOOD" or "ABOUT 100×".
 - **Long-form (16:9): the subject being explained is on screen from the start of its scene.** Bind only labels,

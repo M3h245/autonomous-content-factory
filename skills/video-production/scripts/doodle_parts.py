@@ -37,7 +37,7 @@ Every part is centred on (0,0) in its own coordinates; the size column is the dr
   rug            560 x 120      woven rug next to a tile strip, seen from the side
   skin_layers    700 x 360      skin cross-section: surface, layers, nerve endings (blue cold, red warm)
   piggy_bank     360 x 280      piggy bank with a coin slot
-  finger         420 x 160      pointing index finger with hand, pointing right
+  finger         460 x 190      pointing hand (fist, extended index finger, thumb, sleeve cuff), pointing right
   puddle         300 x 90       flat melt-water puddle
   speaker        300 x 300      loudspeaker cone with sound waves (for "louder" / volume)
   fan            300 x 300      desk/PC fan: frame, three blades, hub
@@ -314,12 +314,16 @@ def piggy_bank(a: dict) -> str:
 
 
 def finger(a: dict) -> str:
+    """Pointing hand (right): curled fist with knuckle lines, extended index finger with a nail, thumb on top.
+    v3.3.1: redrawn — the first version read as a flat paddle in the long-form review."""
     s = _skin(a)
-    return (f'<path d="M-200,-60 L20,-60 C40,-60 50,-50 60,-40 L190,-40 C215,-40 215,0 190,0 L60,0 C55,30 40,50 20,60 L-200,60 Z" '
+    return (f'<path d="M-40,-62 C40,-66 120,-62 186,-58 C212,-56 214,-24 188,-22 C130,-20 70,-22 30,-20" fill="{s}" stroke-linejoin="round"/>'
+            f'<path d="M168,-54 C182,-52 184,-30 170,-28" fill="none" stroke="{LINE}" stroke-width="7"/>'
+            f'<path d="M-190,-40 C-190,-80 -120,-90 -40,-70 L30,-22 C40,10 30,60 -10,72 C-60,86 -150,84 -180,60 C-200,40 -200,0 -190,-40 Z" '
             f'fill="{s}" stroke-linejoin="round"/>'
-            f'<path d="M150,-30 C160,-22 160,-12 150,-8" fill="none" stroke="{LINE}" stroke-width="7"/>'
-            f'<path d="M10,12 C24,22 30,34 26,46" fill="none" stroke="{LINE}" stroke-width="7"/>'
-            '<path d="M-200,-60 L-200,60" fill="none" stroke-width="12"/>')
+            f'<path d="M-20,-8 C10,-4 22,8 18,22 M-30,22 C0,26 12,38 8,50 M-50,50 C-24,54 -14,64 -18,74" fill="none" stroke="{LINE}" stroke-width="7"/>'
+            f'<path d="M-120,-78 C-80,-110 -20,-104 10,-70 C-10,-60 -50,-58 -80,-62" fill="{s}" stroke-linejoin="round"/>'
+            '<path d="M-200,-30 L-240,-30 L-240,60 L-196,60" fill="#3b82c4" stroke-linejoin="round"/>')
 
 
 def puddle(a: dict) -> str:
