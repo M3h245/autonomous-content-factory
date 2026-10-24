@@ -365,7 +365,8 @@ def railing(a: dict) -> str:
 def plastic_block(a: dict) -> str:
     """Matte plastic block (no shine streaks, rounded moulded edge), so it never reads as metal next to metal_block."""
     c = a.get("data-fill", "#e8590c")
-    return _block(c, "#ffa94d", "#c2410c",
+    # v3.3.1: data-top / data-side recolour the whole block (e.g. black plastic next to black aluminium)
+    return _block(c, a.get("data-top", "#ffa94d"), a.get("data-side", "#c2410c"),
                   '<path d="M-150,100 L80,100" fill="none" stroke="#ffffff" stroke-width="6" stroke-dasharray="4 18" opacity="0.5"/>')
 
 
