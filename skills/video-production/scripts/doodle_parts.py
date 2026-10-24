@@ -41,7 +41,7 @@ Every part is centred on (0,0) in its own coordinates; the size column is the dr
   puddle         300 x 90       flat melt-water puddle
   speaker        300 x 300      loudspeaker cone with sound waves (for "louder" / volume)
   fan            300 x 300      desk/PC fan: frame, three blades, hub
-  railing        560 x 340      handrail on posts with balusters; data-fill metal (default) or a wood colour
+  railing        620 x 480      stair handrail over steps; data-fill metal (default) or a wood colour
 """
 from __future__ import annotations
 
@@ -349,13 +349,16 @@ def fan(a: dict) -> str:
 
 
 def railing(a: dict) -> str:
+    """Stair handrail: a diagonal rail on two posts over a flight of steps. v3.3.1: a level rail on bars read as a
+    radiator (and a level rail on posts as a table) in the long-form review; the stairs make it unmistakable."""
     c = a.get("data-fill", "#9aa5b1")
-    bal = "".join(f'<rect x="{x - 8}" y="-110" width="16" height="250" fill="{c}"/>' for x in range(-180, 200, 72))
-    return (bal + f'<rect x="-280" y="-150" width="56" height="320" rx="10" fill="{c}"/>'
-            f'<rect x="224" y="-150" width="56" height="320" rx="10" fill="{c}"/>'
-            f'<rect x="-290" y="-170" width="580" height="50" rx="25" fill="{c}"/>'
-            '<path d="M-250,-160 L240,-160" fill="none" stroke="#ffffff" stroke-width="8"/>'
-            f'<rect x="-300" y="150" width="600" height="20" rx="8" fill="#868e96"/>')
+    return ('<path d="M-300,170 L-300,110 L-180,110 L-180,50 L-60,50 L-60,-10 L60,-10 L60,-70 L180,-70 L180,-130 L300,-130 '
+            'L300,170 Z" fill="#dee2e6" stroke-linejoin="round"/>'
+            f'<rect x="-262" y="-60" width="34" height="170" rx="8" fill="{c}"/>'
+            f'<rect x="232" y="-280" width="34" height="150" rx="8" fill="{c}"/>'
+            f'<path d="M-280,-70 L290,-290" fill="none" stroke="#1d1b1a" stroke-width="44" stroke-linecap="round"/>'
+            f'<path d="M-280,-70 L290,-290" fill="none" stroke="{c}" stroke-width="30" stroke-linecap="round"/>'
+            '<path d="M-250,-90 L250,-283" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>')
 
 
 PARTS = {"leg": leg, "ear": ear, "head": head, "hand": hand, "eye": eye, "plane": plane, "thermometer": thermometer,
