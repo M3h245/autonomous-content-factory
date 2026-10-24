@@ -92,7 +92,7 @@ The channel's drawings must look *deliberately illustrated*, never like a toddle
   `leg`, `ear`, `head` (profile), `hand`, `eye`, `plane`, `thermometer`, `metal_block`, `wood_block`, `ice_cube`, `mug`,
   `pan`, `flame`, `weight`, `hose` (`data-state="kinked|straight"`), `molecule`, `spoon` (`data-fill` metal or wood), `bowl`
   (`data-fill` = water colour), `bench`, `slide`, `heat_sink`, `jacket`, `cup`, `water`, `rug`, `skin_layers`, `piggy_bank`,
-  `finger`, `puddle`, plus the older props and the `dude`.
+  `finger`, `puddle`, `speaker`, `fan`, `railing`, `plastic_block`, plus the older props and the `dude`.
   Parts are centred on (0,0); place with `transform="translate(x y) scale(s)"`. Never redraw a body part from boxes.
 - **A new subject the library lacks:** draw it with real anatomy/shape cues (a foot has a heel, arch and toes; a plane has
   a fuselage, wings, tail and windows), check it at full size, and add it to `doodle_parts.py` so the next video reuses it.

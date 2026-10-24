@@ -19,6 +19,7 @@ Every part is centred on (0,0) in its own coordinates; the size column is the dr
   thermometer    90 x 520       glass tube, red bulb; data-level 0..1 sets the red column
   metal_block    330 x 250      grey block with shine streaks (3/4 view)
   wood_block     330 x 250      brown block with grain lines (3/4 view)
+  plastic_block  330 x 250      matte plastic block, no shine (orange by default; data-fill)
   ice_cube       260 x 240      pale blue cube with highlight
   mug            300 x 280      mug with handle and steam
   pan            560 x 140      frying pan side view, handle to the right
@@ -361,9 +362,16 @@ def railing(a: dict) -> str:
             '<path d="M-250,-90 L250,-283" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>')
 
 
+def plastic_block(a: dict) -> str:
+    """Matte plastic block (no shine streaks, rounded moulded edge), so it never reads as metal next to metal_block."""
+    c = a.get("data-fill", "#e8590c")
+    return _block(c, "#ffa94d", "#c2410c",
+                  '<path d="M-150,100 L80,100" fill="none" stroke="#ffffff" stroke-width="6" stroke-dasharray="4 18" opacity="0.5"/>')
+
+
 PARTS = {"leg": leg, "ear": ear, "head": head, "hand": hand, "eye": eye, "plane": plane, "thermometer": thermometer,
          "metal_block": metal_block, "wood_block": wood_block, "ice_cube": ice_cube, "mug": mug, "pan": pan,
          "flame": flame, "weight": weight, "hose": hose, "molecule": molecule, "spoon": spoon, "bowl": bowl,
          "bench": bench, "slide": slide, "heat_sink": heat_sink, "jacket": jacket, "cup": cup, "water": water, "rug": rug,
          "skin_layers": skin_layers, "piggy_bank": piggy_bank, "finger": finger, "puddle": puddle,
-         "speaker": speaker, "fan": fan, "railing": railing}
+         "speaker": speaker, "fan": fan, "railing": railing, "plastic_block": plastic_block}

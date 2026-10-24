@@ -38,6 +38,7 @@
   short-form explainer" and COVER.FORMAT demanded a 9:16 cover, so the first 16:9 long-form video was marked down for
   being landscape and 8.9 min long. The format now follows the frames (16:9 → "long-form explainer", 16:9 cover
   >= 1280 wide).
+- **`plastic_block`** (matte, orange, no shine): an aluminium block next to a recoloured `metal_block` read as two metal boxes, so the ice-cube test looked backwards.
 - **More reviewed parts:** `speaker`, `fan`, `railing` (redrawn as a stair handrail over steps after two reviews read level rails as a radiator and a table) (the long-form review read a volume knob and a PC fan as clock
   dials and both railings as tables). Scene guide: no "≈" in marker text; on 16:9 the subject is on screen from the
   start of its scene.
