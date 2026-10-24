@@ -46,6 +46,7 @@
   the single-FFT path, so their mixes are unchanged.
 - **Long-form captions (subtitles.py):** 16:9 videos default to 5 words per caption chunk (Shorts stay at 3); the
   review found 2-3-word flashes broke phrases on an 8-minute video ("ONE OF THE", "FOLLOW FOR A").
+  The 16:9 caption line also moves up from 0.86 to 0.84 of the frame height (it sat under the player's control bar).
 - **`finger` part redrawn** (fist with knuckles, extended index finger, thumb, cuff): the first version read as a
   paddle. Scene guide: text `y` is the vertical centre; long-form labels pop instead of being hand-written.
 - **Channel follow line (cta.py, reviewer.py):** `CHANNEL_CTA` = "Follow for a daily mystery." / "FOLLOW BRAIN

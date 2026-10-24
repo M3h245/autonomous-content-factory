@@ -273,7 +273,7 @@ def cmd_run(a) -> int:
     if a.aspect == "wide":
         set_canvas(1920, 1080)
         if a.y is None:
-            a.y = 0.86
+            a.y = 0.84      # v3.3.1: 0.86 sat under the YouTube player's control bar on hover
         if a.max_words is None:      # v3.3.1: 2-3-word flashes broke phrases on 8-minute videos ("ONE OF THE")
             a.max_words = 5
     else:
