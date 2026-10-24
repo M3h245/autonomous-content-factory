@@ -30,6 +30,9 @@
   wide anchors on the side rails, worst gap first, latest word that closes the gap, first-occurrence words only, and
   the closing 16:9 scene (end-screen zone) left calm. Replay on the first long-form run: 17 accents in 15 scenes,
   every gap <= 3.5 s.
+- **SUB.BURNED_IN on 16:9 (subtitles.py):** the burn-in probe grabbed frames at a fixed 270x480 (portrait) size, so on a
+  1920x1080 video the caption-band rows pointed into the middle of the squashed picture and every long-form burn read
+  "0 changed pixels" and escalated. The probe now uses a quarter of the current canvas. Regression test added.
 - **Channel follow line (cta.py, reviewer.py):** `CHANNEL_CTA` = "Follow for a daily mystery." / "FOLLOW BRAIN
   ACADEMY". It is meant to be identical in every video, so `CTA.RELEVANCE` and `CTA.NOT_REPEATED` no longer reject it
   and the naturalness brevity cap is 2.8 s for it (the CTA.DURATION cap). Every other CTA keeps the old rules. The

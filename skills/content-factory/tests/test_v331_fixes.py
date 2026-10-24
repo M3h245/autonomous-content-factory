@@ -153,5 +153,24 @@ class WideDensity(unittest.TestCase):
             DE.set_canvas(1080, 1920)
 
 
+class WideBurnProbe(unittest.TestCase):
+    def test_caption_band_probe_reads_the_16x9_band(self):
+        import shutil, subprocess
+        if not shutil.which("ffmpeg"):
+            self.skipTest("ffmpeg missing")
+        sys.path.insert(0, str(SK / "subtitle-production/scripts"))
+        import subtitles as SUB
+        with tempfile.TemporaryDirectory() as d:
+            a, b = Path(d) / "a.mp4", Path(d) / "b.mp4"
+            base = ["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "color=c=white:s=1920x1080:d=1", "-pix_fmt", "yuv420p"]
+            subprocess.run(base + [str(a)], check=True)
+            subprocess.run(base[:-2] + ["-vf", "drawbox=x=400:y=880:w=1100:h=100:color=black:t=fill", "-pix_fmt", "yuv420p", str(b)], check=True)
+            SUB.set_canvas(1920, 1080)
+            try:
+                self.assertGreaterEqual(SUB.caption_band_diff(a, b, 0.5, 929), 40)
+            finally:
+                SUB.set_canvas(1080, 1920)
+
+
 if __name__ == "__main__":
     unittest.main()

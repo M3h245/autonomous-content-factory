@@ -231,11 +231,15 @@ def glyph_gaps(font: str, text: str) -> list[str]:
 
 def caption_band_diff(a: Path, b: Path, t: float, y: int) -> int:
     """Pixels (quarter resolution) in the caption band that differ clearly between master and burned video at time t."""
+    # v3.3.1: probe at quarter resolution of the CURRENT canvas; the fixed 270x480 grab squashed a 16:9 frame, so the
+    # band row (y // 4) pointed at the middle of the picture and every long-form burn read as "nothing changed".
+    qw, qh = W // 4, H // 4
+
     def grab(p: Path) -> np.ndarray:
         out = subprocess.run([ffmpeg_bin(), "-v", "error", "-ss", f"{t:.3f}", "-i", str(p), "-frames:v", "1",
-                              "-vf", "scale=270:480,format=gray", "-f", "rawvideo", "-"], capture_output=True, check=True).stdout
-        return np.frombuffer(out, dtype=np.uint8).reshape(480, 270).astype(float)
-    band = slice(max(0, y // 4 - 40), min(480, y // 4 + 40))
+                              "-vf", f"scale={qw}:{qh},format=gray", "-f", "rawvideo", "-"], capture_output=True, check=True).stdout
+        return np.frombuffer(out, dtype=np.uint8).reshape(qh, qw).astype(float)
+    band = slice(max(0, y // 4 - 40), min(qh, y // 4 + 40))
     return int((np.abs(grab(a)[band] - grab(b)[band]) > 40).sum())
 
 
