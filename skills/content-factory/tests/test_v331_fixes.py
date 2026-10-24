@@ -116,5 +116,17 @@ class HookFrame0Canvas(unittest.TestCase):
         self.assertGreater(stats["subject_height_ratio"], 0.5)   # 600 px of 1080, not of 1920
 
 
+class TwoLineFollowCard(unittest.TestCase):
+    def test_follow_card_split_over_two_text_lines_counts_as_shown(self):
+        sc = script("Follow for a daily mystery. And that pop? Just one bubble.")
+        sc["cta"] = {"needed": True, "decision_reason": "channel line", "type": "follow", "placement": "integrated",
+                     "modality": "both", "beat_id": "b3", **CTA.CHANNEL_CTA}
+        ss = sents(sc)
+        st = [x for x in ss if x["text"].startswith("Follow")][0]["start"]
+        labels = [{"text": "FOLLOW", "at_s": st}, {"text": "BRAIN ACADEMY", "at_s": st}]
+        res = CTA.check(sc, ss, 22.0, labels=labels)
+        self.assertTrue({c["id"]: c["passed"] for c in res["checks"]}["CTA.ON_SCREEN_SHOWN"])
+
+
 if __name__ == "__main__":
     unittest.main()

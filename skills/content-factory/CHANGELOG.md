@@ -17,6 +17,9 @@
 - **Script speech-rate check (reviewer.py):** measured over the whole estimated runtime with the final review's band
   (2.0-3.4 w/s). It used speech-only time with a 3.3 cap tuned on `am_michael`; with `af_heart` calibrated, real
   delivered Shorts measure 3.3-3.5 w/s between pauses, so every correct estimate failed message_clarity.
+- **CTA.ON_SCREEN_SHOWN (cta.py):** a follow card written on two lines ("FOLLOW" over "BRAIN ACADEMY") is two text
+  elements; the check now joins the labels on screen in the CTA window instead of requiring one element with the whole
+  line (the first long-form render failed on it).
 - **Channel follow line (cta.py, reviewer.py):** `CHANNEL_CTA` = "Follow for a daily mystery." / "FOLLOW BRAIN
   ACADEMY". It is meant to be identical in every video, so `CTA.RELEVANCE` and `CTA.NOT_REPEATED` no longer reject it
   and the naturalness brevity cap is 2.8 s for it (the CTA.DURATION cap). Every other CTA keeps the old rules. The

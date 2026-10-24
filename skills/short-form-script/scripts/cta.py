@@ -214,7 +214,11 @@ def check(script: dict, sentences: list[dict], duration_s: float, *, labels: lis
     # 6 on-screen CTA must really be on screen during its window (VIDEO only — needs the visual audit labels)
     if labels is not None and cta.get("modality") in ("on_screen", "both"):
         want = norm(cta.get("on_screen", ""))
-        seen = [lb for lb in labels if norm(lb["text"]) == want and start - 0.6 <= lb["at_s"] <= end + 0.3]
+        inwin = [lb for lb in labels if start - 0.6 <= lb["at_s"] <= end + 0.3]
+        seen = [lb for lb in inwin if norm(lb["text"]) == want]
+        # v3.3.1: a two-line card ("FOLLOW" over "BRAIN ACADEMY") is one label split in two text elements
+        if not seen and want and want in norm(" ".join(lb["text"] for lb in inwin)):
+            seen = inwin
         c("CTA.ON_SCREEN_SHOWN", bool(seen), "major", f"label '{cta.get('on_screen')}' appears at "
           f"{[lb['at_s'] for lb in labels if norm(lb['text']) == want]} (window {start:.2f}-{end:.2f}s)")
     if cta.get("type") == "part_2":
