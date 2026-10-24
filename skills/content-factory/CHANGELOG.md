@@ -22,7 +22,7 @@
   line (the first long-form render failed on it).
 - **VID.MOTION_GAP vs VID.END_SCREEN_TAIL (render_video.py):** on 16:9 the last 5 s must stay calm for the end
   screen, but the motion-gap check counted that calm tail as dead air, so every long-form video failed one of the two.
-  Gaps are now measured up to the start of the end-screen zone.
+  Gaps are now measured up to the start of the end-screen zone (VID.MOTION_GAP and VID.PACING_CADENCE).
 - **density_events.py on 16:9:** it never added anything to a long-form scene (0 accents on 87 scenes): the canvas was
   not switched to 1920x1080 and its anchors sat at y 1440-1660, off a 1080-high frame, so every accent failed the
   geometry gate. It also only filled the tail after a scene's last entrance (interior gaps were left), took the

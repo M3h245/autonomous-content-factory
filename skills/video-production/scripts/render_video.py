@@ -391,7 +391,8 @@ def main_cmd(a) -> int:
         hk0 = audit["hook"].get("visual_events_first_1_5s", 0)
         sr.check("VID.OPENING_DENSITY", hk0 >= 2, "major", f"{hk0} visual event(s) in the first 1.5 s", hk0, 2,
                  fix("VISUAL_PLAN", "add_entrances", scene="first", window_s=1.5))
-        evs = sorted(set([0.0] + [t for t in tl.visual_events() if 0 <= t < voice_dur] + [voice_dur]))
+        # v3.3.1: same end-screen exemption as VID.MOTION_GAP (the calm 16:9 tail is required, not slow pacing)
+        evs = sorted(set([0.0] + [t for t in tl.visual_events() if 0 <= t < gap_end] + [gap_end]))
         gaps_ = [b - c for c, b in zip(evs, evs[1:])] or [voice_dur]
         cad_max, cad_med = PACING["long" if LONG else "short"]
         sr.check("VID.PACING_CADENCE", max(gaps_) <= cad_max and float(np.median(gaps_)) <= cad_med, "major",
