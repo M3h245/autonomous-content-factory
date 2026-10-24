@@ -20,11 +20,31 @@ def _t(dur: float) -> np.ndarray:
     return np.arange(int(dur * SR)) / SR
 
 
-def _band(x: np.ndarray, lo: float, hi: float) -> np.ndarray:
+def _band_fft(x: np.ndarray, lo: float, hi: float) -> np.ndarray:
     X = np.fft.rfft(x)
     f = np.fft.rfftfreq(x.size, 1 / SR)
     X[(f < lo) | (f > hi)] = 0
     return np.fft.irfft(X, x.size)
+
+
+BAND_CHUNK_S, BAND_PAD_S = 20.0, 1.0
+
+
+def _band(x: np.ndarray, lo: float, hi: float) -> np.ndarray:
+    """Speech-band filter. v3.3.1: long inputs are filtered in 20 s blocks with 1 s of context on each side (only the
+    centre is kept). One whole-signal FFT of a 9-minute 48 kHz track needed several GB (complex spectrum + masks +
+    copies, several times per mix) and the long-form render was killed by the OOM killer; Shorts (<20 s blocks)
+    take the original single-FFT path, so their mixes are bit-identical."""
+    n = x.size
+    c, p = int(BAND_CHUNK_S * SR), int(BAND_PAD_S * SR)
+    if n <= c + 2 * p:
+        return _band_fft(x, lo, hi)
+    out = np.empty(n, dtype=float)
+    for s0 in range(0, n, c):
+        s1 = min(n, s0 + c)
+        a0, a1 = max(0, s0 - p), min(n, s1 + p)
+        out[s0:s1] = _band_fft(x[a0:a1], lo, hi)[s0 - a0: s0 - a0 + (s1 - s0)]
+    return out
 
 
 def _norm(x: np.ndarray, peak: float = 1.0) -> np.ndarray:

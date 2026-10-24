@@ -40,6 +40,10 @@
 - **More reviewed parts:** `speaker`, `fan`, `railing` (the long-form review read a volume knob and a PC fan as clock
   dials and both railings as tables). Scene guide: no "≈" in marker text; on 16:9 the subject is on screen from the
   start of its scene.
+- **Long-form audio no longer OOMs (audio_design.py):** the speech-band filter ran one FFT over the whole track; on a
+  9-minute 48 kHz mix that took several GB per call and the render was killed (exit -9) twice. Inputs longer than
+  22 s are now filtered in 20 s blocks with 1 s of context (0.5 % RMS difference on a 90 s noise test); Shorts keep
+  the single-FFT path, so their mixes are unchanged.
 - **Channel follow line (cta.py, reviewer.py):** `CHANNEL_CTA` = "Follow for a daily mystery." / "FOLLOW BRAIN
   ACADEMY". It is meant to be identical in every video, so `CTA.RELEVANCE` and `CTA.NOT_REPEATED` no longer reject it
   and the naturalness brevity cap is 2.8 s for it (the CTA.DURATION cap). Every other CTA keeps the old rules. The
