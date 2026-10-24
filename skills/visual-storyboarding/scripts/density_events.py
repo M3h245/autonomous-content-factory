@@ -48,6 +48,19 @@ ACCENTS = [
 # All sit between the drawing (which the storyboard keeps above ~y=1000) and the caption band (y 1060-1360) is avoided
 # by keeping y <= 1010 or >= 1400.
 ANCHORS = [(170, 1440), (910, 1440), (540, 1500), (170, 1600), (910, 1600), (540, 1660)]
+# v3.3.1: 16:9 (1920x1080) — the portrait anchors are off-canvas there, so every accent failed the geometry gate and
+# long-form scenes were never densified. Wide anchors sit on the side rails and the lower corners, above the caption
+# band (y >= 864) and inside the 5 % safe margin.
+ANCHORS_WIDE = [(150, 330), (1770, 330), (150, 600), (1770, 600), (170, 790), (1750, 790)]
+
+
+def anchors() -> list[tuple[int, int]]:
+    import doodle_engine as de
+    return ANCHORS_WIDE if de.W > de.H else ANCHORS
+
+
+def _nw(w: str) -> str:
+    return "".join(c for c in w.lower() if c.isalnum() or c == "'")
 
 
 def scene_words_timed(scene: dict, timing: dict) -> list[dict]:
@@ -88,8 +101,9 @@ def gate_ok(svg: str, words: list[dict], style: dict, scene_id: str) -> bool:
 
 
 def accent_svg(kind: str, loop: str, colour: str, x: int, y: int, word: str, n: int) -> str:
+    sc = 0.9 if y < 1000 else 1.1   # smaller on the 16:9 rails
     return (f'<g id="dens{n}" data-lib="{kind}" data-fill="{colour}" '
-            f'transform="translate({x} {y}) scale(1.1)" data-in="pop" data-at="w:{word}" data-loop="{loop}"/>')
+            f'transform="translate({x} {y}) scale({sc})" data-in="pop" data-at="w:{word}" data-loop="{loop}"/>')
 
 
 def densify(svg: str, words: list[dict], style: dict, scene_id: str, max_gap: float,
@@ -103,16 +117,24 @@ def densify(svg: str, words: list[dict], style: dict, scene_id: str, max_gap: fl
         times, dur = entrance_times(body + "</svg>", words, style, scene_id)
         if not times:
             break
-        worst = max([dur - times[-1]] + [b - a for a, b in zip(times, times[1:])])
-        if worst <= max_gap:
+        spans = [(a, b) for a, b in zip(times, times[1:])] + [(times[-1], dur)]
+        a0, b0 = max(spans, key=lambda ab: ab[1] - ab[0])
+        if b0 - a0 <= max_gap:
             break
-        last = times[-1]
-        # earliest unused word that lands after the current last entrance, leaving room for the entrance itself
-        pick = next((i for i, w in enumerate(words) if i not in used and w["start"] > last + 0.35), None)
+        # v3.3.1: fill the WORST gap (interior or tail), not only the tail after the last entrance: interior gaps
+        # were never filled, so the render kept failing VID.MOTION_GAP one scene at a time. Within the gap take the
+        # latest word that still closes it, so one accent covers a whole max_gap window instead of stacking up.
+        # A cue `w:<word>` binds to the word's FIRST occurrence in the scene, so repeated words are skipped.
+        first = lambda i: all(_nw(x["w"]) != _nw(words[i]["w"]) for x in words[:i])  # noqa: E731
+        ok = lambda i: i not in used and first(i)  # noqa: E731
+        win = [i for i, w in enumerate(words) if ok(i) and a0 + 0.35 < w["start"] <= min(b0, a0 + max_gap) - 0.15]
+        pick = max(win, key=lambda i: words[i]["start"]) if win else \
+            next((i for i, w in enumerate(words) if ok(i) and a0 + 0.35 < w["start"] < b0 - 0.35), None)
         if pick is None:
             break
         kind, loop, colour = ACCENTS[n % len(ACCENTS)]
-        x, y = ANCHORS[n % len(ANCHORS)]
+        anc = anchors()
+        x, y = anc[n % len(anc)]
         frag = accent_svg(kind, loop, colour, x, y, words[pick]["w"], n)
         trial = body + frag + "</svg>"
         if not gate_ok(trial, words, style, scene_id):
@@ -138,8 +160,15 @@ def main() -> int:
     timing = json.load(open(a.timing, encoding="utf-8"))
     sb_dir = Path(a.storyboard).resolve().parent
     style = sb.get("style", {})
+    canvas = style.get("canvas") or sb.get("canvas")
+    if canvas:                                   # v3.3.1: measure and place on the storyboard's own canvas
+        import doodle_engine as de
+        de.set_canvas(int(canvas[0]), int(canvas[1]))
     total, touched = [], 0
-    for scene in sb["scenes"]:
+    wide = bool(canvas) and int(canvas[0]) > int(canvas[1])
+    for k, scene in enumerate(sb["scenes"]):
+        if wide and k == len(sb["scenes"]) - 1:
+            continue        # v3.3.1: the closing 16:9 scene carries the end-screen zone, which must stay calm
         words = scene_words_timed(scene, timing)
         if not words:
             continue

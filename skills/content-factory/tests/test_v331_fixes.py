@@ -128,5 +128,30 @@ class TwoLineFollowCard(unittest.TestCase):
         self.assertTrue({c["id"]: c["passed"] for c in res["checks"]}["CTA.ON_SCREEN_SHOWN"])
 
 
+class WideDensity(unittest.TestCase):
+    def test_interior_gap_on_16x9_gets_one_on_canvas_accent(self):
+        sys.path.insert(0, str(SK / "video-production/scripts")); sys.path.insert(0, str(SK / "visual-storyboarding/scripts"))
+        import doodle_engine as DE
+        import density_events as D
+        DE.set_canvas(1920, 1080)
+        try:
+            ws = "one two three four five six seven eight nine ten eleven twelve thirteen fourteen".split()
+            words = [{"w": w, "start": round(0.5 * i, 2), "end": round(0.5 * i + 0.4, 2)} for i, w in enumerate(ws)]
+            svg = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">'
+                   '<text x="960" y="130" font-family="marker" font-size="84" text-anchor="middle" data-in="write" data-at="0">TITLE</text>'
+                   '<rect x="560" y="300" width="800" height="450" fill="#9a9a9a" data-in="pop" data-at="w:two"/>'
+                   '<circle cx="960" cy="520" r="120" fill="#e8452c" data-in="pop" data-at="w:fourteen"/></svg>')
+            style = {"palette": ["#ffd23f"], "paper": "plain"}
+            new, added = D.densify(svg, words, style, "t", 3.5)
+            self.assertGreaterEqual(len(added), 1)
+            for a in added:
+                self.assertLess(a["anchor"][1], 864)                 # above the 16:9 caption band, on canvas
+                self.assertGreater(a["at_s"], 1.0); self.assertLess(a["at_s"], 6.5)   # inside the interior gap
+            times, _ = D.entrance_times(new, words, style, "t")
+            self.assertLessEqual(max(b - a for a, b in zip(times, times[1:])), 3.5)
+        finally:
+            DE.set_canvas(1080, 1920)
+
+
 if __name__ == "__main__":
     unittest.main()

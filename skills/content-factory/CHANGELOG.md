@@ -23,6 +23,13 @@
 - **VID.MOTION_GAP vs VID.END_SCREEN_TAIL (render_video.py):** on 16:9 the last 5 s must stay calm for the end
   screen, but the motion-gap check counted that calm tail as dead air, so every long-form video failed one of the two.
   Gaps are now measured up to the start of the end-screen zone.
+- **density_events.py on 16:9:** it never added anything to a long-form scene (0 accents on 87 scenes): the canvas was
+  not switched to 1920x1080 and its anchors sat at y 1440-1660, off a 1080-high frame, so every accent failed the
+  geometry gate. It also only filled the tail after a scene's last entrance (interior gaps were left), took the
+  earliest word (stacking accents) and could bind to a repeated word's first occurrence. Now: storyboard canvas,
+  wide anchors on the side rails, worst gap first, latest word that closes the gap, first-occurrence words only, and
+  the closing 16:9 scene (end-screen zone) left calm. Replay on the first long-form run: 17 accents in 15 scenes,
+  every gap <= 3.5 s.
 - **Channel follow line (cta.py, reviewer.py):** `CHANNEL_CTA` = "Follow for a daily mystery." / "FOLLOW BRAIN
   ACADEMY". It is meant to be identical in every video, so `CTA.RELEVANCE` and `CTA.NOT_REPEATED` no longer reject it
   and the naturalness brevity cap is 2.8 s for it (the CTA.DURATION cap). Every other CTA keeps the old rules. The
