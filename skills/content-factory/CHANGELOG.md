@@ -20,6 +20,9 @@
 - **CTA.ON_SCREEN_SHOWN (cta.py):** a follow card written on two lines ("FOLLOW" over "BRAIN ACADEMY") is two text
   elements; the check now joins the labels on screen in the CTA window instead of requiring one element with the whole
   line (the first long-form render failed on it).
+- **VID.MOTION_GAP vs VID.END_SCREEN_TAIL (render_video.py):** on 16:9 the last 5 s must stay calm for the end
+  screen, but the motion-gap check counted that calm tail as dead air, so every long-form video failed one of the two.
+  Gaps are now measured up to the start of the end-screen zone.
 - **Channel follow line (cta.py, reviewer.py):** `CHANNEL_CTA` = "Follow for a daily mystery." / "FOLLOW BRAIN
   ACADEMY". It is meant to be identical in every video, so `CTA.RELEVANCE` and `CTA.NOT_REPEATED` no longer reject it
   and the naturalness brevity cap is 2.8 s for it (the CTA.DURATION cap). Every other CTA keeps the old rules. The

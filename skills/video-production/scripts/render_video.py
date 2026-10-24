@@ -350,7 +350,10 @@ def main_cmd(a) -> int:
              i_lufs, [a.lufs - 1.5, a.lufs + 1.5], fix("VIDEO", "remix", lufs=a.lufs))
     sr.check("VID.PEAK", peak <= -0.5, "major", f"sample peak {peak} dBFS", peak, -0.5, fix("VIDEO", "remix", lufs=a.lufs - 1))
     if tl is not None:
-        ev = [t for t in tl.visual_events() if 0 <= t < voice_dur] + [voice_dur]
+        # v3.3.1: on long-form the end-screen zone (last END_SCREEN_TAIL_S) must stay calm (VID.END_SCREEN_TAIL), so it is
+        # not dead air; measuring gaps into it made the two gates contradict each other on every 16:9 video.
+        gap_end = voice_dur - END_SCREEN_TAIL_S if LONG and voice_dur >= 25 else voice_dur
+        ev = [t for t in tl.visual_events() if 0 <= t < gap_end] + [gap_end]
         gaps = [(round(b - a_, 2), round(a_, 2)) for a_, b in zip([0.0] + ev[:-1], ev)]
         worst = max(gaps)
         sr.check("VID.MOTION_GAP", worst[0] <= a.max_motion_gap, "major",
