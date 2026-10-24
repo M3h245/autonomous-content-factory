@@ -182,6 +182,19 @@ def scene_changes(video: Path, thresh: float = 0.06) -> list[float]:
     return [round(float(m), 3) for m in re.findall(r"pts_time:([0-9.]+)", p.stderr)]
 
 
+def cover_format_ok(g: dict) -> bool:
+    """v3.3.1: a Short's cover is 9:16 (>=720 wide); a 16:9 long-form video's thumbnail is 16:9 (>=1280 wide, YouTube's
+    recommended thumbnail size). The 9:16 rule used to fail every long-form cover."""
+    h, w = g["cover_shape"]
+    if g.get("wide"):
+        return w >= 1280 and abs(w / h - 16 / 9) <= 0.02
+    return w >= 720 and abs(h / w - 16 / 9) <= 0.02
+
+
+def cover_format_label(g: dict) -> str:
+    return "16:9, ≥1280 wide" if g.get("wide") else "9:16, ≥720 wide"
+
+
 def gather(pk: Packet) -> dict:
     tr = pk.json("text/transcript.json")
     pub = pk.json("text/publish.json", {})
@@ -190,7 +203,8 @@ def gather(pk: Packet) -> dict:
     mix = pk.json("measurements/mix_report.json", {})
     subs = pk.json("measurements/subtitles_result.json", {})
     claims = pk.json("evidence/claims.json", {"facts": [], "sources": []})
-    ff_cov, ff_ink = coverage(pk.image("frames/first_frame.png"))
+    ff_img = pk.image("frames/first_frame.png")
+    ff_cov, ff_ink = coverage(ff_img)
     cover_img = pk.image("frames/cover.jpg")
     cv_cov, _ = coverage(cover_img)
     events, styles = ass_events(pk.path("text/captions.ass").read_text(encoding="utf-8"))
@@ -200,7 +214,8 @@ def gather(pk: Packet) -> dict:
     # visual events: the engine's exact list for doodle videos, otherwise measured from the final video itself
     vis_events = audit["visual_events"] if audit else scene_changes(pk.path("media/final.mp4"))
     return {"visual_events": vis_events, "visual_events_source": "visual audit" if audit else "ffmpeg scene detection","tr": tr, "pub": pub, "qa": qa, "audit": audit, "mix": mix, "subs": subs, "claims": claims,
-            "ff_cov": ff_cov, "ff_ink": ff_ink, "cover_shape": cover_img.shape[:2], "cover_cov": cv_cov,
+            "ff_cov": ff_cov, "ff_ink": ff_ink, "cover_shape": cover_img.shape[:2],
+            "wide": ff_img.shape[1] > ff_img.shape[0], "cover_cov": cv_cov,   # v3.3.1 wide: 16:9 long-form → 16:9 cover
             "cover_headline": head, "cap_events": events, "cap_styles": styles, "sents": sents, "words": words,
             "duration": tr["duration_s"], "qa_failed": {c["id"]: c for c in qa.get("checks", []) if not c["passed"]},
             "qa_metrics": qa.get("metrics", {}), "cta_pub": pk.json("text/cta.json", {"present": False}) or {"present": False},
@@ -234,8 +249,8 @@ def objective(g: dict) -> list[dict]:
     if not t or len(t) > 100:
         out.append({"id": "TITLE.FORMAT", "severity": "blocking", "evidence": f"title length {len(t)} (1-100)"})
     h, w = g["cover_shape"]
-    if w < 720 or abs(h / w - 16 / 9) > 0.02:
-        out.append({"id": "COVER.FORMAT", "severity": "major", "evidence": f"cover {w}x{h} (needs 9:16, ≥720 wide)"})
+    if not cover_format_ok(g):
+        out.append({"id": "COVER.FORMAT", "severity": "major", "evidence": f"cover {w}x{h} (needs {cover_format_label(g)})"})
     if g["words"] and g["words"][-1]["end"] > g["duration"] + 0.05:
         out.append({"id": "TIMING.BEYOND_VIDEO", "severity": "blocking", "evidence": "speech ends after the video"})
     return out
@@ -403,8 +418,7 @@ def heuristic(g: dict) -> dict:
     # thumbnail / cover
     hd = g["cover_headline"]
     hw = set(words_of(" ".join(hd)))
-    sig = [("9:16, ≥720 wide", g["cover_shape"][1] >= 720 and abs(g["cover_shape"][0] / g["cover_shape"][1] - 16 / 9) <= 0.02,
-            f"{g['cover_shape'][1]}x{g['cover_shape'][0]}"), ("subject fills ≥8 %", g["cover_cov"] >= 0.08, f"{g['cover_cov']:.1%}"),
+    sig = [(cover_format_label(g), cover_format_ok(g), f"{g['cover_shape'][1]}x{g['cover_shape'][0]}"), ("subject fills ≥8 %", g["cover_cov"] >= 0.08, f"{g['cover_cov']:.1%}"),
            ("headline text in the upper area", len(hd) >= 1, f"{hd[:5]}" if hd else "none (frame grab with captions only)"),
            ("headline relates to title/video", bool(hw & (tw | set(words_of(tr["text"])))), f"{sorted(hw)[:5]}" if hw else "no headline")]
     out["thumbnail_coherence"] = dim(ratio_score(sig, 4), sig, 4, "a designed cover is a Phase 4 deliverable")
@@ -475,8 +489,15 @@ def overall(scores: dict, objective_fails: list) -> dict:
 
 
 # ----------------------------------------------------------------------------- LLM judges (fresh context)
-RUBRIC_TEXT = ("Score each dimension 1-5 (1 unacceptable, 2 weak, 3 acceptable, 4 strong, 5 publish-ready) for a vertical "
-               "short-form explainer. Dimensions: " + ", ".join(DIMS) + ". For EVERY dimension give concise visual/audio "
+def rubric_text(g: dict) -> str:
+    """v3.3.1: the reviewer is told the real format (a 16:9 long-form video was judged as a 'vertical short')."""
+    fmt = ("16:9 long-form explainer (YouTube video over 8 minutes, chapters, thumbnail 16:9)" if g.get("wide")
+           else "vertical short-form explainer")
+    return RUBRIC_TEXT.replace("{FORMAT}", fmt)
+
+
+RUBRIC_TEXT = ("Score each dimension 1-5 (1 unacceptable, 2 weak, 3 acceptable, 4 strong, 5 publish-ready) for a {FORMAT}. "
+               "Dimensions: " + ", ".join(DIMS) + ". For EVERY dimension give concise visual/audio "
                "evidence from the packet; for every score below 4 give an explanation of what fails and what would fix it. "
                "Judge only what is in the packet. Return ONLY JSON: {\"<dimension>\": {\"score\": int, \"evidence\": str, "
                "\"explanation\": str}, ...}. If hook_strength is below 4, you may add \"fix_stage\": \"HOOK\" to it when the "
@@ -505,7 +526,7 @@ def judge_anthropic(pk: Packet, g: dict, obj: list) -> dict:
                     "media_type": "image/png" if name.endswith(".png") else "image/jpeg", "data": data}}]
     content.append({"type": "text", "text": packet_text(pk, g, obj)})
     body = {"model": os.environ.get("CF_REVIEW_MODEL", "claude-sonnet-4-5"), "max_tokens": 2500,
-            "system": "You are an independent reviewer. You did not make this video. " + RUBRIC_TEXT,
+            "system": "You are an independent reviewer. You did not make this video. " + rubric_text(g),
             "messages": [{"role": "user", "content": content}]}
     req = urllib.request.Request(f"{base}/v1/messages", data=json.dumps(body).encode(), method="POST",
                                  headers={"x-api-key": key or "test", "anthropic-version": "2023-06-01", "content-type": "application/json"})
@@ -665,7 +686,7 @@ def cmd_review(a) -> int:
             if not jpath.exists():
                 (out / "review_request.md").write_text(
                     "# Independent review request\n\nYou are a fresh reviewer. Read ONLY the files in this packet:\n"
-                    f"`{pk.root}` (see manifest.json). Do not open anything else.\n\n{RUBRIC_TEXT}\n\nWrite the JSON to "
+                    f"`{pk.root}` (see manifest.json). Do not open anything else.\n\n{rubric_text(g)}\n\nWrite the JSON to "
                     f"`{jpath}` and stop.\n\nObjective failures already found:\n```json\n{json.dumps(obj, indent=1)}\n```\n", encoding="utf-8")
                 write_json(out / "boundary_log.json", boundary_log(pk, a, loaded, "subagent (awaiting)"))
                 print(json.dumps({"verdict": "AWAITING_JUDGMENT", "request": str(out / "review_request.md")}))

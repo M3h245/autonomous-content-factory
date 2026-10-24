@@ -39,6 +39,9 @@ Every part is centred on (0,0) in its own coordinates; the size column is the dr
   piggy_bank     360 x 280      piggy bank with a coin slot
   finger         420 x 160      pointing index finger with hand, pointing right
   puddle         300 x 90       flat melt-water puddle
+  speaker        300 x 300      loudspeaker cone with sound waves (for "louder" / volume)
+  fan            300 x 300      desk/PC fan: frame, three blades, hub
+  railing        560 x 340      handrail on posts with balusters; data-fill metal (default) or a wood colour
 """
 from __future__ import annotations
 
@@ -325,8 +328,35 @@ def puddle(a: dict) -> str:
             '<path d="M-90,-6 C-60,-16 -30,-2 -10,-10" fill="none" stroke="#ffffff" stroke-width="8"/>')
 
 
+def speaker(a: dict) -> str:
+    c = a.get("data-fill", "#3a3f45")
+    return (f'<path d="M-140,-50 L-70,-50 L20,-130 L20,130 L-70,50 L-140,50 Z" fill="{c}" stroke-linejoin="round"/>'
+            '<path d="M60,-60 C95,-25 95,25 60,60 M95,-100 C150,-40 150,40 95,100" fill="none" stroke-width="14" stroke-linecap="round"/>')
+
+
+def fan(a: dict) -> str:
+    blade = '<path d="M0,0 C-20,-40 -10,-110 40,-120 C70,-80 50,-30 0,0 Z" fill="#7cc6f2"/>'
+    return ('<rect x="-150" y="-150" width="300" height="300" rx="36" fill="#3a3f45"/>'
+            '<circle cx="0" cy="0" r="122" fill="#e9ecef"/>'
+            + "".join(f'<g transform="rotate({k * 120})">{blade}</g>' for k in range(3)) +
+            '<circle cx="0" cy="0" r="26" fill="#5b6470"/>'
+            '<circle cx="-118" cy="-118" r="10" fill="#adb5bd" stroke="none"/><circle cx="118" cy="-118" r="10" fill="#adb5bd" stroke="none"/>'
+            '<circle cx="-118" cy="118" r="10" fill="#adb5bd" stroke="none"/><circle cx="118" cy="118" r="10" fill="#adb5bd" stroke="none"/>')
+
+
+def railing(a: dict) -> str:
+    c = a.get("data-fill", "#9aa5b1")
+    bal = "".join(f'<rect x="{x - 8}" y="-110" width="16" height="250" fill="{c}"/>' for x in range(-180, 200, 72))
+    return (bal + f'<rect x="-280" y="-150" width="56" height="320" rx="10" fill="{c}"/>'
+            f'<rect x="224" y="-150" width="56" height="320" rx="10" fill="{c}"/>'
+            f'<rect x="-290" y="-170" width="580" height="50" rx="25" fill="{c}"/>'
+            '<path d="M-250,-160 L240,-160" fill="none" stroke="#ffffff" stroke-width="8"/>'
+            f'<rect x="-300" y="150" width="600" height="20" rx="8" fill="#868e96"/>')
+
+
 PARTS = {"leg": leg, "ear": ear, "head": head, "hand": hand, "eye": eye, "plane": plane, "thermometer": thermometer,
          "metal_block": metal_block, "wood_block": wood_block, "ice_cube": ice_cube, "mug": mug, "pan": pan,
          "flame": flame, "weight": weight, "hose": hose, "molecule": molecule, "spoon": spoon, "bowl": bowl,
          "bench": bench, "slide": slide, "heat_sink": heat_sink, "jacket": jacket, "cup": cup, "water": water, "rug": rug,
-         "skin_layers": skin_layers, "piggy_bank": piggy_bank, "finger": finger, "puddle": puddle}
+         "skin_layers": skin_layers, "piggy_bank": piggy_bank, "finger": finger, "puddle": puddle,
+         "speaker": speaker, "fan": fan, "railing": railing}

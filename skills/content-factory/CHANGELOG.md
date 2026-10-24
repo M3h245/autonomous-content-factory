@@ -33,6 +33,13 @@
 - **SUB.BURNED_IN on 16:9 (subtitles.py):** the burn-in probe grabbed frames at a fixed 270x480 (portrait) size, so on a
   1920x1080 video the caption-band rows pointed into the middle of the squashed picture and every long-form burn read
   "0 changed pixels" and escalated. The probe now uses a quarter of the current canvas. Regression test added.
+- **Independent review knows the format (reviewer.py):** the request told the judge every video was a "vertical
+  short-form explainer" and COVER.FORMAT demanded a 9:16 cover, so the first 16:9 long-form video was marked down for
+  being landscape and 8.9 min long. The format now follows the frames (16:9 → "long-form explainer", 16:9 cover
+  >= 1280 wide).
+- **More reviewed parts:** `speaker`, `fan`, `railing` (the long-form review read a volume knob and a PC fan as clock
+  dials and both railings as tables). Scene guide: no "≈" in marker text; on 16:9 the subject is on screen from the
+  start of its scene.
 - **Channel follow line (cta.py, reviewer.py):** `CHANNEL_CTA` = "Follow for a daily mystery." / "FOLLOW BRAIN
   ACADEMY". It is meant to be identical in every video, so `CTA.RELEVANCE` and `CTA.NOT_REPEATED` no longer reject it
   and the naturalness brevity cap is 2.8 s for it (the CTA.DURATION cap). Every other CTA keeps the old rules. The

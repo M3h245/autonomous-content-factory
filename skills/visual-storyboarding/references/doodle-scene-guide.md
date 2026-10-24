@@ -98,6 +98,11 @@ The channel's drawings must look *deliberately illustrated*, never like a toddle
   a fuselage, wings, tail and windows), check it at full size, and add it to `doodle_parts.py` so the next video reuses it.
 - **One clear subject per scene**, big (≥25 % of the frame height), nothing overlapping it by accident; labels never sit
   on top of the subject; no shape that can be misread (a plane that looks like an arrow piercing an ear).
+- **No "≈" in marker text:** Permanent Marker draws "≈" like a "1" ("COPPER ≈ 100×" reads "COPPER 1 100×"). Write
+  "COPPER: 100× WOOD" or "ABOUT 100×".
+- **Long-form (16:9): the subject being explained is on screen from the start of its scene.** Bind only labels,
+  arrows and the second half of a comparison to narration words; a scene that shows a title and a stick figure
+  pointing at nothing for 3 s reads as missing art. Comparisons ("air vs water", "three bowls") show both sides.
 - **Scene titles are present from the scene's first frame** (`data-at="0"`): a title that writes itself in at the last
   word leaves the top of the frame empty for seconds.
 - **Ending card:** the channel follow card says exactly `FOLLOW BRAIN ACADEMY` and must fit inside its card.
