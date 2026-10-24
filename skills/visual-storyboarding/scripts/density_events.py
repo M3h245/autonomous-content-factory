@@ -176,7 +176,9 @@ def main() -> int:
         if not p.is_absolute():
             p = sb_dir / p
         svg = p.read_text(encoding="utf-8")
-        new, added = densify(svg, words, style, scene["id"], a.max_gap, dry=a.dry_run)
+        # v3.3.1: aim 0.25 s under the gate: the scene-local timeline here and the render's global one differ by a
+        # few frames (shot starts, transitions), and a 3.54 s gap against a 3.5 s limit cost a 30-minute re-render.
+        new, added = densify(svg, words, style, scene["id"], max(1.0, a.max_gap - 0.25), dry=a.dry_run)
         if added:
             touched += 1
             total += added

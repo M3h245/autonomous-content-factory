@@ -28,7 +28,7 @@
   geometry gate. It also only filled the tail after a scene's last entrance (interior gaps were left), took the
   earliest word (stacking accents) and could bind to a repeated word's first occurrence. Now: storyboard canvas,
   wide anchors on the side rails, worst gap first, latest word that closes the gap, first-occurrence words only, and
-  the closing 16:9 scene (end-screen zone) left calm. Replay on the first long-form run: 17 accents in 15 scenes,
+  the closing 16:9 scene (end-screen zone) left calm, and it aims 0.25 s under the gate (scene-local vs render timeline). Replay on the first long-form run: 17 accents in 15 scenes,
   every gap <= 3.5 s.
 - **SUB.BURNED_IN on 16:9 (subtitles.py):** the burn-in probe grabbed frames at a fixed 270x480 (portrait) size, so on a
   1920x1080 video the caption-band rows pointed into the middle of the squashed picture and every long-form burn read
