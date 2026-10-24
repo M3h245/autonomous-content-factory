@@ -35,12 +35,12 @@ for _p in (str(_HERE.parents[2] / "video-production" / "scripts"), str(_HERE.par
 
 # accents that read as "something just happened" without changing what the scene depicts, with the idle loop that suits
 # each one. Kept small and few so a scene never turns into confetti.
+# v3.3.1: only neutral accents. A density "?" or "!" bound to a random word reads as meaning something ("a stray
+# question mark next to the wooden spoon") — the long-form review flagged them as marks with no meaning.
 ACCENTS = [
     ("sparkle", "pulse", "#e03131"),
-    ("question", "bob", "#1c7ed6"),
     ("star", "pulse", "#f59f00"),
     ("sparkle", "tremble", "#2f9e44"),
-    ("exclaim", "tremble", "#e03131"),
     ("sparkle", "pulse", "#7048e8"),
 ]
 
