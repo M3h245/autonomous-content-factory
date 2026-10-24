@@ -340,7 +340,8 @@ class PackageJudgmentCoverage(unittest.TestCase):
                             "--dossier", tmp / run.name / "research/dossier.json", "--out-dir", tmp / "out"], capture_output=True, text=True)
         self.assertTrue((tmp / "out" / "review" / "packets" / "P1").exists(), p.stderr[-800:])
         pk = sorted(str(x) for x in (tmp / "out" / "review" / "packets").iterdir())
-        sha = hashlib.sha256((Path(pk[0]) / "manifest.json").read_bytes()).hexdigest()      # packet P1
+        _m = json.loads((Path(pk[0]) / "manifest.json").read_text(encoding="utf-8")); _m.pop("built_at", None)
+        sha = hashlib.sha256(json.dumps(_m, sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest()  # packet P1 (v3.3.1: canonical, no built_at)
         j = tmp / "judgment.json"
         write_json(j, {"candidates": {"P1": {"scores": {"curiosity": 5}, "packet_manifest_sha256": sha},
                                       "P2": {"scores": {"curiosity": 5}, "packet_manifest_sha256": "0" * 64}}})
