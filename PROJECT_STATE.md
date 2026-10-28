@@ -24,6 +24,13 @@ consumers in idea_engine, factory init and hook_engine. The synchronisation step
 were **applied to the production database** on 2026-10-18/19: runs 36, publications 18, yt_observations 8 584,
 `data/learning/latest.json` in place, `memory/dump.json` re-exported from the 36-run database.
 
+## Owner workflow rule (2026-10-28)
+- For every new factory batch, IDEATION must use the Idea Engine path: generate **about 50 candidate ideas**
+  (the engine's 30–80 band) in an ideas file, then let `idea_engine.py` / `select_ideas.py` filter, score and select
+  the best N.
+- Do not replace that pool with a 16-idea pool or a hand-picked shortlist. This rule came from the 2026-10-28 music
+  batch and applies to the next batch.
+
 ## Status
 **The production system is v3.3.0, uncommitted until the owner approves the release** (v3.2.0 and v3.3.0 are in the
 working tree; the last tagged release is v3.1.1). Tags v3.2.0 / v3.3.0 are created only after that approval (P5.4).
